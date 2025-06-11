@@ -12,22 +12,9 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #073B4C; /* Dark primary background */
-            line-height: 1.6;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 450px; /* Increased max-width for charts */
-            margin-left: auto;
-            margin-right: auto;
-            height: 320px; /* Slightly increased height */
-            max-height: 380px; /* Adjusted max-height */
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 380px; /* Adjusted height for larger screens */
-            }
+            background-color: #073B4C;
+            color: #E0F2F1;
+            line-height: 1.7;
         }
         .gradient-text {
             background: linear-gradient(45deg, #FFD166, #06D6A0);
@@ -35,328 +22,231 @@
             -webkit-text-fill-color: transparent;
         }
         .card {
-            background-color: rgba(17, 138, 178, 0.15); /* Slightly less opaque */
-            backdrop-filter: blur(12px); /* Increased blur */
-            border: 1px solid rgba(255, 255, 255, 0.08); /* More subtle border */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); /* Stronger shadow */
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            background-color: rgba(17, 138, 178, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 1rem;
         }
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
         }
-        /* Corrected Countdown Timer Styling */
         .countdown-segment {
-            display: flex; 
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: #06D6A0;
-            color: #073B4C;
-            border-radius: 8px; /* Slightly more rounded */
-            font-weight: bold;
-            font-size: 1.75rem; /* Larger font size for numbers */
-            min-width: 65px; /* Ensure segments have a consistent width */
-            height: 70px; /* Fixed height for consistency */
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            line-height: 1.1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-color: #06D6A0; color: #073B4C;
+            border-radius: 0.5rem; font-weight: 700; font-size: 1.75rem;
+            min-width: 65px; height: 70px; text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); line-height: 1.1;
         }
-        .countdown-label {
-            font-size: 0.8rem; /* Slightly larger label */
-            color: #073B4C; /* Dark color for label on light background */
-            margin-top: 0.2rem;
-            font-weight: 500;
-        }
-        .itinerary-day-card, .info-list-card {
-            background-color: rgba(17, 138, 178, 0.15);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem; /* Increased margin */
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-        .itinerary-day-card:hover, .info-list-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
-        }
-        .itinerary-activity {
-            margin-bottom: 0.6rem;
-            color: #E0F2F1;
-        }
-        .itinerary-meal {
-            font-style: italic;
-            color: #FFD166; /* Meal details in accent color */
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-top: 0.5rem;
-        }
+        .countdown-label { font-size: 0.8rem; color: #073B4C; margin-top: 0.2rem; font-weight: 500; }
         .info-list-item {
-            margin-bottom: 0.7rem; /* Increased margin */
             display: flex;
             align-items: flex-start;
             font-size: 1rem;
             color: #E0F2F1;
+            margin-bottom: 0.75rem; /* 12px */
         }
         .info-list-item::before {
             content: '•';
             color: #06D6A0;
             font-weight: bold;
             display: inline-block;
-            width: 1em; /* Adjusted width */
+            width: 1em;
             flex-shrink: 0;
             margin-right: 0.6em;
-            font-size: 1.2em; /* Larger bullet */
+            font-size: 1.2em;
+            line-height: 1.5; /* Align bullet with text */
         }
-        /* Radio button custom styling */
-        input[type="radio"] {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            border: 2px solid #118AB2;
-            border-radius: 50%;
-            width: 1.25rem;
-            height: 1.25rem;
-            transition: all 0.2s ease-in-out;
-            outline: none;
-            cursor: pointer;
-            position: relative;
-            top: 2px; /* Fine-tune vertical alignment */
+        input[type="radio"], input[type="checkbox"] {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            border: 2px solid #118AB2; transition: all 0.2s ease-in-out;
+            outline: none; cursor: pointer; position: relative;
         }
-        input[type="radio"]:checked {
-            background-color: #06D6A0;
-            border-color: #06D6A0;
-            box-shadow: 0 0 0 3px rgba(6, 214, 160, 0.4); /* Green glow */
+        input[type="radio"] { border-radius: 50%; width: 1.25rem; height: 1.25rem; top: 2px; }
+        input[type="checkbox"] { border-radius: 4px; width: 1.25rem; height: 1.25rem; }
+        input[type="radio"]:checked, input[type="checkbox"]:checked {
+            background-color: #06D6A0; border-color: #06D6A0;
+            box-shadow: 0 0 0 3px rgba(6, 214, 160, 0.4);
         }
         input[type="radio"]:checked::before {
-            content: '';
-            display: block;
-            width: 0.5rem;
-            height: 0.5rem;
-            background-color: #073B4C; /* Inner dot color */
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            content: ''; display: block; width: 0.5rem; height: 0.5rem; background-color: #073B4C;
+            border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
-        label.inline-flex span {
-            transition: color 0.2s ease-in-out;
+        input[type="checkbox"]:checked::before {
+             content: '✓'; color: #073B4C; font-weight: bold; font-size: 0.8rem;
+             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
-        input[type="radio"]:checked + span {
-            color: #FFD166; /* Highlight selected label */
-            font-weight: 600;
+        label.inline-flex span { transition: color 0.2s ease-in-out; }
+        input[type="radio"]:checked + span, input[type="checkbox"]:checked + span { color: #FFD166; font-weight: 600; }
+        .calculator-input {
+            background-color: rgba(0,0,0,0.2); border: 1px solid #118AB2;
+            border-radius: 0.5rem; padding: 0.5rem 0.75rem;
+            color: white; width: 100%;
+        }
+        .card-header {
+            font-size: 1.75rem; /* 28px */
+            font-weight: 900;
+            margin-bottom: 1.5rem; /* 24px */
+            text-align: center;
+            color: #FFD166;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 250px; /* Adjusted for sidebar */
         }
     </style>
 </head>
-<body class="text-white">
+<body class="p-4 sm:p-6 lg:p-8">
 
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
-
+    <div class="container mx-auto">
         <header class="text-center my-8 md:my-12">
             <h1 class="text-4xl md:text-6xl font-black gradient-text leading-tight">2025 員工國外旅遊</h1>
             <p class="text-2xl md:text-4xl font-bold text-white mt-2">韓國濟州島之旅 🇰🇷</p>
         </header>
 
-        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            <div class="lg:col-span-3 card rounded-xl shadow-2xl p-6">
-                <h2 class="text-2xl font-bold text-center mb-6 text-[#FFD166]">旅行時間軸</h2>
-                <p class="text-center text-gray-300 mb-6 text-lg">我們將在 2025 年 11 月 10 日至 11 月 14 日，享受為期五天四夜的濟州島假期。</p>
-                <div class="flex justify-between items-center text-center px-4 py-3 bg-gradient-to-r from-[#118AB2]/30 to-[#073B4C]/30 rounded-lg border border-white/5">
-                    <div class="w-1/5 flex flex-col items-center">
-                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">一</div>
-                        <p class="mt-2 text-sm text-gray-200">11/10 出發</p>
-                    </div>
-                    <div class="flex-1 h-0.5 bg-gray-600/50 relative mx-2">
-                         <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent to-[#06D6A0]/50 animate-pulse"></div>
-                    </div>
-                    <div class="w-1/5 flex flex-col items-center">
-                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">二</div>
-                        <p class="mt-2 text-sm text-gray-200">11/11</p>
-                    </div>
-                    <div class="flex-1 h-0.5 bg-gray-600/50 relative mx-2">
-                         <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent to-[#06D6A0]/50 animate-pulse"></div>
-                    </div>
-                    <div class="w-1/5 flex flex-col items-center">
-                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">三</div>
-                        <p class="mt-2 text-sm text-gray-200">11/12</p>
-                    </div>
-                    <div class="flex-1 h-0.5 bg-gray-600/50 relative mx-2">
-                         <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent to-[#06D6A0]/50 animate-pulse"></div>
-                    </div>
-                    <div class="w-1/5 flex flex-col items-center">
-                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">四</div>
-                        <p class="mt-2 text-sm text-gray-200">11/13</p>
-                    </div>
-                    <div class="flex-1 h-0.5 bg-gray-600/50 relative mx-2">
-                         <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent to-[#06D6A0]/50 animate-pulse"></div>
-                    </div>
-                    <div class="w-1/5 flex flex-col items-center">
-                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">五</div>
-                        <p class="mt-2 text-sm text-gray-200">11/14 返程</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Main Layout Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <div class="card rounded-xl p-6 flex flex-col items-center justify-center text-center">
-                 <h3 class="text-xl font-bold mb-2 text-[#FFD166]">✈️ 去程航班</h3>
-                 <p class="text-4xl font-black text-[#06D6A0]">14:25</p>
-                 <p class="text-gray-300 text-base">出發</p>
-                 <p class="text-lg font-bold mt-3 text-white">17:30 抵達</p>
-                 <p class="text-sm text-gray-400">德威航空 TW688</p>
-            </div>
-            
-            <div class="card rounded-xl p-6 flex flex-col items-center justify-center text-center">
-                 <h3 class="text-xl font-bold mb-2 text-[#FFD166]">✈️ 回程航班</h3>
-                 <p class="text-4xl font-black text-[#06D6A0]">12:20</p>
-                 <p class="text-gray-300 text-base">出發</p>
-                 <p class="text-lg font-bold mt-3 text-white">13:25 抵達</p>
-                 <p class="text-sm text-gray-400">德威航空 TW687</p>
-            </div>
-
-            <div class="md:col-span-2 lg:col-span-1 card rounded-xl p-6 flex flex-col items-center justify-center">
-                <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">費用貢獻分析</h2>
-                <p class="text-center text-base text-gray-300 mb-4">公司大力補助，讓您輕鬆出遊！此圖顯示公司補助與員工自付額的比例。</p>
-                <div class="chart-container h-64 md:h-auto">
-                    <canvas id="costBreakdownChart"></canvas>
-                </div>
-            </div>
-
-            <div class="md:col-span-2 card rounded-xl p-6">
-                <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">不同身份費用比較</h2>
-                <p class="text-center text-base text-gray-300 mb-2">此圖表比較不同身份的最終費用，幫助您快速了解預算。</p>
-                
-                <!-- Improved Note Section -->
-                <div class="text-center text-sm text-amber-200/90 bg-black/20 p-3 rounded-lg my-4 border border-white/10 mx-auto max-w-md">
-                    <p><strong class="font-bold text-amber-300">註：</strong> 參加人數達 21 人以上，適用基本自付額 <strong class="font-bold text-white">$2,900</strong>；<br class="sm:hidden"> 16-20 人，適用基本自付額 <strong class="font-bold text-white">$3,900</strong>。</p>
-                </div>
-                
-                <!-- Radio Buttons -->
-                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 mb-6 text-sm md:text-base">
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="radio" name="costOption" value="2900" class="form-radio" checked>
-                        <span class="ml-2 text-white font-medium">方案 A: 總人數 > 20</span>
-                    </label>
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="radio" name="costOption" value="3900" class="form-radio">
-                        <span class="ml-2 text-white font-medium">方案 B: 總人數 16-20</span>
-                    </label>
-                </div>
-
-                <div class="w-full h-80 md:h-96">
-                    <canvas id="scenarioCostChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card rounded-xl p-6 text-center bg-[#FF6B6B]/30 border-[#FF6B6B]">
-                <h2 class="text-2xl font-bold text-white">⚠️ 重要事項</h2>
-                <div class="mt-4">
-                    <h3 class="text-lg font-bold text-[#FFD166]">報名截止</h3>
-                    <p class="text-3xl font-black my-2">本週日</p>
-                    <div id="countdownTimer" class="flex justify-center items-start mt-4 space-x-2 md:space-x-3">
-                        <!-- Countdown timer will be generated by JS -->
+            <!-- Left Column: Main Content -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Itinerary Card -->
+                <section class="card p-6 md:p-8">
+                    <h2 class="card-header">詳細行程</h2>
+                    <div class="space-y-6">
+                        <!-- Day 1 Itinerary -->
+                        <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">第一天：桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷</h3>
+                            <p class="text-gray-300">桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷(巨大火山岩/海蝕地形)→享用晚餐→入住飯店 CHECKIN→享用飯店設施</p>
+                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:X | 午餐:花花小點心 | 晚餐:三姓穴海鮮鍋料理 (W22,500韓幣/人)</p>
+                            <p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                        </div>
+                        <!-- Day 2 Itinerary -->
+                        <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">第二天：城山日出峰→萬丈窟→濟州城邑民俗村→東門市場</h3>
+                            <p class="text-gray-300">飯店→城山日出峰(火山丘/世界自然遺產)→萬丈窟(世界上最長的熔岩洞)→濟州城邑民俗村(贈每人一杯蜂蜜茶或五味子茶)→東門市場+中央地下街+黑豬肉一條街→返回飯店休憩</p>
+                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:石鍋拌飯+涮涮鍋 (W10,000韓幣/人) | 晚餐:明倫進士碳烤黑毛豬肉吃到飽+季節小菜 (W18,900韓幣/人)</p>
+                            <p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                        </div>
+                        <!-- Day 3 Itinerary -->
+                        <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">第三天：ECOLAND森林小火車→漢拏樹木園→天地淵瀑布</h3>
+                            <p class="text-gray-300">飯店→ECOLAND 森林小火車(森林趣/風車/海盜船/彩虹躺椅/哈比人樹洞)→漢拏樹木園(十一個主題園區)→天地淵瀑布(大長今場景/上帝的池塘)→濟州有林橘子(贈每人5顆橘子)→返回飯店休憩</p>
+                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:青花魚定食 (₩11,000韓幣/人) | 晚餐:活鮑魚+碳烤黑毛豬+蝦+蛋+大醬 (₩24,000韓幣/人)</p>
+                            <p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                        </div>
+                        <!-- Day 4 Itinerary -->
+                        <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">第四天：全日自由活動</h3>
+                            <p class="text-gray-300">飯店→全日自由活動→返回飯店休憩</p>
+                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午、晚餐:方便遊玩,敬請自理</p>
+                            <p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                        </div>
+                        <!-- Day 5 Itinerary -->
+                         <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
+                            <h3 class="text-xl font-bold text-white mb-2">第五天：返回溫暖的家</h3>
+                            <p class="text-gray-300">飯店出發→濟州國際機場/桃園國際機場→歡樂賦歸</p>
+                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:X | 晚餐:X</p>
+                            <p class="text-sm text-gray-400 mt-2">住宿: 溫暖的家</p>
+                        </div>
                     </div>
-                </div>
+                </section>
+
+                <!-- Cost Calculator Card -->
+                <section id="calculator" class="card p-6 md:p-8">
+                    <h2 class="card-header">🧮 費用試算工具</h2>
+                    <form id="costCalculatorForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">1. 選擇方案</legend><div class="flex flex-col space-y-3 mt-2"><label class="inline-flex items-center cursor-pointer"><input type="radio" name="costOption" value="2900" class="form-radio" checked><span class="ml-3 text-white">A: 總人數 > 20 (自付$2,900)</span></label><label class="inline-flex items-center cursor-pointer"><input type="radio" name="costOption" value="3900" class="form-radio"><span class="ml-3 text-white">B: 總人數 16-20 (自付$3,900)</span></label></div></fieldset>
+                            <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">2. 額外選項</legend><div class="flex flex-col space-y-3 mt-2"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus"><span class="ml-3 text-white">去年業績達標 (享眷屬補助)</span></label><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom"><span class="ml-3 text-white">需要單人房 (補價差$9,000)</span></label></div></fieldset>
+                        </div>
+                        <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">3. 輸入同行人數 (員工本人免填)</legend><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2"><div><label for="numAdults" class="block text-sm font-medium text-gray-300 mb-1">眷屬 (成人)</label><input type="number" id="numAdults" class="calculator-input" value="0" min="0"></div><div><label for="numChildren" class="block text-sm font-medium text-gray-300 mb-1">孩童 (9歲以下不佔床)</label><input type="number" id="numChildren" class="calculator-input" value="0" min="0"></div><div><label for="numInfants" class="block text-sm font-medium text-gray-300 mb-1">嬰兒 (2歲以下)</label><input type="number" id="numInfants" class="calculator-input" value="0" min="0"></div></div></fieldset>
+                        <div id="costResult" class="text-center bg-black/20 p-6 rounded-lg border border-white/10 min-h-[120px] flex flex-col justify-center">
+                            <p class="text-gray-400">請填寫人數，費用將自動更新</p>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Restored Included/Not Included Card -->
+                <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-bold text-center mb-4 text-white">團費包含項目</h3>
+                        <div class="space-y-2 text-gray-200">
+                           <p class="info-list-item">交通費：行程表內團體遊覽車，德威航空來回經濟艙團體機票。</p>
+                           <p class="info-list-item">稅捐：各地機場稅、燃料稅、稅金。</p>
+                           <p class="info-list-item">餐食：行程內列明之餐食，盡量安排適合國人口味。</p>
+                           <p class="info-list-item">住宿：行程表內飯店住宿（兩人一室為原則），需達 10 間以上。</p>
+                           <p class="info-list-item">遊覽費：行程內旅遊活動之門票、手續費。</p>
+                           <p class="info-list-item">保險費：每人全程旅遊責任保險新台幣伍佰萬元及貳十萬元意外醫療險。</p>
+                           <p class="info-list-item">贈禮：花花專屬贈品、旅遊手冊、企業紀念布條、花花筆、夾鏈袋、網卡。</p>
+                           <p class="info-list-item">小費：司機、領隊、導遊小費 (每日 NT$300 x 5 天，共 NT$1,500/人，已包含)。</p>
+                           <p class="info-list-item">領隊導遊：達 16 人以上派遣合格專業領隊 1 位，當地導遊 1 位。</p>
+                           <p class="info-list-item">飲用水：礦泉水無限提供。</p>
+                        </div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-bold text-center mb-4 text-white">團費未含項目</h3>
+                        <div class="space-y-2 text-gray-200">
+                           <p class="info-list-item">證照費：新辦 (換新) 十年效期護照費用 NT$1,600 元。</p>
+                           <p class="info-list-item">證照費：14 歲以下五年效期護照費用 NT$1,200 元。</p>
+                           <p class="info-list-item">純係私人之消費：如電話費、洗衣費等。</p>
+                           <p class="info-list-item">床頭、行李小費及表上未列明之其他行程自費行程。</p>
+                           <p class="info-list-item">旅遊平安保險及旅遊不便險等其他私人保險項目。</p>
+                        </div>
+                    </div>
+                </section>
             </div>
 
-            <div class="card rounded-xl p-6 text-center">
-                <h3 class="text-lg font-bold text-[#FFD166]">取消政策</h3>
-                <p class="text-gray-200 mt-2 mb-3 text-base">報名後取消者，需自付機票取消費用 <span class="font-bold text-[#FF6B6B]">$9,000</span> 至 <span class="font-bold text-[#FF6B6B]">$12,000</span> 元。</p>
-            </div>
+            <!-- Right Column: Sidebar -->
+            <div class="lg:col-span-1 space-y-8">
+                <section class="card p-6 text-center bg-[#FF6B6B]/20 border-[#FF6B6B]/50">
+                    <h2 class="card-header text-white">⚠️ 報名倒數中</h2>
+                    <p class="text-3xl font-black my-1 text-white">本週日 截止</p>
+                    <div id="countdownTimer" class="flex justify-center items-start mt-4 space-x-2 md:space-x-3"></div>
+                </section>
 
-            <div class="card rounded-xl p-6 text-center">
-                <h3 class="text-lg font-bold text-[#FFD166]">📩 如何報名</h3>
-                <p class="text-gray-200 mt-4 text-lg">請於<span class="text-2xl font-bold text-[#06D6A0]">LINE記事本留言</span>確認您的參加總人數</p>
-                <p class="mt-4 text-gray-300">謝謝您的配合！期待與您同遊！</p>
-            </div>
-
-            <!-- Included and Not Included Sections -->
-            <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-                <div class="info-list-card">
-                    <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">團費包含項目</h2>
-                    <ul class="text-gray-300 text-left">
-                        <li class="info-list-item">交通費：行程表內團體遊覽車，德威航空來回經濟艙團體機票。</li>
-                        <li class="info-list-item">稅捐：各地機場稅、燃料稅、稅金。</li>
-                        <li class="info-list-item">餐食：行程內列明之餐食，盡量安排適合國人口味。</li>
-                        <li class="info-list-item">住宿：行程表內飯店住宿（兩人一室為原則），需達 10 間以上。</li>
-                        <li class="info-list-item">遊覽費：行程內旅遊活動之門票、手續費。</li>
-                        <li class="info-list-item">保險費：每人全程旅遊責任保險新台幣伍佰萬元及貳十萬元意外醫療險。</li>
-                        <li class="info-list-item">贈禮：花花專屬贈品、旅遊手冊、企業紀念布條、花花筆、夾鏈袋、網卡。</li>
-                        <li class="info-list-item">小費：司機、領隊、導遊小費 (每日 NT$300 x 5 天，共 NT$1,500/人，已包含在團費中)。</li>
-                        <li class="info-list-item">領隊導遊：達 16 人以上派遣合格專業領隊 1 位，當地導遊 1 位。</li>
-                        <li class="info-list-item">飲用水：礦泉水無限提供。</li>
-                    </ul>
-                </div>
-                <div class="info-list-card">
-                    <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">團費未含項目</h2>
-                    <ul class="text-gray-300 text-left">
-                        <li class="info-list-item">證照費：新辦 (換新) 十年效期護照費用 NT$1,600 元。</li>
-                        <li class="info-list-item">證照費：14 歲以下五年效期護照費用 NT$1,200 元。</li>
-                        <li class="info-list-item">純係私人之消費：如電話費、洗衣費等。</li>
-                        <li class="info-list-item">床頭、行李小費及表上未列明之其他行程自費行程。</li>
-                        <li class="info-list-item">旅遊平安保險及旅遊不便險等其他私人保險項目。</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Itinerary Details -->
-            <div class="lg:col-span-3 card rounded-xl shadow-2xl p-6 mt-6">
-                <h2 class="text-2xl font-bold text-center mb-6 text-[#FFD166]">詳細行程 (五天四夜)</h2>
+                <section class="card p-6">
+                     <h2 class="card-header">✈️ 航班資訊</h2>
+                     <div class="space-y-4">
+                        <div class="text-center"><h3 class="text-lg font-bold text-white">去程 TPE → CJU</h3><p class="text-3xl font-black text-[#06D6A0]">14:25 - 17:30</p><p class="text-sm text-gray-400">德威航空 TW688</p></div><hr class="border-gray-700"><div class="text-center"><h3 class="text-lg font-bold text-white">回程 CJU → TPE</h3><p class="text-3xl font-black text-[#06D6A0]">12:20 - 13:25</p><p class="text-sm text-gray-400">德威航空 TW687</p></div>
+                     </div>
+                </section>
                 
-                <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第一天：桃園國際機場 / 濟州國際機場 → 龍頭岩 + 龍淵峽谷</h3>
-                    <p class="text-gray-300 itinerary-activity">抵達濟州島後，前往參觀濟州島的標誌性景點 — <strong>龍頭岩</strong>，欣賞火山噴發後形成的巨大岩石。接著漫步於周邊的 <strong>龍淵峽谷</strong>，感受大自然鬼斧神工的雕刻。傍晚享用豐盛晚餐後，入住飯店並享受飯店設施。</p>
-                    <p class="itinerary-meal">早餐: X | 午餐: 花花小點心 | 晚餐: 三姓穴海鮮鍋料理 (W22,500韓幣/人)</p>
-                    <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
-                </div>
+                 <!-- Restored Donut Chart -->
+                <section class="card p-6">
+                    <h2 class="card-header">費用貢獻分析</h2>
+                    <div class="chart-container"><canvas id="costBreakdownChart"></canvas></div>
+                    <p class="text-center text-sm text-gray-400 mt-4">此圖為最低自付額方案下，公司與員工的費用比例。</p>
+                </section>
 
-                <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第二天：城山日出峰 → 萬丈窟 → 濟州城邑民俗村 → 東門市場</h3>
-                    <p class="text-gray-300 itinerary-activity">早晨前往被列為世界自然遺產的 <strong>城山日出峰</strong>，感受壯麗的火山丘景色。隨後探索世界上最長的熔岩洞 <strong>萬丈窟</strong>。接著造訪充滿濟州傳統風情的 <strong>城邑民俗村</strong>。傍晚則前往熱鬧的 <strong>東門市場</strong>、<strong>中央地下街</strong> 及 <strong>黑豬肉一條街</strong>，享受購物與美食的樂趣。</p>
-                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 石鍋拌飯 + 涮涮鍋 (W10,000韓幣/人) | 晚餐: 明倫進士碳烤黑毛豬肉吃到飽 (W18,900韓幣/人)</p>
-                    <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
-                </div>
+                <!-- Corrected Cost Rules Card -->
+                <section class="card p-6">
+                    <h2 class="card-header">💰 費用規則</h2>
+                    <div class="space-y-2">
+                        <div class="info-list-item"><div><strong>公司補助：</strong><br>每位員工補助 <strong class="text-[#06D6A0]">$30,000</strong> 元。</div></div>
+                        <div class="info-list-item"><div><strong>員工自付：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>總人數 > 20：自付 $2,900</li><li>總人數 16-20：自付 $3,900</li></ul></div></div>
+                        <div class="info-list-item"><div><strong>眷屬補助：</strong><br>業績達標者，可為<strong class="text-white">一位同行眷屬</strong> (成人或孩童) 申請 <strong class="text-[#FFD166]">$15,000 元補助</strong>！</div></div>
+                        <div class="info-list-item"><div><strong>其他優惠：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>孩童不佔床：團費減 $1,000</li><li>嬰兒價：$6,500</li><li>單人房：需補價差 $9,000</li></ul></div></div>
+                    </div>
+                </section>
 
-                <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第三天：ECOLAND 森林小火車 → 漢拏樹木園 → 天地淵瀑布</h3>
-                    <p class="text-gray-300 itinerary-activity">今日將搭乘可愛的 <strong>ECOLAND 森林小火車</strong>，穿梭於美麗的森林中。隨後漫步於擁有十一個主題園區的 <strong>漢拏樹木園</strong>。接著前往壯觀的 <strong>天地淵瀑布</strong> (大長今拍攝場景)。行程中還將造訪 <strong>濟州有林橘子園</strong>，每人可獲贈 5 顆甜美的橘子。</p>
-                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 青花魚定食 (₩11,000韓幣/人) | 晚餐: 活鮑魚+碳烤黑毛豬 (₩24,000韓幣/人)</p>
-                    <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
-                </div>
-
-                <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第四天：全日自由活動</h3>
-                    <p class="text-gray-300 itinerary-activity">此日為全日自由活動時間，您可以自行安排探索濟州島的特色景點、品嚐當地美食或享受飯店設施。領隊導遊將隨時提供協助與建議。</p>
-                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 方便遊玩, 敬請自理 | 晚餐: 方便遊玩, 敬請自理</p>
-                    <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
-                </div>
-
-                <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第五天：濟州國際機場 → 桃園國際機場 → 歡樂賦歸</h3>
-                    <p class="text-gray-300 itinerary-activity">在飯店享用完早餐後，整理行李，帶著滿滿的回憶前往濟州國際機場。搭乘班機返回桃園國際機場，結束這趟精彩的濟州島員工旅遊。</p>
-                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: X | 晚餐: X</p>
-                    <p class="text-gray-300 text-sm mt-2">住宿: 溫暖的家</p>
-                </div>
+                <section class="card p-6 text-center"><h2 class="card-header">📩 如何報名</h2><p class="text-lg text-gray-200">請於<span class="text-2xl font-bold text-[#06D6A0] mx-1">LINE記事本</span>留言<br>確認您的<span class="font-bold text-white">參加總人數</span></p><p class="mt-4 text-gray-400">期待與您同遊！</p></section>
+                <section class="card p-6 text-center"><h3 class="text-xl font-bold text-[#FFD166]">取消政策</h3><p class="text-gray-200 mt-2 mb-1 text-base">報名後取消，需自付機票取消費 <span class="font-bold text-[#FF6B6B]">$9,000 - $12,000</span> 元。</p></section>
             </div>
-
-        </main>
+        </div>
     </div>
 
     <script>
-        // Chart.js Global Configuration
+        // --- Chart.js Global Config ---
         Chart.defaults.font.family = "'Noto Sans TC', sans-serif";
         Chart.defaults.color = '#E0F2F1';
-
-        const chartTooltipTitleCallback = (tooltipItems) => {
-            const item = tooltipItems[0];
-            let label = item.chart.data.labels[item.dataIndex];
-            return Array.isArray(label) ? label.join(' ') : label;
-        };
-
-        // Doughnut Chart: Cost Breakdown
+        
+        // --- Donut Chart ---
         const costBreakdownCtx = document.getElementById('costBreakdownChart').getContext('2d');
         new Chart(costBreakdownCtx, {
             type: 'doughnut',
@@ -365,155 +255,130 @@
                 datasets: [{
                     data: [30000, 2900],
                     backgroundColor: ['#06D6A0', '#FFD166'],
-                    borderColor: '#073B4C',
+                    borderColor: 'rgba(17, 138, 178, 0.1)',
                     borderWidth: 4,
                     hoverOffset: 8
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                responsive: true, maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { color: '#FFFFFF', padding: 20 }
-                    },
+                    legend: { position: 'bottom', labels: { color: '#FFFFFF', padding: 15 } },
                     tooltip: {
-                        callbacks: { title: chartTooltipTitleCallback },
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleFont: { size: 14, weight: 'bold' },
-                        bodyFont: { size: 12 },
-                        padding: 10
+                        titleFont: { size: 14, weight: 'bold' }, bodyFont: { size: 12 }, padding: 10
                     }
                 },
-                cutout: '60%'
+                cutout: '65%'
             }
         });
 
-        // Bar Chart: Scenario Costs
-        const baseCosts = {
-            '2900': {
-                '員工本人': 2900,
-                '單人房': 2900 + 9000,
-                '眷屬 (補助後)': 17900, 
-                '9歲以下孩童 (不佔床)': 16900,
-                '未滿2歲嬰兒 (不佔床)': 6500
-            },
-            '3900': {
-                '員工本人': 3900,
-                '單人房': 3900 + 9000,
-                '眷屬 (補助後)': 18900, 
-                '9歲以下孩童 (不佔床)': 17900,
-                '未滿2歲嬰兒 (不佔床)': 6500
-            }
-        };
+        // --- Cost Calculator Logic ---
+        const calculatorForm = document.getElementById('costCalculatorForm');
+        const resultDiv = document.getElementById('costResult');
 
-        const scenarioLabels = [
-            '員工本人',
-            '單人房',
-            '眷屬 (補助後)',
-            '9歲以下孩童 (不佔床)',
-            '未滿2歲嬰兒 (不佔床)'
-        ];
+        function calculateTotalCost() {
+            const basePlan = document.querySelector('input[name="costOption"]:checked').value;
+            const hasBonus = document.getElementById('performanceBonus').checked;
+            let numAdults = parseInt(document.getElementById('numAdults').value) || 0;
+            let numChildren = parseInt(document.getElementById('numChildren').value) || 0;
+            const numInfants = parseInt(document.getElementById('numInfants').value) || 0;
+            const needsSingleRoom = document.getElementById('singleRoom').checked;
 
-        const scenarioCostCtx = document.getElementById('scenarioCostChart').getContext('2d');
-        let scenarioChart = new Chart(scenarioCostCtx, {
-            type: 'bar',
-            data: {
-                labels: scenarioLabels,
-                datasets: [{
-                    label: '總費用 (元)',
-                    data: scenarioLabels.map(label => baseCosts['2900'][label]),
-                    backgroundColor: ['#118AB2', '#FFD166', '#06D6A0', '#48bfe3', '#FF6B6B'],
-                    borderRadius: 8,
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                        ticks: { color: '#FFFFFF' }
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: { color: '#FFFFFF', font: { size: 13 } }
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                         callbacks: { title: chartTooltipTitleCallback },
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleFont: { size: 14, weight: 'bold' },
-                        bodyFont: { size: 12 },
-                        padding: 10
-                    }
+            const companySubsidy = 30000;
+            const familyBonusSubsidy = 15000;
+            const baseEmployeeCost = parseInt(basePlan);
+            const totalTourCost = baseEmployeeCost + companySubsidy;
+            
+            const childDiscount = 1000;
+            const infantCost = 6500;
+            const singleRoomSupplement = 9000;
+
+            let totalCost = 0;
+            let breakdownHtml = '<div class="text-left space-y-2">';
+            totalCost += baseEmployeeCost;
+            breakdownHtml += `<p>• 員工本人：<span class="font-bold text-white">${baseEmployeeCost.toLocaleString()}</span> 元</p>`;
+            
+            if (hasBonus) {
+                if (numAdults > 0) {
+                    const subsidizedCost = totalTourCost - familyBonusSubsidy;
+                    totalCost += subsidizedCost;
+                    breakdownHtml += `<p>• 達標眷屬 (1位成人補助$15,000)：<span class="font-bold text-white">${subsidizedCost.toLocaleString()}</span> 元</p>`;
+                    numAdults--;
+                } else if (numChildren > 0) {
+                    const subsidizedCost = (totalTourCost - childDiscount) - familyBonusSubsidy;
+                    totalCost += subsidizedCost;
+                    breakdownHtml += `<p>• 達標眷屬 (1位孩童補助$15,000)：<span class="font-bold text-white">${subsidizedCost.toLocaleString()}</span> 元</p>`;
+                    numChildren--;
                 }
             }
-        });
 
-        // Event listener for radio buttons
-        document.querySelectorAll('input[name="costOption"]').forEach(radio => {
-            radio.addEventListener('change', (event) => {
-                const selectedOption = event.target.value;
-                scenarioChart.data.datasets[0].data = scenarioLabels.map(label => baseCosts[selectedOption][label]);
-                scenarioChart.update();
-            });
-        });
+            if (numAdults > 0) {
+                const fullPriceAdultsCost = numAdults * totalTourCost;
+                totalCost += fullPriceAdultsCost;
+                breakdownHtml += `<p>• 一般眷屬 (${numAdults}位)：<span class="font-bold text-white">${fullPriceAdultsCost.toLocaleString()}</span> 元</p>`;
+            }
+            if (numChildren > 0) {
+                const childTotalCost = numChildren * (totalTourCost - childDiscount);
+                totalCost += childTotalCost;
+                breakdownHtml += `<p>• 一般孩童 (${numChildren}位)：<span class="font-bold text-white">${childTotalCost.toLocaleString()}</span> 元</p>`;
+            }
+            if (numInfants > 0) {
+                const infantTotalCost = numInfants * infantCost;
+                totalCost += infantTotalCost;
+                breakdownHtml += `<p>• 嬰兒 (${numInfants}位)：<span class="font-bold text-white">${infantTotalCost.toLocaleString()}</span> 元</p>`;
+            }
+            if (needsSingleRoom) {
+                totalCost += singleRoomSupplement;
+                breakdownHtml += `<p>• 單人房價差：<span class="font-bold text-white">${singleRoomSupplement.toLocaleString()}</span> 元</p>`;
+            }
+            breakdownHtml += '</div>';
 
-        // Countdown Timer Logic
+            const originalNumAdults = parseInt(document.getElementById('numAdults').value) || 0;
+            const originalNumChildren = parseInt(document.getElementById('numChildren').value) || 0;
+            const originalNumInfants = parseInt(document.getElementById('numInfants').value) || 0;
+            const totalCompanions = originalNumAdults + originalNumChildren + originalNumInfants;
+
+            if (totalCompanions === 0 && !needsSingleRoom) {
+                 resultDiv.innerHTML = `<p class="text-xl">您的預估總金額</p><p class="text-4xl font-black gradient-text mt-1">NT$ ${totalCost.toLocaleString()}</p>`;
+            } else {
+                 resultDiv.innerHTML = `${breakdownHtml}<hr class="border-gray-600 my-4"><p class="text-xl">預估總金額</p><p class="text-4xl font-black gradient-text mt-1">NT$ ${totalCost.toLocaleString()}</p>`;
+            }
+        }
+
+        calculatorForm.addEventListener('submit', (e) => { e.preventDefault(); });
+        calculatorForm.addEventListener('input', calculateTotalCost);
+        document.addEventListener('DOMContentLoaded', calculateTotalCost);
+
+        // --- Countdown Timer Logic ---
         const countdownTimerElement = document.getElementById('countdownTimer');
-        // Set the deadline to the upcoming Sunday at 23:59:59
         const today = new Date();
-        const dayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, etc.
-        const daysUntilSunday = 7 - dayOfWeek;
+        const dayOfWeek = today.getDay(); 
+        const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
         const deadlineDate = new Date(today);
-        deadlineDate.setDate(today.getDate() + (dayOfWeek === 0 ? 0 : daysUntilSunday)); // If today is Sunday, deadline is today
+        deadlineDate.setDate(today.getDate() + daysUntilSunday);
         deadlineDate.setHours(23, 59, 59, 999);
 
         const updateCountdown = () => {
             const now = new Date().getTime();
             const distance = deadlineDate.getTime() - now;
-
             if (distance < 0) {
                 clearInterval(countdownInterval);
                 countdownTimerElement.innerHTML = '<span class="text-xl font-bold text-white">報名已截止！</span>';
                 return;
             }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // Correctly structured HTML for the countdown timer
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
             countdownTimerElement.innerHTML = `
-                <div class="countdown-segment">
-                    <span>${days.toString().padStart(2, '0')}</span>
-                    <span class="countdown-label">天</span>
-                </div>
-                <div class="countdown-segment">
-                    <span>${hours.toString().padStart(2, '0')}</span>
-                    <span class="countdown-label">時</span>
-                </div>
-                <div class="countdown-segment">
-                    <span>${minutes.toString().padStart(2, '0')}</span>
-                    <span class="countdown-label">分</span>
-                </div>
-                <div class="countdown-segment">
-                    <span>${seconds.toString().padStart(2, '0')}</span>
-                    <span class="countdown-label">秒</span>
-                </div>
-            `;
+                <div class="countdown-segment"><span>${d.toString().padStart(2, '0')}</span><span class="countdown-label">天</span></div>
+                <div class="countdown-segment"><span>${h.toString().padStart(2, '0')}</span><span class="countdown-label">時</span></div>
+                <div class="countdown-segment"><span>${m.toString().padStart(2, '0')}</span><span class="countdown-label">分</span></div>
+                <div class="countdown-segment"><span>${s.toString().padStart(2, '0')}</span><span class="countdown-label">秒</span></div>`;
         };
-
         const countdownInterval = setInterval(updateCountdown, 1000);
-        updateCountdown(); // Initial call to display immediately
+        updateCountdown();
     </script>
 </body>
 </html>
