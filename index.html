@@ -69,22 +69,17 @@
             border: 2px solid #118AB2; transition: all 0.2s ease-in-out;
             outline: none; cursor: pointer; position: relative;
         }
-        input[type="radio"] { border-radius: 50%; width: 1.25rem; height: 1.25rem; top: 2px; }
         input[type="checkbox"] { border-radius: 4px; width: 1.25rem; height: 1.25rem; }
-        input[type="radio"]:checked, input[type="checkbox"]:checked {
+        input[type="checkbox"]:checked {
             background-color: #06D6A0; border-color: #06D6A0;
             box-shadow: 0 0 0 3px rgba(6, 214, 160, 0.4);
         }
-        input[type="radio"]:checked::before {
-            content: ''; display: block; width: 0.5rem; height: 0.5rem; background-color: #073B4C;
-            border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        }
         input[type="checkbox"]:checked::before {
-             content: '✓'; color: #073B4C; font-weight: bold; font-size: 0.8rem;
-             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            content: '✓'; color: #073B4C; font-weight: bold; font-size: 0.8rem;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
         label.inline-flex span { transition: color 0.2s ease-in-out; }
-        input[type="radio"]:checked + span, input[type="checkbox"]:checked + span { color: #FFD166; font-weight: 600; }
+        input[type="checkbox"]:checked + span { color: #FFD166; font-weight: 600; }
         .form-input {
             background-color: rgba(0,0,0,0.2); border: 1px solid #118AB2;
             border-radius: 0.5rem; padding: 0.5rem 0.75rem;
@@ -97,20 +92,10 @@
             text-align: center;
             color: #FFD166;
         }
-        /* Modal styles */
-        .modal-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        #submitBtn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
         }
-        .modal-backdrop.active { opacity: 1; pointer-events: auto; }
-        .modal-content {
-            background-color: #073B4C; border: 1px solid #118AB2;
-            padding: 2rem; border-radius: 1rem; width: 90%; max-width: 500px;
-            transform: scale(0.95); transition: transform 0.3s ease;
-        }
-        .modal-backdrop.active .modal-content { transform: scale(1); }
     </style>
 </head>
 <body class="p-4 sm:p-6 lg:p-8">
@@ -150,22 +135,32 @@
             </section>
             
             <section class="card p-6 md:p-8">
-                <h2 class="card-header">費用說明 & 線上報名</h2>
+                <h2 class="card-header">費用試算 & 線上報名</h2>
                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                     <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">💰 費用規則</h3><div class="info-list-item"><div><strong>公司補助：</strong><br>每位員工補助 <strong class="text-[#06D6A0]">$30,000</strong> 元。</div></div><div class="info-list-item"><div><strong>員工自付：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>總人數 > 20：自付 $2,900</li><li>總人數 16-20：自付 $3,900</li></ul></div></div><div class="info-list-item"><div><strong>眷屬補助：</strong><br>業績達標者，可為<strong class="text-white">一位同行眷屬</strong> (成人或孩童) 申請 <strong class="text-[#FFD166]">$15,000 元補助</strong>！</div></div><div class="info-list-item"><div><strong>其他優惠：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>孩童不佔床：團費減 $1,000</li><li>嬰兒價：$6,500</li><li>單人房：需補價差 $9,000</li></ul></div></div></div>
-                    <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">📩 如何報名</h3><div class="info-list-item"><div><strong>步驟一：</strong><br>使用下方的試算工具，了解兩種人數級距下的費用。</div></div><div class="info-list-item"><div><strong>步驟二：</strong><br>填寫報名資訊，點擊「產生報名資料」按鈕。</div></div><div class="info-list-item"><div><strong>步驟三：</strong><br>複製產生的文字，並貼到<strong class="text-[#06D6A0] mx-1">公司LINE群組的記事本</strong>中，即完成報名！</div></div><div class="info-list-item"><div><strong>取消政策：</strong><br>報名後取消，需自付機票取消費 <strong class="text-[#FF6B6B]">$9,000 - $12,000</strong> 元。</div></div></div>
+                    <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">📩 報名流程</h3><div class="info-list-item"><div><strong>步驟一：</strong><br>使用下方的工具試算您的費用。</div></div><div class="info-list-item"><div><strong>步驟二：</strong><br>填寫您與所有同行眷屬的護照資料。</div></div><div class="info-list-item"><div><strong>步驟三：</strong><br>點擊「送出報名」按鈕，資料會自動記錄，完成後會有成功訊息！</div></div><div class="info-list-item"><div><strong>取消政策：</strong><br>報名後取消，需自付機票取消費 <strong class="text-[#FF6B6B]">$9,000 - $12,000</strong> 元。</div></div></div>
                 </div>
                 <hr class="border-gray-700/50 mb-8">
-                <form id="costCalculatorForm" class="space-y-6">
-                    <h3 class="text-2xl font-bold text-center text-white">線上報名小幫手</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">1. 您的資料</legend><div class="space-y-4 mt-2"><div><label for="regName" class="block text-sm font-medium text-gray-300 mb-1">您的姓名</label><input type="text" id="regName" class="form-input" placeholder="請輸入姓名"></div><div><label for="regDept" class="block text-sm font-medium text-gray-300 mb-1">部門</label><input type="text" id="regDept" class="form-input" placeholder="請輸入部門"></div></div></fieldset>
-                        <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">2. 額外選項</legend><div class="flex flex-col space-y-3 mt-2 justify-center h-full"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus"><span class="ml-3 text-white">去年業績達標 (享眷屬補助)</span></label><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom"><span class="ml-3 text-white">需要單人房 (補價差$9,000)</span></label></div></fieldset>
-                    </div>
-                    <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">3. 同行人數 (員工本人免填)</legend><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2"><div><label for="numAdults" class="block text-sm font-medium text-gray-300 mb-1">眷屬 (成人)</label><input type="number" id="numAdults" class="form-input" value="0" min="0"></div><div><label for="numChildren" class="block text-sm font-medium text-gray-300 mb-1">孩童 (9歲以下不佔床)</label><input type="number" id="numChildren" class="form-input" value="0" min="0"></div><div><label for="numInfants" class="block text-sm font-medium text-gray-300 mb-1">嬰兒 (2歲以下)</label><input type="number" id="numInfants" class="form-input" value="0" min="0"></div></div></fieldset>
+                <form id="registrationForm" class="space-y-6">
+                    <h3 class="text-2xl font-bold text-center text-white">費用試算 & 報名表</h3>
                     
+                    <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">1. 同行人數 (員工本人免填)</legend><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2"><div><label for="numAdults" class="block text-sm font-medium text-gray-300 mb-1">眷屬 (成人)</label><input type="number" id="numAdults" class="form-input" value="0" min="0"></div><div><label for="numChildren" class="block text-sm font-medium text-gray-300 mb-1">孩童 (不佔床)</label><input type="number" id="numChildren" class="form-input" value="0" min="0"></div><div><label for="numInfants" class="block text-sm font-medium text-gray-300 mb-1">嬰兒 (2歲以下)</label><input type="number" id="numInfants" class="form-input" value="0" min="0"></div></div></fieldset>
+                    
+                    <input type="hidden" id="hiddenAdults" name="adults">
+                    <input type="hidden" id="hiddenChildren" name="children">
+                    <input type="hidden" id="hiddenInfants" name="infants">
+
+                    <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">2. 您的資料</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2"><div><label for="regName" class="block text-sm font-medium text-gray-300 mb-1">您的姓名</label><input type="text" id="regName" name="employee_name" class="form-input" placeholder="請輸入姓名" required></div><div><label for="regDept" class="block text-sm font-medium text-gray-300 mb-1">部門</label><input type="text" id="regDept" name="department" class="form-input" placeholder="請輸入部門" required></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4 items-center"><div><label class="block text-sm font-medium text-gray-300 mb-1">護照英文姓名</label><input type="text" name="employee_passport_name" class="form-input" placeholder="PASSPORT NAME" required></div><div><label class="block text-sm font-medium text-gray-300 mb-1">護照號碼</label><input type="text" name="employee_passport_number" class="form-input" placeholder="護照號碼" required></div><div><label class="block text-sm font-medium text-gray-300 mb-1">出生年月日</label><input type="date" name="employee_dob" class="form-input" required></div></div><div class="mt-4"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="employee_renew_passport"><span class="ml-3 text-white">需要新辦/換新護照</span></label></div></fieldset>
+                    
+                    <div id="companionSection" class="space-y-6"></div>
+
+                    <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">3. 整體選項</legend><div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-8 mt-2 justify-center"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus" name="bonus"><span class="ml-3 text-white">去年業績達標 (享眷屬補助)</span></label><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom" name="single_room"><span class="ml-3 text-white">需要單人房 (補價差$9,000)</span></label></div></fieldset>
+
                     <div id="costResult" class="text-center bg-black/20 p-6 rounded-lg border border-white/10 min-h-[120px] flex flex-col justify-center"><p class="text-gray-400">請填寫人數，下方將顯示費用預估</p></div>
-                    <button type="button" id="generateRegInfoBtn" class="w-full bg-[#06D6A0] text-[#073B4C] font-bold py-3 px-8 rounded-lg hover:bg-white transition-colors duration-300 text-lg">產生報名資料 & 複製</button>
+                    <button type="submit" id="submitBtn" class="w-full bg-[#06D6A0] text-[#073B4C] font-bold py-3 px-8 rounded-lg hover:bg-white transition-colors duration-300 text-lg">
+                        送出報名
+                    </button>
+                    <div id="formStatus" class="text-center mt-4 h-6"></div>
                 </form>
             </section>
             
@@ -176,23 +171,81 @@
         </main>
     </div>
 
-    <!-- Modal for showing registration info -->
-    <div id="regModal" class="modal-backdrop">
-        <div class="modal-content">
-            <h2 class="text-2xl font-bold text-center mb-4 text-white">您的報名資訊</h2>
-            <p class="text-center text-gray-300 mb-4">請複製以下所有文字，並貼到LINE群組記事本中。</p>
-            <textarea id="regSummary" class="w-full h-48 p-3 rounded-lg bg-black/20 border border-gray-600 text-white" readonly></textarea>
-            <div class="flex gap-4 mt-4">
-                <button id="copyBtn" class="w-full bg-[#06D6A0] text-[#073B4C] font-bold py-2 px-4 rounded-lg hover:bg-white transition-colors">複製內容</button>
-                <button id="closeModalBtn" class="w-full bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-500 transition-colors">關閉</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        const calculatorForm = document.getElementById('costCalculatorForm');
+        const regForm = document.getElementById('registrationForm');
         const resultDiv = document.getElementById('costResult');
+        const numAdultsInput = document.getElementById('numAdults');
+        const numChildrenInput = document.getElementById('numChildren');
+        const numInfantsInput = document.getElementById('numInfants');
+        const companionSection = document.getElementById('companionSection');
+        const hiddenAdultsInput = document.getElementById('hiddenAdults');
+        const hiddenChildrenInput = document.getElementById('hiddenChildren');
+        const hiddenInfantsInput = document.getElementById('hiddenInfants');
+
+        function generateCompanionFields() {
+            const adults = parseInt(numAdultsInput.value) || 0;
+            const children = parseInt(numChildrenInput.value) || 0;
+            const infants = parseInt(numInfantsInput.value) || 0;
+            hiddenAdultsInput.value = adults;
+            hiddenChildrenInput.value = children;
+            hiddenInfantsInput.value = infants;
+            let companionHtml = '';
+            
+            for (let i = 1; i <= adults; i++) {
+                companionHtml += `
+                    <fieldset class="p-4 border border-gray-600/50 rounded-lg">
+                        <legend class="px-2 text-md font-semibold text-white">眷屬 (成人) ${i} 資料</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+                            <div><label class="block text-sm font-medium text-gray-300 mb-1">護照英文姓名</label><input type="text" name="adult_${i}_passport_name" class="form-input" placeholder="PASSPORT NAME" required></div>
+                            <div><label class="block text-sm font-medium text-gray-300 mb-1">護照號碼</label><input type="text" name="adult_${i}_passport_number" class="form-input" placeholder="護照號碼" required></div>
+                            <div><label class="block text-sm font-medium text-gray-300 mb-1">出生年月日</label><input type="date" name="adult_${i}_dob" class="form-input" required></div>
+                        </div>
+                        <div class="mt-4"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="adult_${i}_renew_passport"><span class="ml-3 text-white">需要新辦/換新護照</span></label></div>
+                    </fieldset>`;
+            }
+             for (let i = 1; i <= children; i++) {
+                companionHtml += `
+                    <fieldset class="p-4 border border-gray-600/50 rounded-lg">
+                        <legend class="px-2 text-md font-semibold text-white">孩童 ${i} 資料</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+                            <div><label class="block text-sm font-medium text-gray-300 mb-1">護照英文姓名</label><input type="text" name="child_${i}_passport_name" class="form-input" placeholder="PASSPORT NAME" required></div>
+                            <div><label class="block text-sm font-medium text-gray-300 mb-1">護照號碼</label><input type="text" name="child_${i}_passport_number" class="form-input" placeholder="護照號碼" required></div>
+                            <div><label class="block text-sm font-medium text-gray-300 mb-1">出生年月日</label><input type="date" name="child_${i}_dob" class="form-input" required></div>
+                        </div>
+                        <div class="mt-4"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="child_${i}_renew_passport"><span class="ml-3 text-white">需要新辦/換新護照 (14歲以下 $1,200)</span></label></div>
+                    </fieldset>`;
+            }
+            for (let i = 1; i <= infants; i++) {
+                companionHtml += `
+                    <fieldset class="p-4 border border-gray-600/50 rounded-lg">
+                        <legend class="px-2 text-md font-semibold text-white">嬰兒 ${i} 資料</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+                            <div><label class="block text-sm font-medium text-gray-300 mb-1">護照英文姓名</label><input type="text" name="infant_${i}_passport_name" class="form-input" placeholder="PASSPORT NAME" required></div>
+                            <div><label class="block text-sm font-medium text-gray-300 mb-1">護照號碼</label><input type="text" name="infant_${i}_passport_number" class="form-input" placeholder="護照號碼" required></div>
+                            <div><label class="block text-sm font-medium text-gray-300 mb-1">出生年月日</label><input type="date" name="infant_${i}_dob" class="form-input" required></div>
+                        </div>
+                        <div class="mt-4"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="infant_${i}_renew_passport"><span class="ml-3 text-white">需要新辦/換新護照 (14歲以下 $1,200)</span></label></div>
+                    </fieldset>`;
+            }
+            companionSection.innerHTML = companionHtml;
+            
+            companionSection.querySelectorAll('input').forEach(input => {
+                input.addEventListener('change', calculateTotalCost);
+            });
+        }
         
+        function getAge(dateString) {
+            if (!dateString) return 99; // Assume adult if no date is entered
+            const today = new Date();
+            const birthDate = new Date(dateString);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
         function calculateTotalCost() {
             const scenarios = {
                 planB: { base: 3900, label: "若總人數16-20位" },
@@ -205,9 +258,9 @@
                 const scenario = scenarios[scenarioKey];
                 
                 const hasBonus = document.getElementById('performanceBonus').checked;
-                let numAdults = parseInt(document.getElementById('numAdults').value) || 0;
-                let numChildren = parseInt(document.getElementById('numChildren').value) || 0;
-                const numInfants = parseInt(document.getElementById('numInfants').value) || 0;
+                const numAdults = parseInt(numAdultsInput.value) || 0;
+                const numChildren = parseInt(numChildrenInput.value) || 0;
+                const numInfants = parseInt(numInfantsInput.value) || 0;
                 const needsSingleRoom = document.getElementById('singleRoom').checked;
 
                 const companySubsidy = 30000;
@@ -217,98 +270,132 @@
                 const childDiscount = 1000;
                 const infantCost = 6500;
                 const singleRoomSupplement = 9000;
+                const adultPassportFee = 1600;
+                const childPassportFee = 1200;
 
-                let totalCost = 0;
+                let tourTotalCost = 0;
+                let passportTotalCost = 0;
                 let breakdownHtml = '<div class="text-left text-sm space-y-1 mt-3">';
-                
-                // --- Individual Cost Calculation ---
-                totalCost += baseEmployeeCost;
-                breakdownHtml += `<p>• 員工本人：<span class="font-bold text-white">${baseEmployeeCost.toLocaleString()}</span> 元</p>`;
+                let bonusApplied = false;
 
-                let tempAdults = numAdults;
-                let tempChildren = numChildren;
-                
-                if (hasBonus) {
-                    if (tempAdults > 0) {
-                        const cost = totalTourCost - familyBonusSubsidy;
-                        totalCost += cost;
-                        breakdownHtml += `<p>• 達標眷屬 (1位成人)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`;
-                        tempAdults--;
-                    } else if (tempChildren > 0) {
-                        const cost = (totalTourCost - childDiscount) - familyBonusSubsidy;
-                        totalCost += cost;
-                        breakdownHtml += `<p>• 達標眷屬 (1位孩童)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`;
-                        tempChildren--;
+                tourTotalCost += baseEmployeeCost;
+                breakdownHtml += `<p>• 員工本人：<span class="font-bold text-white">${baseEmployeeCost.toLocaleString()}</span> 元</p>`;
+                const employeeDob = regForm.querySelector('[name="employee_dob"]')?.value;
+                if (regForm.querySelector('[name="employee_renew_passport"]')?.checked) {
+                    passportTotalCost += (getAge(employeeDob) < 14 ? childPassportFee : adultPassportFee);
+                }
+
+                for (let i = 1; i <= numAdults; i++) {
+                    let adultCost = totalTourCost;
+                    let adultBreakdownText = `• 眷屬 (成人 ${i})：`;
+                    if (hasBonus && !bonusApplied) {
+                        adultCost -= familyBonusSubsidy;
+                        adultBreakdownText = `• 達標眷屬 (成人 ${i})：`;
+                        bonusApplied = true;
+                    }
+                    tourTotalCost += adultCost;
+                    breakdownHtml += `<p>${adultBreakdownText}<span class="font-bold text-white">${adultCost.toLocaleString()}</span> 元</p>`;
+                    const adultDob = regForm.querySelector(`[name="adult_${i}_dob"]`)?.value;
+                    if (regForm.querySelector(`[name="adult_${i}_renew_passport"]`)?.checked) {
+                        passportTotalCost += (getAge(adultDob) < 14 ? childPassportFee : adultPassportFee);
                     }
                 }
 
-                if (tempAdults > 0) { const cost = tempAdults * totalTourCost; totalCost += cost; breakdownHtml += `<p>• 一般眷屬 (${tempAdults}位)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`; }
-                if (tempChildren > 0) { const cost = tempChildren * (totalTourCost - childDiscount); totalCost += cost; breakdownHtml += `<p>• 一般孩童 (${tempChildren}位)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`; }
-                if (numInfants > 0) { const cost = numInfants * infantCost; totalCost += cost; breakdownHtml += `<p>• 嬰兒 (${numInfants}位)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`; }
-                if (needsSingleRoom) { totalCost += singleRoomSupplement; breakdownHtml += `<p>• 單人房價差：<span class="font-bold text-white">${singleRoomSupplement.toLocaleString()}</span> 元</p>`; }
+                for (let i = 1; i <= numChildren; i++) {
+                    let childCost = totalTourCost - childDiscount;
+                    let childBreakdownText = `• 孩童 (${i})：`;
+                    if (hasBonus && !bonusApplied) {
+                        childCost -= familyBonusSubsidy;
+                        childBreakdownText = `• 達標眷屬 (孩童 ${i})：`;
+                        bonusApplied = true;
+                    }
+                    tourTotalCost += childCost;
+                    breakdownHtml += `<p>${childBreakdownText}<span class="font-bold text-white">${childCost.toLocaleString()}</span> 元</p>`;
+                    if (regForm.querySelector(`[name="child_${i}_renew_passport"]`)?.checked) {
+                        passportTotalCost += childPassportFee;
+                    }
+                }
                 
+                if (numInfants > 0) {
+                    tourTotalCost += numInfants * infantCost;
+                    breakdownHtml += `<p>• 嬰兒 (${numInfants}位)：<span class="font-bold text-white">${(numInfants * infantCost).toLocaleString()}</span> 元</p>`;
+                     for (let i = 1; i <= numInfants; i++) {
+                        if (regForm.querySelector(`[name="infant_${i}_renew_passport"]`)?.checked) {
+                            passportTotalCost += childPassportFee;
+                        }
+                     }
+                }
+
+                if (needsSingleRoom) { tourTotalCost += singleRoomSupplement; breakdownHtml += `<p>• 單人房價差：<span class="font-bold text-white">${singleRoomSupplement.toLocaleString()}</span> 元</p>`; }
+                
+                if(passportTotalCost > 0) {
+                    breakdownHtml += `<p>• 護照辦理費總計：<span class="font-bold text-amber-300">${passportTotalCost.toLocaleString()}</span> 元</p>`;
+                }
+                
+                let grandTotal = tourTotalCost + passportTotalCost;
                 breakdownHtml += '</div>';
 
-                // --- Final HTML structure ---
                 finalHtml += `
                     <div class="flex-1 p-4 rounded-lg ${scenarioKey === 'planA' ? 'bg-green-500/10' : 'bg-yellow-500/10'}">
                         <p class="font-bold ${scenarioKey === 'planA' ? 'text-green-300' : 'text-yellow-300'}">${scenario.label}費用明細：</p>
                         ${breakdownHtml}
                         <hr class="border-gray-500/50 my-3">
-                        <p class="font-bold text-white text-right">總計：<span class="text-2xl font-black">${totalCost.toLocaleString()}</span> 元</p>
+                        <p class="font-bold text-white text-right">總計：<span class="text-2xl font-black">${grandTotal.toLocaleString()}</span> 元</p>
                     </div>`;
             }
             resultDiv.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
         }
-
-        calculatorForm.addEventListener('input', calculateTotalCost);
-        document.addEventListener('DOMContentLoaded', calculateTotalCost);
-
-        const generateBtn = document.getElementById('generateRegInfoBtn');
-        const modal = document.getElementById('regModal');
-        const summaryTextarea = document.getElementById('regSummary');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const copyBtn = document.getElementById('copyBtn');
-
-        generateBtn.addEventListener('click', () => {
-            const name = document.getElementById('regName').value;
-            const dept = document.getElementById('regDept').value;
-            if (!name || !dept) {
-                alert('請填寫您的姓名與部門！');
-                return;
+        
+        numAdultsInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
+        numChildrenInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
+        numInfantsInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
+        
+        regForm.addEventListener('change', (event) => {
+            const numberInputIds = ['numAdults', 'numChildren', 'numInfants'];
+            if (!numberInputIds.includes(event.target.id)) {
+                calculateTotalCost();
             }
-            const adults = parseInt(document.getElementById('numAdults').value) || 0;
-            const children = parseInt(document.getElementById('numChildren').value) || 0;
-            const infants = parseInt(document.getElementById('numInfants').value) || 0;
-            const totalPeople = 1 + adults + children + infants;
-            
-            const summary = `
-========== 濟州島之旅報名 ==========
-報名員工：${name}
-部門：${dept}
-------------------------------------
-總參加人數：${totalPeople} 人
-  • 員工：1 位
-  • 眷屬(成人)：${adults} 位
-  • 孩童(不佔床)：${children} 位
-  • 嬰兒：${infants} 位
-------------------------------------
-費用：最終費用將依總報名人數（16-20人或21人以上）決定。
-=================================
-            `;
-            summaryTextarea.value = summary.trim();
-            modal.classList.add('active');
         });
 
-        closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
-        copyBtn.addEventListener('click', () => {
-            summaryTextarea.select();
-            document.execCommand('copy');
-            copyBtn.textContent = '已複製！';
-            setTimeout(() => {
-                copyBtn.textContent = '複製內容';
-                modal.classList.remove('active');
-            }, 1500);
+        document.addEventListener('DOMContentLoaded', () => {
+             generateCompanionFields();
+             calculateTotalCost();
+        });
+
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec';
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const formStatus = document.getElementById('formStatus');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = '傳送中...';
+            formStatus.textContent = '';
+            
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => response.json())
+                .then(data => {
+                    if(data.result === 'success'){
+                        formStatus.textContent = '報名成功！感謝您的參與。';
+                        formStatus.style.color = '#06D6A0';
+                        form.reset();
+                        // 優化：成功送出後，重設動態產生的眷屬欄位和費用
+                        generateCompanionFields();
+                        calculateTotalCost();
+                    } else {
+                        throw new Error(data.error || 'Unknown error');
+                    }
+                })
+                .catch(error => {
+                    formStatus.textContent = '報名失敗，請稍後再試或聯繫主辦人。';
+                    formStatus.style.color = '#FF6B6B';
+                    console.error('Error!', error.message);
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '送出報名';
+                });
         });
         
         const countdownTimerElement = document.getElementById('countdownTimer');
