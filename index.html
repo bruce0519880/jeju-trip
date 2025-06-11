@@ -35,12 +35,18 @@
         }
         .countdown-segment {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background-color: #06D6A0; color: #073B4C;
+            background-color: #FF6B6B; /* UPDATED: Changed background to red */
+            color: #FFFFFF; /* UPDATED: Changed text to white for contrast */
             border-radius: 0.5rem; font-weight: 700; font-size: 1.75rem;
             min-width: 65px; height: 70px; text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); line-height: 1.1;
         }
-        .countdown-label { font-size: 0.8rem; color: #073B4C; margin-top: 0.2rem; font-weight: 500; }
+        .countdown-label { 
+            font-size: 0.8rem; 
+            color: #FFFFFF; /* UPDATED: Changed text to white */
+            margin-top: 0.2rem; 
+            font-weight: 500; 
+        }
         .info-list-item {
             display: flex;
             align-items: flex-start;
@@ -92,140 +98,77 @@
             text-align: center;
             color: #FFD166;
         }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 450px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 250px; /* Adjusted for sidebar */
-        }
     </style>
 </head>
 <body class="p-4 sm:p-6 lg:p-8">
 
-    <div class="container mx-auto">
+    <div class="container mx-auto max-w-5xl">
         <header class="text-center my-8 md:my-12">
             <h1 class="text-4xl md:text-6xl font-black gradient-text leading-tight">2025 員工國外旅遊</h1>
             <p class="text-2xl md:text-4xl font-bold text-white mt-2">韓國濟州島之旅 🇰🇷</p>
         </header>
 
-        <!-- Main Layout Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Layout: Single Column for better mobile experience -->
+        <main class="space-y-8">
             
-            <!-- Left Column: Main Content -->
-            <div class="lg:col-span-2 space-y-8">
-                <!-- Itinerary Card -->
-                <section class="card p-6 md:p-8">
-                    <h2 class="card-header">詳細行程</h2>
-                    <div class="space-y-6">
-                        <!-- Day 1 Itinerary -->
-                        <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
-                            <h3 class="text-xl font-bold text-white mb-2">第一天：桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷</h3>
-                            <p class="text-gray-300">桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷(巨大火山岩/海蝕地形)→享用晚餐→入住飯店 CHECKIN→享用飯店設施</p>
-                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:X | 午餐:花花小點心 | 晚餐:三姓穴海鮮鍋料理 (W22,500韓幣/人)</p>
-                            <p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+            <!-- Key Information Summary Card -->
+            <section class="card p-6 md:p-8">
+                <h2 class="card-header">旅行摘要</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <!-- Left: Dates & Countdown -->
+                    <div class="text-center md:text-left">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-white">旅行日期</h3>
+                            <p class="text-3xl font-black text-[#06D6A0]">2025年 11月 10日 (一) - 11月 14日 (五)</p>
+                            <p class="text-gray-300">五天四夜，享受海島風光</p>
                         </div>
-                        <!-- Day 2 Itinerary -->
-                        <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
-                            <h3 class="text-xl font-bold text-white mb-2">第二天：城山日出峰→萬丈窟→濟州城邑民俗村→東門市場</h3>
-                            <p class="text-gray-300">飯店→城山日出峰(火山丘/世界自然遺產)→萬丈窟(世界上最長的熔岩洞)→濟州城邑民俗村(贈每人一杯蜂蜜茶或五味子茶)→東門市場+中央地下街+黑豬肉一條街→返回飯店休憩</p>
-                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:石鍋拌飯+涮涮鍋 (W10,000韓幣/人) | 晚餐:明倫進士碳烤黑毛豬肉吃到飽+季節小菜 (W18,900韓幣/人)</p>
-                            <p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
-                        </div>
-                        <!-- Day 3 Itinerary -->
-                        <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
-                            <h3 class="text-xl font-bold text-white mb-2">第三天：ECOLAND森林小火車→漢拏樹木園→天地淵瀑布</h3>
-                            <p class="text-gray-300">飯店→ECOLAND 森林小火車(森林趣/風車/海盜船/彩虹躺椅/哈比人樹洞)→漢拏樹木園(十一個主題園區)→天地淵瀑布(大長今場景/上帝的池塘)→濟州有林橘子(贈每人5顆橘子)→返回飯店休憩</p>
-                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:青花魚定食 (₩11,000韓幣/人) | 晚餐:活鮑魚+碳烤黑毛豬+蝦+蛋+大醬 (₩24,000韓幣/人)</p>
-                            <p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
-                        </div>
-                        <!-- Day 4 Itinerary -->
-                        <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
-                            <h3 class="text-xl font-bold text-white mb-2">第四天：全日自由活動</h3>
-                            <p class="text-gray-300">飯店→全日自由活動→返回飯店休憩</p>
-                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午、晚餐:方便遊玩,敬請自理</p>
-                            <p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
-                        </div>
-                        <!-- Day 5 Itinerary -->
-                         <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg">
-                            <h3 class="text-xl font-bold text-white mb-2">第五天：返回溫暖的家</h3>
-                            <p class="text-gray-300">飯店出發→濟州國際機場/桃園國際機場→歡樂賦歸</p>
-                            <p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:X | 晚餐:X</p>
-                            <p class="text-sm text-gray-400 mt-2">住宿: 溫暖的家</p>
+                        <div class="p-4 rounded-lg bg-black/10">
+                             <h3 class="text-lg font-bold text-white">報名倒數中 <span class="text-[#FF6B6B]">(本週日截止)</span></h3>
+                             <div id="countdownTimer" class="flex justify-center md:justify-start items-start mt-2 space-x-2 md:space-x-3"></div>
                         </div>
                     </div>
-                </section>
-
-                <!-- Cost Calculator Card -->
-                <section id="calculator" class="card p-6 md:p-8">
-                    <h2 class="card-header">🧮 費用試算工具</h2>
-                    <form id="costCalculatorForm" class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">1. 選擇方案</legend><div class="flex flex-col space-y-3 mt-2"><label class="inline-flex items-center cursor-pointer"><input type="radio" name="costOption" value="2900" class="form-radio" checked><span class="ml-3 text-white">A: 總人數 > 20 (自付$2,900)</span></label><label class="inline-flex items-center cursor-pointer"><input type="radio" name="costOption" value="3900" class="form-radio"><span class="ml-3 text-white">B: 總人數 16-20 (自付$3,900)</span></label></div></fieldset>
-                            <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">2. 額外選項</legend><div class="flex flex-col space-y-3 mt-2"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus"><span class="ml-3 text-white">去年業績達標 (享眷屬補助)</span></label><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom"><span class="ml-3 text-white">需要單人房 (補價差$9,000)</span></label></div></fieldset>
+                    <!-- Right: Flight Info -->
+                    <div class="space-y-4 p-4 rounded-lg bg-black/10">
+                        <div class="text-center">
+                             <h3 class="text-lg font-bold text-white">✈️ 去程 TPE → CJU</h3>
+                             <p class="text-2xl font-bold text-white">14:25 - 17:30</p>
+                             <p class="text-sm text-gray-400">德威航空 TW688</p>
                         </div>
-                        <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">3. 輸入同行人數 (員工本人免填)</legend><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2"><div><label for="numAdults" class="block text-sm font-medium text-gray-300 mb-1">眷屬 (成人)</label><input type="number" id="numAdults" class="calculator-input" value="0" min="0"></div><div><label for="numChildren" class="block text-sm font-medium text-gray-300 mb-1">孩童 (9歲以下不佔床)</label><input type="number" id="numChildren" class="calculator-input" value="0" min="0"></div><div><label for="numInfants" class="block text-sm font-medium text-gray-300 mb-1">嬰兒 (2歲以下)</label><input type="number" id="numInfants" class="calculator-input" value="0" min="0"></div></div></fieldset>
-                        <div id="costResult" class="text-center bg-black/20 p-6 rounded-lg border border-white/10 min-h-[120px] flex flex-col justify-center">
-                            <p class="text-gray-400">請填寫人數，費用將自動更新</p>
+                        <hr class="border-gray-700">
+                        <div class="text-center">
+                             <h3 class="text-lg font-bold text-white">✈️ 回程 CJU → TPE</h3>
+                             <p class="text-2xl font-bold text-white">12:20 - 13:25</p>
+                             <p class="text-sm text-gray-400">德威航空 TW687</p>
                         </div>
-                    </form>
-                </section>
-
-                <!-- Restored Included/Not Included Card -->
-                <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="card p-6">
-                        <h3 class="text-xl font-bold text-center mb-4 text-white">團費包含項目</h3>
-                        <div class="space-y-2 text-gray-200">
-                           <p class="info-list-item">交通費：行程表內團體遊覽車，德威航空來回經濟艙團體機票。</p>
-                           <p class="info-list-item">稅捐：各地機場稅、燃料稅、稅金。</p>
-                           <p class="info-list-item">餐食：行程內列明之餐食，盡量安排適合國人口味。</p>
-                           <p class="info-list-item">住宿：行程表內飯店住宿（兩人一室為原則），需達 10 間以上。</p>
-                           <p class="info-list-item">遊覽費：行程內旅遊活動之門票、手續費。</p>
-                           <p class="info-list-item">保險費：每人全程旅遊責任保險新台幣伍佰萬元及貳十萬元意外醫療險。</p>
-                           <p class="info-list-item">贈禮：花花專屬贈品、旅遊手冊、企業紀念布條、花花筆、夾鏈袋、網卡。</p>
-                           <p class="info-list-item">小費：司機、領隊、導遊小費 (每日 NT$300 x 5 天，共 NT$1,500/人，已包含)。</p>
-                           <p class="info-list-item">領隊導遊：達 16 人以上派遣合格專業領隊 1 位，當地導遊 1 位。</p>
-                           <p class="info-list-item">飲用水：礦泉水無限提供。</p>
-                        </div>
-                    </div>
-                    <div class="card p-6">
-                        <h3 class="text-xl font-bold text-center mb-4 text-white">團費未含項目</h3>
-                        <div class="space-y-2 text-gray-200">
-                           <p class="info-list-item">證照費：新辦 (換新) 十年效期護照費用 NT$1,600 元。</p>
-                           <p class="info-list-item">證照費：14 歲以下五年效期護照費用 NT$1,200 元。</p>
-                           <p class="info-list-item">純係私人之消費：如電話費、洗衣費等。</p>
-                           <p class="info-list-item">床頭、行李小費及表上未列明之其他行程自費行程。</p>
-                           <p class="info-list-item">旅遊平安保險及旅遊不便險等其他私人保險項目。</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Right Column: Sidebar -->
-            <div class="lg:col-span-1 space-y-8">
-                <section class="card p-6 text-center bg-[#FF6B6B]/20 border-[#FF6B6B]/50">
-                    <h2 class="card-header text-white">⚠️ 報名倒數中</h2>
-                    <p class="text-3xl font-black my-1 text-white">本週日 截止</p>
-                    <div id="countdownTimer" class="flex justify-center items-start mt-4 space-x-2 md:space-x-3"></div>
-                </section>
-
-                <section class="card p-6">
-                     <h2 class="card-header">✈️ 航班資訊</h2>
-                     <div class="space-y-4">
-                        <div class="text-center"><h3 class="text-lg font-bold text-white">去程 TPE → CJU</h3><p class="text-3xl font-black text-[#06D6A0]">14:25 - 17:30</p><p class="text-sm text-gray-400">德威航空 TW688</p></div><hr class="border-gray-700"><div class="text-center"><h3 class="text-lg font-bold text-white">回程 CJU → TPE</h3><p class="text-3xl font-black text-[#06D6A0]">12:20 - 13:25</p><p class="text-sm text-gray-400">德威航空 TW687</p></div>
                      </div>
-                </section>
-                
-                 <!-- Restored Donut Chart -->
-                <section class="card p-6">
-                    <h2 class="card-header">費用貢獻分析</h2>
-                    <div class="chart-container"><canvas id="costBreakdownChart"></canvas></div>
-                    <p class="text-center text-sm text-gray-400 mt-4">此圖為最低自付額方案下，公司與員工的費用比例。</p>
-                </section>
+                </div>
+            </section>
 
-                <!-- Corrected Cost Rules Card -->
-                <section class="card p-6">
+            <!-- Itinerary Card -->
+            <section class="card p-6 md:p-8">
+                <h2 class="card-header">詳細行程</h2>
+                <div class="space-y-6">
+                    <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg"><h3 class="text-xl font-bold text-white mb-2">第一天：桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷</h3><p class="text-gray-300">桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷(巨大火山岩/海蝕地形)→享用晚餐→入住飯店 CHECKIN→享用飯店設施</p><p class="text-sm italic text-[#FFD166] mt-2">早餐:X | 午餐:花花小點心 | 晚餐:三姓穴海鮮鍋料理 (W22,500韓幣/人)</p><p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p></div>
+                    <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg"><h3 class="text-xl font-bold text-white mb-2">第二天：城山日出峰→萬丈窟→濟州城邑民俗村→東門市場</h3><p class="text-gray-300">飯店→城山日出峰(火山丘/世界自然遺產)→萬丈窟(世界上最長的熔岩洞)→濟州城邑民俗村(贈每人一杯蜂蜜茶或五味子茶)→東門市場+中央地下街+黑豬肉一條街→返回飯店休憩</p><p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:石鍋拌飯+涮涮鍋 (W10,000韓幣/人) | 晚餐:明倫進士碳烤黑毛豬肉吃到飽+季節小菜 (W18,900韓幣/人)</p><p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p></div>
+                    <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg"><h3 class="text-xl font-bold text-white mb-2">第三天：ECOLAND森林小火車→漢拏樹木園→天地淵瀑布</h3><p class="text-gray-300">飯店→ECOLAND 森林小火車(森林趣/風車/海盜船/彩虹躺椅/哈比人樹洞)→漢拏樹木園(十一個主題園區)→天地淵瀑布(大長今場景/上帝的池塘)→濟州有林橘子(贈每人5顆橘子)→返回飯店休憩</p><p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:青花魚定食 (₩11,000韓幣/人) | 晚餐:活鮑魚+碳烤黑毛豬+蝦+蛋+大醬 (₩24,000韓幣/人)</p><p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p></div>
+                    <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg"><h3 class="text-xl font-bold text-white mb-2">第四天：全日自由活動</h3><p class="text-gray-300">飯店→全日自由活動→返回飯店休憩</p><p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午、晚餐:方便遊玩,敬請自理</p><p class="text-sm text-gray-400 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p></div>
+                    <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg"><h3 class="text-xl font-bold text-white mb-2">第五天：返回溫暖的家</h3><p class="text-gray-300">飯店出發→濟州國際機場/桃園國際機場→歡樂賦歸</p><p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:X | 晚餐:X</p><p class="text-sm text-gray-400 mt-2">住宿: 溫暖的家</p></div>
+                </div>
+            </section>
+
+            <!-- Cost Calculator Card -->
+            <section id="calculator" class="card p-6 md:p-8">
+                <h2 class="card-header">🧮 費用試算工具</h2>
+                <form id="costCalculatorForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6"><fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">1. 選擇方案</legend><div class="flex flex-col space-y-3 mt-2"><label class="inline-flex items-center cursor-pointer"><input type="radio" name="costOption" value="2900" class="form-radio" checked><span class="ml-3 text-white">A: 總人數 > 20 (自付$2,900)</span></label><label class="inline-flex items-center cursor-pointer"><input type="radio" name="costOption" value="3900" class="form-radio"><span class="ml-3 text-white">B: 總人數 16-20 (自付$3,900)</span></label></div></fieldset><fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">2. 額外選項</legend><div class="flex flex-col space-y-3 mt-2"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus"><span class="ml-3 text-white">去年業績達標 (享眷屬補助)</span></label><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom"><span class="ml-3 text-white">需要單人房 (補價差$9,000)</span></label></div></fieldset></div>
+                    <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">3. 輸入同行人數 (員工本人免填)</legend><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2"><div><label for="numAdults" class="block text-sm font-medium text-gray-300 mb-1">眷屬 (成人)</label><input type="number" id="numAdults" class="calculator-input" value="0" min="0"></div><div><label for="numChildren" class="block text-sm font-medium text-gray-300 mb-1">孩童 (9歲以下不佔床)</label><input type="number" id="numChildren" class="calculator-input" value="0" min="0"></div><div><label for="numInfants" class="block text-sm font-medium text-gray-300 mb-1">嬰兒 (2歲以下)</label><input type="number" id="numInfants" class="calculator-input" value="0" min="0"></div></div></fieldset>
+                    <div id="costResult" class="text-center bg-black/20 p-6 rounded-lg border border-white/10 min-h-[120px] flex flex-col justify-center"><p class="text-gray-400">請填寫人數，費用將自動更新</p></div>
+                </form>
+            </section>
+            
+            <!-- Cost Rules & Other Info -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="card p-6">
                     <h2 class="card-header">💰 費用規則</h2>
                     <div class="space-y-2">
                         <div class="info-list-item"><div><strong>公司補助：</strong><br>每位員工補助 <strong class="text-[#06D6A0]">$30,000</strong> 元。</div></div>
@@ -233,46 +176,22 @@
                         <div class="info-list-item"><div><strong>眷屬補助：</strong><br>業績達標者，可為<strong class="text-white">一位同行眷屬</strong> (成人或孩童) 申請 <strong class="text-[#FFD166]">$15,000 元補助</strong>！</div></div>
                         <div class="info-list-item"><div><strong>其他優惠：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>孩童不佔床：團費減 $1,000</li><li>嬰兒價：$6,500</li><li>單人房：需補價差 $9,000</li></ul></div></div>
                     </div>
-                </section>
-
-                <section class="card p-6 text-center"><h2 class="card-header">📩 如何報名</h2><p class="text-lg text-gray-200">請於<span class="text-2xl font-bold text-[#06D6A0] mx-1">LINE記事本</span>留言<br>確認您的<span class="font-bold text-white">參加總人數</span></p><p class="mt-4 text-gray-400">期待與您同遊！</p></section>
-                <section class="card p-6 text-center"><h3 class="text-xl font-bold text-[#FFD166]">取消政策</h3><p class="text-gray-200 mt-2 mb-1 text-base">報名後取消，需自付機票取消費 <span class="font-bold text-[#FF6B6B]">$9,000 - $12,000</span> 元。</p></section>
-            </div>
-        </div>
+                </div>
+                 <div class="space-y-8">
+                    <div class="card p-6 text-center"><h2 class="card-header">📩 如何報名</h2><p class="text-lg text-gray-200">請於<span class="text-2xl font-bold text-[#06D6A0] mx-1">LINE記事本</span>留言<br>確認您的<span class="font-bold text-white">參加總人數</span></p><p class="mt-4 text-gray-400">期待與您同遊！</p></div>
+                    <div class="card p-6 text-center"><h3 class="text-xl font-bold text-[#FFD166]">取消政策</h3><p class="text-gray-200 mt-2 mb-1 text-base">報名後取消，需自付機票取消費 <span class="font-bold text-[#FF6B6B]">$9,000 - $12,000</span> 元。</p></div>
+                 </div>
+            </section>
+            
+            <!-- Included/Not Included Card -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-6"><h3 class="text-xl font-bold text-center mb-4 text-white">團費包含項目</h3><div class="space-y-2 text-gray-200"><p class="info-list-item">交通費：行程表內團體遊覽車，德威航空來回經濟艙團體機票。</p><p class="info-list-item">稅捐：各地機場稅、燃料稅、稅金。</p><p class="info-list-item">餐食：行程內列明之餐食，盡量安排適合國人口味。</p><p class="info-list-item">住宿：行程表內飯店住宿（兩人一室為原則），需達 10 間以上。</p><p class="info-list-item">遊覽費：行程內旅遊活動之門票、手續費。</p><p class="info-list-item">保險費：每人全程旅遊責任保險新台幣伍佰萬元及貳十萬元意外醫療險。</p><p class="info-list-item">贈禮：花花專屬贈品、旅遊手冊、企業紀念布條、花花筆、夾鏈袋、網卡。</p><p class="info-list-item">小費：司機、領隊、導遊小費 (每日 NT$300 x 5 天，共 NT$1,500/人，已包含)。</p><p class="info-list-item">領隊導遊：達 16 人以上派遣合格專業領隊 1 位，當地導遊 1 位。</p><p class="info-list-item">飲用水：礦泉水無限提供。</p></div></div>
+                <div class="card p-6"><h3 class="text-xl font-bold text-center mb-4 text-white">團費未含項目</h3><div class="space-y-2 text-gray-200"><p class="info-list-item">證照費：新辦 (換新) 十年效期護照費用 NT$1,600 元。</p><p class="info-list-item">證照費：14 歲以下五年效期護照費用 NT$1,200 元。</p><p class="info-list-item">純係私人之消費：如電話費、洗衣費等。</p><p class="info-list-item">床頭、行李小費及表上未列明之其他行程自費行程。</p><p class="info-list-item">旅遊平安保險及旅遊不便險等其他私人保險項目。</p></div></div>
+            </section>
+        </main>
     </div>
 
     <script>
-        // --- Chart.js Global Config ---
-        Chart.defaults.font.family = "'Noto Sans TC', sans-serif";
-        Chart.defaults.color = '#E0F2F1';
-        
-        // --- Donut Chart ---
-        const costBreakdownCtx = document.getElementById('costBreakdownChart').getContext('2d');
-        new Chart(costBreakdownCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['公司補助', '員工自付額 (最低)'],
-                datasets: [{
-                    data: [30000, 2900],
-                    backgroundColor: ['#06D6A0', '#FFD166'],
-                    borderColor: 'rgba(17, 138, 178, 0.1)',
-                    borderWidth: 4,
-                    hoverOffset: 8
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { color: '#FFFFFF', padding: 15 } },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleFont: { size: 14, weight: 'bold' }, bodyFont: { size: 12 }, padding: 10
-                    }
-                },
-                cutout: '65%'
-            }
-        });
-
         // --- Cost Calculator Logic ---
         const calculatorForm = document.getElementById('costCalculatorForm');
         const resultDiv = document.getElementById('costResult');
