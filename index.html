@@ -38,18 +38,79 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #06D6A0;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .countdown-segment {
+            display: inline-block;
+            background-color: #06D6A0;
+            color: #073B4C;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.25rem; /* text-xl */
+            line-height: 1.75rem; /* leading-7 */
+            margin: 0 0.25rem;
+            min-width: 50px; /* Ensure segments have a consistent width */
+            text-align: center;
+        }
+        .countdown-label {
+            font-size: 0.75rem; /* text-xs */
+            line-height: 1rem; /* leading-4 */
+            color: #E0F2F1;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        .itinerary-day-card, .info-list-card {
+            background-color: rgba(17, 138, 178, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        .itinerary-activity {
+            margin-bottom: 0.5rem;
+        }
+        .itinerary-meal {
+            font-style: italic;
+            color: #E0F2F1;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .info-list-item {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .info-list-item::before {
+            content: '•';
+            color: #06D6A0;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-right: 0.5em;
+        }
+        .cancellation-policy-list li {
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+            color: #E0F2F1;
+        }
+        .cancellation-policy-list li:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body class="text-white">
-    <!-- Narrative Plan: The infographic tells a story, starting with an exciting announcement (Hero), moving to practical details (Overview, Flights, Costs), highlighting important rules (Deadlines, Policies), and ending with a clear call to action (How to Register). This guides the employee from excitement to action. -->
-    <!-- Visualization Choices:
-        - Trip Timeline (HTML/CSS): Goal: Organize. Shows the 5-day flow clearly without complex charts. Method: Styled flexbox divs. NO SVG.
-        - Cost Contribution (Chart.js Donut): Goal: Compare. Instantly shows the large company subsidy vs. the small employee share. Method: Chart.js Canvas. NO SVG.
-        - Scenario Costs (Chart.js Bar): Goal: Compare. Allows employees to easily compare out-of-pocket costs for different family situations. Method: Chart.js Canvas. NO SVG.
-        - Big Numbers (HTML/CSS): Goal: Inform. Key data like deadlines and cancellation fees are made prominent for immediate attention. Method: Large, styled text. NO SVG.
-    -->
-    <!-- Chosen Color Palette: Energetic & Playful (#FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C) -->
-    <!-- CONFIRMATION: NO SVG or Mermaid JS was used in this document. All diagrams and charts are rendered using HTML/CSS with Tailwind or the Chart.js Canvas renderer. -->
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
 
@@ -115,7 +176,21 @@
 
             <div class="md:col-span-2 card rounded-xl shadow-2xl p-6">
                 <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">不同身份費用比較</h2>
-                 <p class="text-center text-sm text-gray-300 mb-4">此圖表比較不同身份（員工、單人房、嬰兒）的最終費用，幫助您快速了解預算。</p>
+                 <p class="text-center text-sm text-gray-300 mb-4">此圖表比較不同身份（員工、眷屬、孩童等）的最終費用，幫助您快速了解預算。</p>
+                
+                <!-- 選項按鈕 -->
+                <div class="flex flex-wrap justify-center space-x-2 md:space-x-4 mb-6 text-sm md:text-base">
+                    <label class="inline-flex items-center cursor-pointer mb-2 md:mb-0">
+                        <input type="radio" name="costOption" value="2900" class="form-radio h-4 w-4 md:h-5 md:w-5 text-[#06D6A0] focus:ring-[#06D6A0]" checked>
+                        <span class="ml-2 text-white font-medium">方案 A: 基本自付額 $2,900</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="radio" name="costOption" value="3900" class="form-radio h-4 w-4 md:h-5 md:w-5 text-[#06D6A0] focus:ring-[#06D6A0]">
+                        <span class="ml-2 text-white font-medium">方案 B: 基本自付額 $3,900</span>
+                    </label>
+                </div>
+                <!-- 結束選項按鈕 -->
+
                 <div class="w-full h-80">
                     <canvas id="scenarioCostChart"></canvas>
                 </div>
@@ -126,14 +201,15 @@
                 <div class="mt-4">
                     <h3 class="text-lg font-bold text-[#FFD166]">報名截止</h3>
                     <p class="text-3xl font-black my-2">本週日</p>
-                    <p class="text-gray-200 text-sm">請儘速確認參加人數 (含眷屬)</p>
+                    <div id="countdownTimer" class="flex justify-center items-end mt-4">
+                        <!-- 倒數計時器將顯示在此處 -->
+                    </div>
                 </div>
             </div>
 
             <div class="card rounded-xl shadow-2xl p-6 text-center">
                 <h3 class="text-lg font-bold text-[#FFD166]">取消政策</h3>
-                <p class="text-gray-200 mt-2 mb-3">報名後取消，需自付機票取消費</p>
-                <p class="text-3xl md:text-4xl font-black text-[#FF6B6B]">$9,000 ~ $12,000</p>
+                <p class="text-gray-200 mt-2 mb-3">報名後取消者，需自付機票取消費用 <span class="font-bold text-[#FF6B6B]">$9,000</span> 至 <span class="font-bold text-[#FF6B6B]">$12,000</span> 元。</p>
             </div>
 
             <div class="card rounded-xl shadow-2xl p-6 text-center">
@@ -141,6 +217,75 @@
                 <p class="text-gray-200 mt-4 text-lg">請於下方<br><span class="text-2xl font-bold text-[#06D6A0]">留言確認</span><br>您的參加總人數</p>
                 <p class="mt-4">期待與您同遊！</p>
             </div>
+
+            <!-- 團費包含與未含項目 -->
+            <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="info-list-card">
+                    <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">團費包含項目</h2>
+                    <ul class="text-gray-300 text-left">
+                        <li class="info-list-item">交通費：行程表內團體遊覽車，德威航空來回經濟艙團體機票。</li>
+                        <li class="info-list-item">稅捐：各地機場稅、燃料稅、稅金。</li>
+                        <li class="info-list-item">餐食：行程內列明之餐食，盡量安排適合國人口味。</li>
+                        <li class="info-list-item">住宿：行程表內飯店住宿（兩人一室為原則），需達 10 間以上。</li>
+                        <li class="info-list-item">遊覽費：行程內旅遊活動之門票、手續費。</li>
+                        <li class="info-list-item">保險費：每人全程旅遊責任保險新台幣伍佰萬元及貳十萬元意外醫療險。</li>
+                        <li class="info-list-item">贈禮：花花專屬贈品、旅遊手冊、企業紀念布條、花花筆、夾鏈袋、網卡。</li>
+                        <li class="info-list-item">小費：司機、領隊、導遊小費 (每日 NT$300 x 5 天，共 NT$1,500/人，已包含在團費中)。</li>
+                        <li class="info-list-item">領隊導遊：達 16 人以上派遣合格專業領隊 1 位，當地導遊 1 位。</li>
+                        <li class="info-list-item">飲用水：礦泉水無限提供。</li>
+                    </ul>
+                </div>
+                <div class="info-list-card">
+                    <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">團費未含項目</h2>
+                    <ul class="text-gray-300 text-left">
+                        <li class="info-list-item">證照費：新辦 (換新) 十年效期護照費用 NT$1,600 元。</li>
+                        <li class="info-list-item">證照費：14 歲以下五年效期護照費用 NT$1,200 元。</li>
+                        <li class="info-list-item">純係私人之消費：如電話費、洗衣費等。</li>
+                        <li class="info-list-item">床頭、行李小費及表上未列明之其他行程自費行程。</li>
+                        <li class="info-list-item">旅遊平安保險及旅遊不便險等其他私人保險項目。</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- 團費包含與未含項目結束 -->
+
+            <!-- 行程詳細資訊 -->
+            <div class="lg:col-span-3 card rounded-xl shadow-2xl p-6">
+                <h2 class="text-2xl font-bold text-center mb-6 text-[#FFD166]">詳細行程 (五天四夜)</h2>
+                
+                <div class="itinerary-day-card">
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第一天：桃園國際機場 / 濟州國際機場 → 龍頭岩 + 龍淵峽谷 (巨大火山岩 / 海蝕地形)</h3>
+                    <p class="text-gray-300 itinerary-activity">→ 享用晚餐 → 入住飯店 CHECKIN → 享用飯店設施</p>
+                    <p class="itinerary-meal">早餐: X | 午餐: 花花小點心 | 晚餐: 三姓穴海鮮鍋料理 (W22,500韓幣/人)</p>
+                    <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                </div>
+
+                <div class="itinerary-day-card">
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第二天：飯店 → 城山日出峰 (火山丘 / 世界自然遺產) → 萬丈窟 (世界上最長的熔岩洞) → 濟州城邑民俗村 (贈每人一杯蜂蜜茶或五味子茶) → 東門市場 + 中央地下街 + 黑豬肉一條街 → 返回飯店休憩</h3>
+                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 石鍋拌飯 + 涮涮鍋 (W10,000韓幣/人) | 晚餐: 明倫進士碳烤黑毛豬肉吃到飽 + 季節小菜 (W18,900韓幣/人)</p>
+                    <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                </div>
+
+                <div class="itinerary-day-card">
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第三天：飯店 → ECOLAND 森林小火車 (森林趣 / 風車 / 海盜船 / 彩虹躺椅 / 哈比人樹洞) → 漢拏樹木園 (十一個主題園區) → 天地淵瀑布 (大長今場景 / 上帝的池塘) → 濟州有林橘子 (贈每人 5 顆橘子) → 返回飯店休憩</h3>
+                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 青花魚定食 (₩11,000韓幣/人) | 晚餐: 活鮑魚 + 碳烤黑毛豬 + 蝦 + 蛋 + 大醬 (₩24,000韓幣/人)</p>
+                    <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                </div>
+
+                <div class="itinerary-day-card">
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第四天：飯店 → 全日自由活動 → 返回飯店休憩</h3>
+                    <p class="text-gray-300 itinerary-activity">此日為全日自由活動時間，您可以自行安排探索濟州島的特色景點、品嚐當地美食或享受飯店設施。領隊導遊將提供協助。</p>
+                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 方便遊玩, 敬請自理 | 晚餐: 方便遊玩, 敬請自理</p>
+                    <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                </div>
+
+                <div class="itinerary-day-card">
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第五天：飯店出發 → 濟州國際機場 / 桃園國際機場 → 歡樂賦歸</h3>
+                    <p class="text-gray-300 itinerary-activity">享受完早餐後，前往濟州國際機場，搭乘班機返回桃園國際機場，結束愉快的濟州島之旅。</p>
+                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: X | 晚餐: X</p>
+                    <p class="text-gray-300 text-sm mt-2">住宿: 溫暖的家</p>
+                </div>
+            </div>
+            <!-- 行程詳細資訊結束 -->
 
         </main>
     </div>
@@ -203,15 +348,42 @@
             }
         });
 
+        // Define base costs for different scenarios based on user's $2900 / $3900 choice
+        const baseCosts = {
+            '2900': {
+                '員工本人': 2900,
+                '單人房': 2900 + 9000, // 員工自付額 + 單人房補價差
+                '眷屬 (補助後)': 17900, // 根據使用者提供的數字
+                '9歲以下孩童 (不佔床)': 16900, // 眷屬費用 - 孩童優惠 17900 - 1000
+                '未滿2歲嬰兒 (不佔床)': 6500
+            },
+            '3900': {
+                '員工本人': 3900,
+                '單人房': 3900 + 9000, // 員工自付額 + 單人房補價差
+                '眷屬 (補助後)': 18900, // 根據使用者提供的數字
+                '9歲以下孩童 (不佔床)': 17900, // 眷屬費用 - 孩童優惠 18900 - 1000
+                '未滿2歲嬰兒 (不佔床)': 6500
+            }
+        };
+
+        const scenarioLabels = [
+            '員工本人',
+            '單人房',
+            '眷屬 (補助後)',
+            '9歲以下孩童 (不佔床)',
+            '未滿2歲嬰兒 (不佔床)'
+        ];
+
         const scenarioCostCtx = document.getElementById('scenarioCostChart').getContext('2d');
-        new Chart(scenarioCostCtx, {
+        // Initialize chart with the default selected option (2900)
+        let scenarioChart = new Chart(scenarioCostCtx, {
             type: 'bar',
             data: {
-                labels: ['員工本人', '單人房 (需補價差)', '未滿2歲嬰兒'],
+                labels: scenarioLabels,
                 datasets: [{
                     label: '總費用 (元)',
-                    data: [2900, 2900 + 9000, 6500],
-                    backgroundColor: ['#118AB2', '#FFD166', '#06D6A0'],
+                    data: scenarioLabels.map(label => baseCosts['2900'][label]), // Default to 2900 plan
+                    backgroundColor: ['#118AB2', '#FFD166', '#06D6A0', '#06D6A0', '#FF6B6B'],
                     borderRadius: 8
                 }]
             },
@@ -250,6 +422,59 @@
                 }
             }
         });
+
+        // Add event listeners for radio buttons to update the chart
+        const costOptionRadios = document.querySelectorAll('input[name="costOption"]');
+        costOptionRadios.forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                const selectedOption = event.target.value; // '2900' or '3900'
+                scenarioChart.data.datasets[0].data = scenarioLabels.map(label => baseCosts[selectedOption][label]);
+                scenarioChart.update(); // Update the chart with new data
+            });
+        });
+
+        // Countdown Timer Logic
+        const countdownTimerElement = document.getElementById('countdownTimer');
+        // Set the deadline to this Sunday (June 15, 2025) at the end of the day (23:59:59)
+        const deadlineDate = new Date('2025-06-15T23:59:59').getTime();
+
+        const updateCountdown = () => {
+            const now = new Date().getTime();
+            const distance = deadlineDate - now;
+
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                countdownTimerElement.innerHTML = '<span class="text-xl font-bold text-[#FF6B6B]">報名已截止！</span>';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdownTimerElement.innerHTML = `
+                <div>
+                    <span class="countdown-segment">${days}</span>
+                    <span class="countdown-label">天</span>
+                </div>
+                <div>
+                    <span class="countdown-segment">${hours}</span>
+                    <span class="countdown-label">時</span>
+                </div>
+                <div>
+                    <span class="countdown-segment">${minutes}</span>
+                    <span class="countdown-label">分</span>
+                </div>
+                <div>
+                    <span class="countdown-segment">${seconds}</span>
+                    <span class="countdown-label">秒</span>
+                </div>
+            `;
+        };
+
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call to display immediately
     </script>
 </body>
 </html>
