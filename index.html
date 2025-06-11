@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2025 員工國外旅遊：韓國濟州島之旅</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -35,15 +34,15 @@
         }
         .countdown-segment {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background-color: #FF6B6B; /* UPDATED: Changed background to red */
-            color: #FFFFFF; /* UPDATED: Changed text to white for contrast */
+            background-color: #FF6B6B;
+            color: #FFFFFF;
             border-radius: 0.5rem; font-weight: 700; font-size: 1.75rem;
             min-width: 65px; height: 70px; text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); line-height: 1.1;
         }
         .countdown-label { 
             font-size: 0.8rem; 
-            color: #FFFFFF; /* UPDATED: Changed text to white */
+            color: #FFFFFF;
             margin-top: 0.2rem; 
             font-weight: 500; 
         }
@@ -52,7 +51,7 @@
             align-items: flex-start;
             font-size: 1rem;
             color: #E0F2F1;
-            margin-bottom: 0.75rem; /* 12px */
+            margin-bottom: 0.75rem;
         }
         .info-list-item::before {
             content: '•';
@@ -63,7 +62,7 @@
             flex-shrink: 0;
             margin-right: 0.6em;
             font-size: 1.2em;
-            line-height: 1.5; /* Align bullet with text */
+            line-height: 1.5;
         }
         input[type="radio"], input[type="checkbox"] {
             -webkit-appearance: none; -moz-appearance: none; appearance: none;
@@ -86,18 +85,32 @@
         }
         label.inline-flex span { transition: color 0.2s ease-in-out; }
         input[type="radio"]:checked + span, input[type="checkbox"]:checked + span { color: #FFD166; font-weight: 600; }
-        .calculator-input {
+        .form-input {
             background-color: rgba(0,0,0,0.2); border: 1px solid #118AB2;
             border-radius: 0.5rem; padding: 0.5rem 0.75rem;
             color: white; width: 100%;
         }
         .card-header {
-            font-size: 1.75rem; /* 28px */
+            font-size: 1.75rem;
             font-weight: 900;
-            margin-bottom: 1.5rem; /* 24px */
+            margin-bottom: 1.5rem;
             text-align: center;
             color: #FFD166;
         }
+        /* Modal styles */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-backdrop.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background-color: #073B4C; border: 1px solid #118AB2;
+            padding: 2rem; border-radius: 1rem; width: 90%; max-width: 500px;
+            transform: scale(0.95); transition: transform 0.3s ease;
+        }
+        .modal-backdrop.active .modal-content { transform: scale(1); }
     </style>
 </head>
 <body class="p-4 sm:p-6 lg:p-8">
@@ -108,43 +121,23 @@
             <p class="text-2xl md:text-4xl font-bold text-white mt-2">韓國濟州島之旅 🇰🇷</p>
         </header>
 
-        <!-- Main Layout: Single Column for better mobile experience -->
         <main class="space-y-8">
             
-            <!-- Key Information Summary Card -->
             <section class="card p-6 md:p-8">
                 <h2 class="card-header">旅行摘要</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <!-- Left: Dates & Countdown -->
                     <div class="text-center md:text-left">
-                        <div class="mb-6">
-                            <h3 class="text-lg font-bold text-white">旅行日期</h3>
-                            <p class="text-3xl font-black text-[#06D6A0]">2025年 11月 10日 (一) - 11月 14日 (五)</p>
-                            <p class="text-gray-300">五天四夜，享受海島風光</p>
-                        </div>
-                        <div class="p-4 rounded-lg bg-black/10">
-                             <h3 class="text-lg font-bold text-white">報名倒數中 <span class="text-[#FF6B6B]">(本週日截止)</span></h3>
-                             <div id="countdownTimer" class="flex justify-center md:justify-start items-start mt-2 space-x-2 md:space-x-3"></div>
-                        </div>
+                        <div class="mb-6"><h3 class="text-lg font-bold text-white">旅行日期</h3><p class="text-3xl font-black text-[#06D6A0]">2025年 11月 10日 (一) - 11月 14日 (五)</p><p class="text-gray-300">五天四夜，享受海島風光</p></div>
+                        <div class="p-4 rounded-lg bg-black/10"><h3 class="text-lg font-bold text-white">報名倒數中 <span class="text-[#FF6B6B]">(本週日截止)</span></h3><div id="countdownTimer" class="flex justify-center md:justify-start items-start mt-2 space-x-2 md:space-x-3"></div></div>
                     </div>
-                    <!-- Right: Flight Info -->
                     <div class="space-y-4 p-4 rounded-lg bg-black/10">
-                        <div class="text-center">
-                             <h3 class="text-lg font-bold text-white">✈️ 去程 TPE → CJU</h3>
-                             <p class="text-2xl font-bold text-white">14:25 - 17:30</p>
-                             <p class="text-sm text-gray-400">德威航空 TW688</p>
-                        </div>
+                        <div class="text-center"><h3 class="text-lg font-bold text-white">✈️ 去程 TPE → CJU</h3><p class="text-2xl font-bold text-white">14:25 - 17:30</p><p class="text-sm text-gray-400">德威航空 TW688</p></div>
                         <hr class="border-gray-700">
-                        <div class="text-center">
-                             <h3 class="text-lg font-bold text-white">✈️ 回程 CJU → TPE</h3>
-                             <p class="text-2xl font-bold text-white">12:20 - 13:25</p>
-                             <p class="text-sm text-gray-400">德威航空 TW687</p>
-                        </div>
-                     </div>
+                        <div class="text-center"><h3 class="text-lg font-bold text-white">✈️ 回程 CJU → TPE</h3><p class="text-2xl font-bold text-white">12:20 - 13:25</p><p class="text-sm text-gray-400">德威航空 TW687</p></div>
+                    </div>
                 </div>
             </section>
 
-            <!-- Itinerary Card -->
             <section class="card p-6 md:p-8">
                 <h2 class="card-header">詳細行程</h2>
                 <div class="space-y-6">
@@ -155,35 +148,27 @@
                     <div class="p-4 border-l-4 border-[#06D6A0] bg-black/10 rounded-r-lg"><h3 class="text-xl font-bold text-white mb-2">第五天：返回溫暖的家</h3><p class="text-gray-300">飯店出發→濟州國際機場/桃園國際機場→歡樂賦歸</p><p class="text-sm italic text-[#FFD166] mt-2">早餐:飯店內用 | 午餐:X | 晚餐:X</p><p class="text-sm text-gray-400 mt-2">住宿: 溫暖的家</p></div>
                 </div>
             </section>
-
-            <!-- Cost Calculator Card -->
-            <section id="calculator" class="card p-6 md:p-8">
-                <h2 class="card-header">🧮 費用試算工具</h2>
+            
+            <section class="card p-6 md:p-8">
+                <h2 class="card-header">費用說明 & 線上報名</h2>
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">💰 費用規則</h3><div class="info-list-item"><div><strong>公司補助：</strong><br>每位員工補助 <strong class="text-[#06D6A0]">$30,000</strong> 元。</div></div><div class="info-list-item"><div><strong>員工自付：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>總人數 > 20：自付 $2,900</li><li>總人數 16-20：自付 $3,900</li></ul></div></div><div class="info-list-item"><div><strong>眷屬補助：</strong><br>業績達標者，可為<strong class="text-white">一位同行眷屬</strong> (成人或孩童) 申請 <strong class="text-[#FFD166]">$15,000 元補助</strong>！</div></div><div class="info-list-item"><div><strong>其他優惠：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>孩童不佔床：團費減 $1,000</li><li>嬰兒價：$6,500</li><li>單人房：需補價差 $9,000</li></ul></div></div></div>
+                    <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">📩 如何報名</h3><div class="info-list-item"><div><strong>步驟一：</strong><br>使用下方的試算工具，了解兩種人數級距下的費用。</div></div><div class="info-list-item"><div><strong>步驟二：</strong><br>填寫報名資訊，點擊「產生報名資料」按鈕。</div></div><div class="info-list-item"><div><strong>步驟三：</strong><br>複製產生的文字，並貼到<strong class="text-[#06D6A0] mx-1">公司LINE群組的記事本</strong>中，即完成報名！</div></div><div class="info-list-item"><div><strong>取消政策：</strong><br>報名後取消，需自付機票取消費 <strong class="text-[#FF6B6B]">$9,000 - $12,000</strong> 元。</div></div></div>
+                </div>
+                <hr class="border-gray-700/50 mb-8">
                 <form id="costCalculatorForm" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6"><fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">1. 選擇方案</legend><div class="flex flex-col space-y-3 mt-2"><label class="inline-flex items-center cursor-pointer"><input type="radio" name="costOption" value="2900" class="form-radio" checked><span class="ml-3 text-white">A: 總人數 > 20 (自付$2,900)</span></label><label class="inline-flex items-center cursor-pointer"><input type="radio" name="costOption" value="3900" class="form-radio"><span class="ml-3 text-white">B: 總人數 16-20 (自付$3,900)</span></label></div></fieldset><fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">2. 額外選項</legend><div class="flex flex-col space-y-3 mt-2"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus"><span class="ml-3 text-white">去年業績達標 (享眷屬補助)</span></label><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom"><span class="ml-3 text-white">需要單人房 (補價差$9,000)</span></label></div></fieldset></div>
-                    <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">3. 輸入同行人數 (員工本人免填)</legend><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2"><div><label for="numAdults" class="block text-sm font-medium text-gray-300 mb-1">眷屬 (成人)</label><input type="number" id="numAdults" class="calculator-input" value="0" min="0"></div><div><label for="numChildren" class="block text-sm font-medium text-gray-300 mb-1">孩童 (9歲以下不佔床)</label><input type="number" id="numChildren" class="calculator-input" value="0" min="0"></div><div><label for="numInfants" class="block text-sm font-medium text-gray-300 mb-1">嬰兒 (2歲以下)</label><input type="number" id="numInfants" class="calculator-input" value="0" min="0"></div></div></fieldset>
-                    <div id="costResult" class="text-center bg-black/20 p-6 rounded-lg border border-white/10 min-h-[120px] flex flex-col justify-center"><p class="text-gray-400">請填寫人數，費用將自動更新</p></div>
+                    <h3 class="text-2xl font-bold text-center text-white">線上報名小幫手</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">1. 您的資料</legend><div class="space-y-4 mt-2"><div><label for="regName" class="block text-sm font-medium text-gray-300 mb-1">您的姓名</label><input type="text" id="regName" class="form-input" placeholder="請輸入姓名"></div><div><label for="regDept" class="block text-sm font-medium text-gray-300 mb-1">部門</label><input type="text" id="regDept" class="form-input" placeholder="請輸入部門"></div></div></fieldset>
+                        <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">2. 額外選項</legend><div class="flex flex-col space-y-3 mt-2 justify-center h-full"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus"><span class="ml-3 text-white">去年業績達標 (享眷屬補助)</span></label><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom"><span class="ml-3 text-white">需要單人房 (補價差$9,000)</span></label></div></fieldset>
+                    </div>
+                    <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">3. 同行人數 (員工本人免填)</legend><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2"><div><label for="numAdults" class="block text-sm font-medium text-gray-300 mb-1">眷屬 (成人)</label><input type="number" id="numAdults" class="form-input" value="0" min="0"></div><div><label for="numChildren" class="block text-sm font-medium text-gray-300 mb-1">孩童 (9歲以下不佔床)</label><input type="number" id="numChildren" class="form-input" value="0" min="0"></div><div><label for="numInfants" class="block text-sm font-medium text-gray-300 mb-1">嬰兒 (2歲以下)</label><input type="number" id="numInfants" class="form-input" value="0" min="0"></div></div></fieldset>
+                    
+                    <div id="costResult" class="text-center bg-black/20 p-6 rounded-lg border border-white/10 min-h-[120px] flex flex-col justify-center"><p class="text-gray-400">請填寫人數，下方將顯示費用預估</p></div>
+                    <button type="button" id="generateRegInfoBtn" class="w-full bg-[#06D6A0] text-[#073B4C] font-bold py-3 px-8 rounded-lg hover:bg-white transition-colors duration-300 text-lg">產生報名資料 & 複製</button>
                 </form>
             </section>
             
-            <!-- Cost Rules & Other Info -->
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <div class="card p-6">
-                    <h2 class="card-header">💰 費用規則</h2>
-                    <div class="space-y-2">
-                        <div class="info-list-item"><div><strong>公司補助：</strong><br>每位員工補助 <strong class="text-[#06D6A0]">$30,000</strong> 元。</div></div>
-                        <div class="info-list-item"><div><strong>員工自付：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>總人數 > 20：自付 $2,900</li><li>總人數 16-20：自付 $3,900</li></ul></div></div>
-                        <div class="info-list-item"><div><strong>眷屬補助：</strong><br>業績達標者，可為<strong class="text-white">一位同行眷屬</strong> (成人或孩童) 申請 <strong class="text-[#FFD166]">$15,000 元補助</strong>！</div></div>
-                        <div class="info-list-item"><div><strong>其他優惠：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>孩童不佔床：團費減 $1,000</li><li>嬰兒價：$6,500</li><li>單人房：需補價差 $9,000</li></ul></div></div>
-                    </div>
-                </div>
-                 <div class="space-y-8">
-                    <div class="card p-6 text-center"><h2 class="card-header">📩 如何報名</h2><p class="text-lg text-gray-200">請於<span class="text-2xl font-bold text-[#06D6A0] mx-1">LINE記事本</span>留言<br>確認您的<span class="font-bold text-white">參加總人數</span></p><p class="mt-4 text-gray-400">期待與您同遊！</p></div>
-                    <div class="card p-6 text-center"><h3 class="text-xl font-bold text-[#FFD166]">取消政策</h3><p class="text-gray-200 mt-2 mb-1 text-base">報名後取消，需自付機票取消費 <span class="font-bold text-[#FF6B6B]">$9,000 - $12,000</span> 元。</p></div>
-                 </div>
-            </section>
-            
-            <!-- Included/Not Included Card -->
             <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="card p-6"><h3 class="text-xl font-bold text-center mb-4 text-white">團費包含項目</h3><div class="space-y-2 text-gray-200"><p class="info-list-item">交通費：行程表內團體遊覽車，德威航空來回經濟艙團體機票。</p><p class="info-list-item">稅捐：各地機場稅、燃料稅、稅金。</p><p class="info-list-item">餐食：行程內列明之餐食，盡量安排適合國人口味。</p><p class="info-list-item">住宿：行程表內飯店住宿（兩人一室為原則），需達 10 間以上。</p><p class="info-list-item">遊覽費：行程內旅遊活動之門票、手續費。</p><p class="info-list-item">保險費：每人全程旅遊責任保險新台幣伍佰萬元及貳十萬元意外醫療險。</p><p class="info-list-item">贈禮：花花專屬贈品、旅遊手冊、企業紀念布條、花花筆、夾鏈袋、網卡。</p><p class="info-list-item">小費：司機、領隊、導遊小費 (每日 NT$300 x 5 天，共 NT$1,500/人，已包含)。</p><p class="info-list-item">領隊導遊：達 16 人以上派遣合格專業領隊 1 位，當地導遊 1 位。</p><p class="info-list-item">飲用水：礦泉水無限提供。</p></div></div>
                 <div class="card p-6"><h3 class="text-xl font-bold text-center mb-4 text-white">團費未含項目</h3><div class="space-y-2 text-gray-200"><p class="info-list-item">證照費：新辦 (換新) 十年效期護照費用 NT$1,600 元。</p><p class="info-list-item">證照費：14 歲以下五年效期護照費用 NT$1,200 元。</p><p class="info-list-item">純係私人之消費：如電話費、洗衣費等。</p><p class="info-list-item">床頭、行李小費及表上未列明之其他行程自費行程。</p><p class="info-list-item">旅遊平安保險及旅遊不便險等其他私人保險項目。</p></div></div>
@@ -191,85 +176,141 @@
         </main>
     </div>
 
+    <!-- Modal for showing registration info -->
+    <div id="regModal" class="modal-backdrop">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-center mb-4 text-white">您的報名資訊</h2>
+            <p class="text-center text-gray-300 mb-4">請複製以下所有文字，並貼到LINE群組記事本中。</p>
+            <textarea id="regSummary" class="w-full h-48 p-3 rounded-lg bg-black/20 border border-gray-600 text-white" readonly></textarea>
+            <div class="flex gap-4 mt-4">
+                <button id="copyBtn" class="w-full bg-[#06D6A0] text-[#073B4C] font-bold py-2 px-4 rounded-lg hover:bg-white transition-colors">複製內容</button>
+                <button id="closeModalBtn" class="w-full bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-500 transition-colors">關閉</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- Cost Calculator Logic ---
         const calculatorForm = document.getElementById('costCalculatorForm');
         const resultDiv = document.getElementById('costResult');
-
+        
         function calculateTotalCost() {
-            const basePlan = document.querySelector('input[name="costOption"]:checked').value;
-            const hasBonus = document.getElementById('performanceBonus').checked;
-            let numAdults = parseInt(document.getElementById('numAdults').value) || 0;
-            let numChildren = parseInt(document.getElementById('numChildren').value) || 0;
-            const numInfants = parseInt(document.getElementById('numInfants').value) || 0;
-            const needsSingleRoom = document.getElementById('singleRoom').checked;
+            const scenarios = {
+                planB: { base: 3900, label: "若總人數16-20位" },
+                planA: { base: 2900, label: "若總人數>20位" }
+            };
 
-            const companySubsidy = 30000;
-            const familyBonusSubsidy = 15000;
-            const baseEmployeeCost = parseInt(basePlan);
-            const totalTourCost = baseEmployeeCost + companySubsidy;
+            let finalHtml = '';
             
-            const childDiscount = 1000;
-            const infantCost = 6500;
-            const singleRoomSupplement = 9000;
+            for (const scenarioKey in scenarios) {
+                const scenario = scenarios[scenarioKey];
+                
+                const hasBonus = document.getElementById('performanceBonus').checked;
+                let numAdults = parseInt(document.getElementById('numAdults').value) || 0;
+                let numChildren = parseInt(document.getElementById('numChildren').value) || 0;
+                const numInfants = parseInt(document.getElementById('numInfants').value) || 0;
+                const needsSingleRoom = document.getElementById('singleRoom').checked;
 
-            let totalCost = 0;
-            let breakdownHtml = '<div class="text-left space-y-2">';
-            totalCost += baseEmployeeCost;
-            breakdownHtml += `<p>• 員工本人：<span class="font-bold text-white">${baseEmployeeCost.toLocaleString()}</span> 元</p>`;
-            
-            if (hasBonus) {
-                if (numAdults > 0) {
-                    const subsidizedCost = totalTourCost - familyBonusSubsidy;
-                    totalCost += subsidizedCost;
-                    breakdownHtml += `<p>• 達標眷屬 (1位成人補助$15,000)：<span class="font-bold text-white">${subsidizedCost.toLocaleString()}</span> 元</p>`;
-                    numAdults--;
-                } else if (numChildren > 0) {
-                    const subsidizedCost = (totalTourCost - childDiscount) - familyBonusSubsidy;
-                    totalCost += subsidizedCost;
-                    breakdownHtml += `<p>• 達標眷屬 (1位孩童補助$15,000)：<span class="font-bold text-white">${subsidizedCost.toLocaleString()}</span> 元</p>`;
-                    numChildren--;
+                const companySubsidy = 30000;
+                const familyBonusSubsidy = 15000;
+                const baseEmployeeCost = scenario.base;
+                const totalTourCost = baseEmployeeCost + companySubsidy;
+                const childDiscount = 1000;
+                const infantCost = 6500;
+                const singleRoomSupplement = 9000;
+
+                let totalCost = 0;
+                let breakdownHtml = '<div class="text-left text-sm space-y-1 mt-3">';
+                
+                // --- Individual Cost Calculation ---
+                totalCost += baseEmployeeCost;
+                breakdownHtml += `<p>• 員工本人：<span class="font-bold text-white">${baseEmployeeCost.toLocaleString()}</span> 元</p>`;
+
+                let tempAdults = numAdults;
+                let tempChildren = numChildren;
+                
+                if (hasBonus) {
+                    if (tempAdults > 0) {
+                        const cost = totalTourCost - familyBonusSubsidy;
+                        totalCost += cost;
+                        breakdownHtml += `<p>• 達標眷屬 (1位成人)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`;
+                        tempAdults--;
+                    } else if (tempChildren > 0) {
+                        const cost = (totalTourCost - childDiscount) - familyBonusSubsidy;
+                        totalCost += cost;
+                        breakdownHtml += `<p>• 達標眷屬 (1位孩童)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`;
+                        tempChildren--;
+                    }
                 }
-            }
 
-            if (numAdults > 0) {
-                const fullPriceAdultsCost = numAdults * totalTourCost;
-                totalCost += fullPriceAdultsCost;
-                breakdownHtml += `<p>• 一般眷屬 (${numAdults}位)：<span class="font-bold text-white">${fullPriceAdultsCost.toLocaleString()}</span> 元</p>`;
-            }
-            if (numChildren > 0) {
-                const childTotalCost = numChildren * (totalTourCost - childDiscount);
-                totalCost += childTotalCost;
-                breakdownHtml += `<p>• 一般孩童 (${numChildren}位)：<span class="font-bold text-white">${childTotalCost.toLocaleString()}</span> 元</p>`;
-            }
-            if (numInfants > 0) {
-                const infantTotalCost = numInfants * infantCost;
-                totalCost += infantTotalCost;
-                breakdownHtml += `<p>• 嬰兒 (${numInfants}位)：<span class="font-bold text-white">${infantTotalCost.toLocaleString()}</span> 元</p>`;
-            }
-            if (needsSingleRoom) {
-                totalCost += singleRoomSupplement;
-                breakdownHtml += `<p>• 單人房價差：<span class="font-bold text-white">${singleRoomSupplement.toLocaleString()}</span> 元</p>`;
-            }
-            breakdownHtml += '</div>';
+                if (tempAdults > 0) { const cost = tempAdults * totalTourCost; totalCost += cost; breakdownHtml += `<p>• 一般眷屬 (${tempAdults}位)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`; }
+                if (tempChildren > 0) { const cost = tempChildren * (totalTourCost - childDiscount); totalCost += cost; breakdownHtml += `<p>• 一般孩童 (${tempChildren}位)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`; }
+                if (numInfants > 0) { const cost = numInfants * infantCost; totalCost += cost; breakdownHtml += `<p>• 嬰兒 (${numInfants}位)：<span class="font-bold text-white">${cost.toLocaleString()}</span> 元</p>`; }
+                if (needsSingleRoom) { totalCost += singleRoomSupplement; breakdownHtml += `<p>• 單人房價差：<span class="font-bold text-white">${singleRoomSupplement.toLocaleString()}</span> 元</p>`; }
+                
+                breakdownHtml += '</div>';
 
-            const originalNumAdults = parseInt(document.getElementById('numAdults').value) || 0;
-            const originalNumChildren = parseInt(document.getElementById('numChildren').value) || 0;
-            const originalNumInfants = parseInt(document.getElementById('numInfants').value) || 0;
-            const totalCompanions = originalNumAdults + originalNumChildren + originalNumInfants;
-
-            if (totalCompanions === 0 && !needsSingleRoom) {
-                 resultDiv.innerHTML = `<p class="text-xl">您的預估總金額</p><p class="text-4xl font-black gradient-text mt-1">NT$ ${totalCost.toLocaleString()}</p>`;
-            } else {
-                 resultDiv.innerHTML = `${breakdownHtml}<hr class="border-gray-600 my-4"><p class="text-xl">預估總金額</p><p class="text-4xl font-black gradient-text mt-1">NT$ ${totalCost.toLocaleString()}</p>`;
+                // --- Final HTML structure ---
+                finalHtml += `
+                    <div class="flex-1 p-4 rounded-lg ${scenarioKey === 'planA' ? 'bg-green-500/10' : 'bg-yellow-500/10'}">
+                        <p class="font-bold ${scenarioKey === 'planA' ? 'text-green-300' : 'text-yellow-300'}">${scenario.label}費用明細：</p>
+                        ${breakdownHtml}
+                        <hr class="border-gray-500/50 my-3">
+                        <p class="font-bold text-white text-right">總計：<span class="text-2xl font-black">${totalCost.toLocaleString()}</span> 元</p>
+                    </div>`;
             }
+            resultDiv.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
         }
 
-        calculatorForm.addEventListener('submit', (e) => { e.preventDefault(); });
         calculatorForm.addEventListener('input', calculateTotalCost);
         document.addEventListener('DOMContentLoaded', calculateTotalCost);
 
-        // --- Countdown Timer Logic ---
+        const generateBtn = document.getElementById('generateRegInfoBtn');
+        const modal = document.getElementById('regModal');
+        const summaryTextarea = document.getElementById('regSummary');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const copyBtn = document.getElementById('copyBtn');
+
+        generateBtn.addEventListener('click', () => {
+            const name = document.getElementById('regName').value;
+            const dept = document.getElementById('regDept').value;
+            if (!name || !dept) {
+                alert('請填寫您的姓名與部門！');
+                return;
+            }
+            const adults = parseInt(document.getElementById('numAdults').value) || 0;
+            const children = parseInt(document.getElementById('numChildren').value) || 0;
+            const infants = parseInt(document.getElementById('numInfants').value) || 0;
+            const totalPeople = 1 + adults + children + infants;
+            
+            const summary = `
+========== 濟州島之旅報名 ==========
+報名員工：${name}
+部門：${dept}
+------------------------------------
+總參加人數：${totalPeople} 人
+  • 員工：1 位
+  • 眷屬(成人)：${adults} 位
+  • 孩童(不佔床)：${children} 位
+  • 嬰兒：${infants} 位
+------------------------------------
+費用：最終費用將依總報名人數（16-20人或21人以上）決定。
+=================================
+            `;
+            summaryTextarea.value = summary.trim();
+            modal.classList.add('active');
+        });
+
+        closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
+        copyBtn.addEventListener('click', () => {
+            summaryTextarea.select();
+            document.execCommand('copy');
+            copyBtn.textContent = '已複製！';
+            setTimeout(() => {
+                copyBtn.textContent = '複製內容';
+                modal.classList.remove('active');
+            }, 1500);
+        });
+        
         const countdownTimerElement = document.getElementById('countdownTimer');
         const today = new Date();
         const dayOfWeek = today.getDay(); 
