@@ -1,1 +1,2 @@
-# jeju-trip
+# jeju-trip-infographic
+
