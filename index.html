@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 員工國外旅遊：韓國濟州島之旅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #073B4C;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #FFD166, #06D6A0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card {
+            background-color: rgba(17, 138, 178, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Narrative Plan: The infographic tells a story, starting with an exciting announcement (Hero), moving to practical details (Overview, Flights, Costs), highlighting important rules (Deadlines, Policies), and ending with a clear call to action (How to Register). This guides the employee from excitement to action. -->
+    <!-- Visualization Choices:
+        - Trip Timeline (HTML/CSS): Goal: Organize. Shows the 5-day flow clearly without complex charts. Method: Styled flexbox divs. NO SVG.
+        - Cost Contribution (Chart.js Donut): Goal: Compare. Instantly shows the large company subsidy vs. the small employee share. Method: Chart.js Canvas. NO SVG.
+        - Scenario Costs (Chart.js Bar): Goal: Compare. Allows employees to easily compare out-of-pocket costs for different family situations. Method: Chart.js Canvas. NO SVG.
+        - Big Numbers (HTML/CSS): Goal: Inform. Key data like deadlines and cancellation fees are made prominent for immediate attention. Method: Large, styled text. NO SVG.
+    -->
+    <!-- Chosen Color Palette: Energetic & Playful (#FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C) -->
+    <!-- CONFIRMATION: NO SVG or Mermaid JS was used in this document. All diagrams and charts are rendered using HTML/CSS with Tailwind or the Chart.js Canvas renderer. -->
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <header class="text-center my-8 md:my-12">
+            <h1 class="text-4xl md:text-6xl font-black gradient-text">2025 員工國外旅遊</h1>
+            <p class="text-2xl md:text-4xl font-bold text-white mt-2">韓國濟州島之旅 🇰🇷</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-3 card rounded-xl shadow-2xl p-6">
+                <h2 class="text-2xl font-bold text-center mb-6 text-[#FFD166]">旅行時間軸</h2>
+                <p class="text-center text-gray-300 mb-6">我們將在 2025 年 11 月 10 日至 11 月 14 日，享受為期五天四夜的濟州島假期。</p>
+                <div class="flex justify-between items-center text-center">
+                    <div class="w-1/5">
+                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">一</div>
+                        <p class="mt-2 text-sm">11/10 出發</p>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-600/50"></div>
+                    <div class="w-1/5">
+                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">二</div>
+                        <p class="mt-2 text-sm">11/11</p>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-600/50"></div>
+                    <div class="w-1/5">
+                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">三</div>
+                        <p class="mt-2 text-sm">11/12</p>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-600/50"></div>
+                    <div class="w-1/5">
+                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">四</div>
+                        <p class="mt-2 text-sm">11/13</p>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-600/50"></div>
+                    <div class="w-1/5">
+                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">五</div>
+                        <p class="mt-2 text-sm">11/14 返程</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card rounded-xl shadow-2xl p-6 flex flex-col items-center justify-center text-center">
+                 <h3 class="text-xl font-bold mb-1 text-[#FFD166]">✈️ 去程航班</h3>
+                 <p class="text-3xl font-black text-[#06D6A0]">14:25</p>
+                 <p class="text-gray-300">出發</p>
+                 <p class="text-lg font-bold mt-2">17:30 抵達</p>
+            </div>
+            
+            <div class="card rounded-xl shadow-2xl p-6 flex flex-col items-center justify-center text-center">
+                 <h3 class="text-xl font-bold mb-1 text-[#FFD166]">✈️ 回程航班</h3>
+                 <p class="text-3xl font-black text-[#06D6A0]">12:20</p>
+                 <p class="text-gray-300">出發</p>
+                 <p class="text-lg font-bold mt-2">13:25 抵達</p>
+            </div>
+
+            <div class="md:col-span-2 lg:col-span-1 card rounded-xl shadow-2xl p-6 flex flex-col items-center justify-center">
+                <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">費用貢獻分析</h2>
+                <p class="text-center text-sm text-gray-300 mb-4">公司大力補助，讓您輕鬆出遊！此圖顯示公司補助與員工自付額的比例。</p>
+                <div class="chart-container h-64 md:h-auto">
+                    <canvas id="costBreakdownChart"></canvas>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 card rounded-xl shadow-2xl p-6">
+                <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">不同身份費用比較</h2>
+                 <p class="text-center text-sm text-gray-300 mb-4">此圖表比較不同身份（員工、單人房、嬰兒）的最終費用，幫助您快速了解預算。</p>
+                <div class="w-full h-80">
+                    <canvas id="scenarioCostChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card rounded-xl shadow-2xl p-6 text-center bg-[#FF6B6B]/30 border-[#FF6B6B]">
+                <h2 class="text-2xl font-bold text-white">⚠️ 重要事項</h2>
+                <div class="mt-4">
+                    <h3 class="text-lg font-bold text-[#FFD166]">報名截止</h3>
+                    <p class="text-3xl font-black my-2">本週日</p>
+                    <p class="text-gray-200 text-sm">請儘速確認參加人數 (含眷屬)</p>
+                </div>
+            </div>
+
+            <div class="card rounded-xl shadow-2xl p-6 text-center">
+                <h3 class="text-lg font-bold text-[#FFD166]">取消政策</h3>
+                <p class="text-gray-200 mt-2 mb-3">報名後取消，需自付機票取消費</p>
+                <p class="text-3xl md:text-4xl font-black text-[#FF6B6B]">$9,000 ~ $12,000</p>
+            </div>
+
+            <div class="card rounded-xl shadow-2xl p-6 text-center">
+                <h3 class="text-lg font-bold text-[#FFD166]">📩 如何報名</h3>
+                <p class="text-gray-200 mt-4 text-lg">請於下方<br><span class="text-2xl font-bold text-[#06D6A0]">留言確認</span><br>您的參加總人數</p>
+                <p class="mt-4">期待與您同遊！</p>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const chartTooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+        
+        const wrapLabel = (label, maxLength = 16) => {
+            if (label.length <= maxLength) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxLength) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + ' ';
+            }
+            lines.push(currentLine.trim());
+            return lines.filter(line => line);
+        };
+
+        const costBreakdownCtx = document.getElementById('costBreakdownChart').getContext('2d');
+        new Chart(costBreakdownCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['公司補助', '員工自付額 (最低)'],
+                datasets: [{
+                    data: [30000, 2900],
+                    backgroundColor: ['#06D6A0', '#FFD166'],
+                    borderColor: '#073B4C',
+                    borderWidth: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#FFFFFF'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: chartTooltipTitleCallback
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+
+        const scenarioCostCtx = document.getElementById('scenarioCostChart').getContext('2d');
+        new Chart(scenarioCostCtx, {
+            type: 'bar',
+            data: {
+                labels: ['員工本人', '單人房 (需補價差)', '未滿2歲嬰兒'],
+                datasets: [{
+                    label: '總費用 (元)',
+                    data: [2900, 2900 + 9000, 6500],
+                    backgroundColor: ['#118AB2', '#FFD166', '#06D6A0'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: chartTooltipTitleCallback
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
