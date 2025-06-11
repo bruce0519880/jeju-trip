@@ -12,20 +12,21 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #073B4C;
+            background-color: #073B4C; /* Dark primary background */
+            line-height: 1.6;
         }
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 400px;
+            max-width: 450px; /* Increased max-width for charts */
             margin-left: auto;
             margin-right: auto;
-            height: 300px;
-            max-height: 350px;
+            height: 320px; /* Slightly increased height */
+            max-height: 380px; /* Adjusted max-height */
         }
         @media (min-width: 768px) {
             .chart-container {
-                height: 350px;
+                height: 380px; /* Adjusted height for larger screens */
             }
         }
         .gradient-text {
@@ -34,79 +35,119 @@
             -webkit-text-fill-color: transparent;
         }
         .card {
-            background-color: rgba(17, 138, 178, 0.2);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(17, 138, 178, 0.15); /* Slightly less opaque */
+            backdrop-filter: blur(12px); /* Increased blur */
+            border: 1px solid rgba(255, 255, 255, 0.08); /* More subtle border */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #06D6A0;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        /* Corrected Countdown Timer Styling */
         .countdown-segment {
-            display: inline-block;
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             background-color: #06D6A0;
             color: #073B4C;
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
+            border-radius: 8px; /* Slightly more rounded */
             font-weight: bold;
-            font-size: 1.25rem; /* text-xl */
-            line-height: 1.75rem; /* leading-7 */
-            margin: 0 0.25rem;
-            min-width: 50px; /* Ensure segments have a consistent width */
+            font-size: 1.75rem; /* Larger font size for numbers */
+            min-width: 65px; /* Ensure segments have a consistent width */
+            height: 70px; /* Fixed height for consistency */
             text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            line-height: 1.1;
         }
         .countdown-label {
-            font-size: 0.75rem; /* text-xs */
-            line-height: 1rem; /* leading-4 */
-            color: #E0F2F1;
-            margin-top: 0.25rem;
-            display: block;
+            font-size: 0.8rem; /* Slightly larger label */
+            color: #073B4C; /* Dark color for label on light background */
+            margin-top: 0.2rem;
+            font-weight: 500;
         }
         .itinerary-day-card, .info-list-card {
-            background-color: rgba(17, 138, 178, 0.2);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem; /* rounded-xl */
-            padding: 1.5rem; /* p-6 */
-            margin-bottom: 1rem; /* mb-4 */
+            background-color: rgba(17, 138, 178, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem; /* Increased margin */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .itinerary-day-card:hover, .info-list-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
         }
         .itinerary-activity {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
+            color: #E0F2F1;
         }
         .itinerary-meal {
             font-style: italic;
-            color: #E0F2F1;
+            color: #FFD166; /* Meal details in accent color */
             font-size: 0.95rem;
             line-height: 1.5;
+            margin-top: 0.5rem;
         }
         .info-list-item {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.7rem; /* Increased margin */
             display: flex;
             align-items: flex-start;
+            font-size: 1rem;
+            color: #E0F2F1;
         }
         .info-list-item::before {
             content: '•';
             color: #06D6A0;
             font-weight: bold;
             display: inline-block;
-            width: 1em;
-            margin-right: 0.5em;
+            width: 1em; /* Adjusted width */
+            flex-shrink: 0;
+            margin-right: 0.6em;
+            font-size: 1.2em; /* Larger bullet */
         }
-        .cancellation-policy-list li {
-            margin-bottom: 0.25rem;
-            font-size: 0.95rem;
-            color: #E0F2F1;
+        /* Radio button custom styling */
+        input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border: 2px solid #118AB2;
+            border-radius: 50%;
+            width: 1.25rem;
+            height: 1.25rem;
+            transition: all 0.2s ease-in-out;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            top: 2px; /* Fine-tune vertical alignment */
         }
-        .cancellation-policy-list li:last-child {
-            margin-bottom: 0;
+        input[type="radio"]:checked {
+            background-color: #06D6A0;
+            border-color: #06D6A0;
+            box-shadow: 0 0 0 3px rgba(6, 214, 160, 0.4); /* Green glow */
+        }
+        input[type="radio"]:checked::before {
+            content: '';
+            display: block;
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: #073B4C; /* Inner dot color */
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        label.inline-flex span {
+            transition: color 0.2s ease-in-out;
+        }
+        input[type="radio"]:checked + span {
+            color: #FFD166; /* Highlight selected label */
+            font-weight: 600;
         }
     </style>
 </head>
@@ -115,7 +156,7 @@
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
 
         <header class="text-center my-8 md:my-12">
-            <h1 class="text-4xl md:text-6xl font-black gradient-text">2025 員工國外旅遊</h1>
+            <h1 class="text-4xl md:text-6xl font-black gradient-text leading-tight">2025 員工國外旅遊</h1>
             <p class="text-2xl md:text-4xl font-bold text-white mt-2">韓國濟州島之旅 🇰🇷</p>
         </header>
 
@@ -123,103 +164,117 @@
 
             <div class="lg:col-span-3 card rounded-xl shadow-2xl p-6">
                 <h2 class="text-2xl font-bold text-center mb-6 text-[#FFD166]">旅行時間軸</h2>
-                <p class="text-center text-gray-300 mb-6">我們將在 2025 年 11 月 10 日至 11 月 14 日，享受為期五天四夜的濟州島假期。</p>
-                <div class="flex justify-between items-center text-center">
-                    <div class="w-1/5">
-                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">一</div>
-                        <p class="mt-2 text-sm">11/10 出發</p>
+                <p class="text-center text-gray-300 mb-6 text-lg">我們將在 2025 年 11 月 10 日至 11 月 14 日，享受為期五天四夜的濟州島假期。</p>
+                <div class="flex justify-between items-center text-center px-4 py-3 bg-gradient-to-r from-[#118AB2]/30 to-[#073B4C]/30 rounded-lg border border-white/5">
+                    <div class="w-1/5 flex flex-col items-center">
+                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">一</div>
+                        <p class="mt-2 text-sm text-gray-200">11/10 出發</p>
                     </div>
-                    <div class="flex-1 h-1 bg-gray-600/50"></div>
-                    <div class="w-1/5">
-                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">二</div>
-                        <p class="mt-2 text-sm">11/11</p>
+                    <div class="flex-1 h-0.5 bg-gray-600/50 relative mx-2">
+                         <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent to-[#06D6A0]/50 animate-pulse"></div>
                     </div>
-                    <div class="flex-1 h-1 bg-gray-600/50"></div>
-                    <div class="w-1/5">
-                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">三</div>
-                        <p class="mt-2 text-sm">11/12</p>
+                    <div class="w-1/5 flex flex-col items-center">
+                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">二</div>
+                        <p class="mt-2 text-sm text-gray-200">11/11</p>
                     </div>
-                    <div class="flex-1 h-1 bg-gray-600/50"></div>
-                    <div class="w-1/5">
-                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">四</div>
-                        <p class="mt-2 text-sm">11/13</p>
+                    <div class="flex-1 h-0.5 bg-gray-600/50 relative mx-2">
+                         <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent to-[#06D6A0]/50 animate-pulse"></div>
                     </div>
-                    <div class="flex-1 h-1 bg-gray-600/50"></div>
-                    <div class="w-1/5">
-                        <div class="bg-[#118AB2] rounded-full w-12 h-12 flex items-center justify-center mx-auto font-bold text-lg">五</div>
-                        <p class="mt-2 text-sm">11/14 返程</p>
+                    <div class="w-1/5 flex flex-col items-center">
+                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">三</div>
+                        <p class="mt-2 text-sm text-gray-200">11/12</p>
+                    </div>
+                    <div class="flex-1 h-0.5 bg-gray-600/50 relative mx-2">
+                         <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent to-[#06D6A0]/50 animate-pulse"></div>
+                    </div>
+                    <div class="w-1/5 flex flex-col items-center">
+                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">四</div>
+                        <p class="mt-2 text-sm text-gray-200">11/13</p>
+                    </div>
+                    <div class="flex-1 h-0.5 bg-gray-600/50 relative mx-2">
+                         <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent to-[#06D6A0]/50 animate-pulse"></div>
+                    </div>
+                    <div class="w-1/5 flex flex-col items-center">
+                        <div class="bg-[#118AB2] rounded-full w-14 h-14 flex items-center justify-center mx-auto font-bold text-xl text-white shadow-md">五</div>
+                        <p class="mt-2 text-sm text-gray-200">11/14 返程</p>
                     </div>
                 </div>
             </div>
             
-            <div class="card rounded-xl shadow-2xl p-6 flex flex-col items-center justify-center text-center">
-                 <h3 class="text-xl font-bold mb-1 text-[#FFD166]">✈️ 去程航班</h3>
-                 <p class="text-3xl font-black text-[#06D6A0]">14:25</p>
-                 <p class="text-gray-300">出發</p>
-                 <p class="text-lg font-bold mt-2">17:30 抵達</p>
+            <div class="card rounded-xl p-6 flex flex-col items-center justify-center text-center">
+                 <h3 class="text-xl font-bold mb-2 text-[#FFD166]">✈️ 去程航班</h3>
+                 <p class="text-4xl font-black text-[#06D6A0]">14:25</p>
+                 <p class="text-gray-300 text-base">出發</p>
+                 <p class="text-lg font-bold mt-3 text-white">17:30 抵達</p>
+                 <p class="text-sm text-gray-400">德威航空 TW688</p>
             </div>
             
-            <div class="card rounded-xl shadow-2xl p-6 flex flex-col items-center justify-center text-center">
-                 <h3 class="text-xl font-bold mb-1 text-[#FFD166]">✈️ 回程航班</h3>
-                 <p class="text-3xl font-black text-[#06D6A0]">12:20</p>
-                 <p class="text-gray-300">出發</p>
-                 <p class="text-lg font-bold mt-2">13:25 抵達</p>
+            <div class="card rounded-xl p-6 flex flex-col items-center justify-center text-center">
+                 <h3 class="text-xl font-bold mb-2 text-[#FFD166]">✈️ 回程航班</h3>
+                 <p class="text-4xl font-black text-[#06D6A0]">12:20</p>
+                 <p class="text-gray-300 text-base">出發</p>
+                 <p class="text-lg font-bold mt-3 text-white">13:25 抵達</p>
+                 <p class="text-sm text-gray-400">德威航空 TW687</p>
             </div>
 
-            <div class="md:col-span-2 lg:col-span-1 card rounded-xl shadow-2xl p-6 flex flex-col items-center justify-center">
+            <div class="md:col-span-2 lg:col-span-1 card rounded-xl p-6 flex flex-col items-center justify-center">
                 <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">費用貢獻分析</h2>
-                <p class="text-center text-sm text-gray-300 mb-4">公司大力補助，讓您輕鬆出遊！此圖顯示公司補助與員工自付額的比例。</p>
+                <p class="text-center text-base text-gray-300 mb-4">公司大力補助，讓您輕鬆出遊！此圖顯示公司補助與員工自付額的比例。</p>
                 <div class="chart-container h-64 md:h-auto">
                     <canvas id="costBreakdownChart"></canvas>
                 </div>
             </div>
 
-            <div class="md:col-span-2 card rounded-xl shadow-2xl p-6">
+            <div class="md:col-span-2 card rounded-xl p-6">
                 <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">不同身份費用比較</h2>
-                 <p class="text-center text-sm text-gray-300 mb-4">此圖表比較不同身份（員工、眷屬、孩童等）的最終費用，幫助您快速了解預算。</p>
+                <p class="text-center text-base text-gray-300 mb-2">此圖表比較不同身份的最終費用，幫助您快速了解預算。</p>
                 
-                <!-- 選項按鈕 -->
-                <div class="flex flex-wrap justify-center space-x-2 md:space-x-4 mb-6 text-sm md:text-base">
-                    <label class="inline-flex items-center cursor-pointer mb-2 md:mb-0">
-                        <input type="radio" name="costOption" value="2900" class="form-radio h-4 w-4 md:h-5 md:w-5 text-[#06D6A0] focus:ring-[#06D6A0]" checked>
-                        <span class="ml-2 text-white font-medium">方案 A: 基本自付額 $2,900</span>
+                <!-- Improved Note Section -->
+                <div class="text-center text-sm text-amber-200/90 bg-black/20 p-3 rounded-lg my-4 border border-white/10 mx-auto max-w-md">
+                    <p><strong class="font-bold text-amber-300">註：</strong> 參加人數達 21 人以上，適用基本自付額 <strong class="font-bold text-white">$2,900</strong>；<br class="sm:hidden"> 16-20 人，適用基本自付額 <strong class="font-bold text-white">$3,900</strong>。</p>
+                </div>
+                
+                <!-- Radio Buttons -->
+                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 mb-6 text-sm md:text-base">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="radio" name="costOption" value="2900" class="form-radio" checked>
+                        <span class="ml-2 text-white font-medium">方案 A: 總人數 > 20</span>
                     </label>
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="radio" name="costOption" value="3900" class="form-radio h-4 w-4 md:h-5 md:w-5 text-[#06D6A0] focus:ring-[#06D6A0]">
-                        <span class="ml-2 text-white font-medium">方案 B: 基本自付額 $3,900</span>
+                        <input type="radio" name="costOption" value="3900" class="form-radio">
+                        <span class="ml-2 text-white font-medium">方案 B: 總人數 16-20</span>
                     </label>
                 </div>
-                <!-- 結束選項按鈕 -->
 
-                <div class="w-full h-80">
+                <div class="w-full h-80 md:h-96">
                     <canvas id="scenarioCostChart"></canvas>
                 </div>
             </div>
 
-            <div class="card rounded-xl shadow-2xl p-6 text-center bg-[#FF6B6B]/30 border-[#FF6B6B]">
+            <div class="card rounded-xl p-6 text-center bg-[#FF6B6B]/30 border-[#FF6B6B]">
                 <h2 class="text-2xl font-bold text-white">⚠️ 重要事項</h2>
                 <div class="mt-4">
                     <h3 class="text-lg font-bold text-[#FFD166]">報名截止</h3>
                     <p class="text-3xl font-black my-2">本週日</p>
-                    <div id="countdownTimer" class="flex justify-center items-end mt-4">
-                        <!-- 倒數計時器將顯示在此處 -->
+                    <div id="countdownTimer" class="flex justify-center items-start mt-4 space-x-2 md:space-x-3">
+                        <!-- Countdown timer will be generated by JS -->
                     </div>
                 </div>
             </div>
 
-            <div class="card rounded-xl shadow-2xl p-6 text-center">
+            <div class="card rounded-xl p-6 text-center">
                 <h3 class="text-lg font-bold text-[#FFD166]">取消政策</h3>
-                <p class="text-gray-200 mt-2 mb-3">報名後取消者，需自付機票取消費用 <span class="font-bold text-[#FF6B6B]">$9,000</span> 至 <span class="font-bold text-[#FF6B6B]">$12,000</span> 元。</p>
+                <p class="text-gray-200 mt-2 mb-3 text-base">報名後取消者，需自付機票取消費用 <span class="font-bold text-[#FF6B6B]">$9,000</span> 至 <span class="font-bold text-[#FF6B6B]">$12,000</span> 元。</p>
             </div>
 
-            <div class="card rounded-xl shadow-2xl p-6 text-center">
+            <div class="card rounded-xl p-6 text-center">
                 <h3 class="text-lg font-bold text-[#FFD166]">📩 如何報名</h3>
                 <p class="text-gray-200 mt-4 text-lg">請於<span class="text-2xl font-bold text-[#06D6A0]">LINE記事本留言</span>確認您的參加總人數</p>
-                <p class="mt-4">謝謝您的配合！期待與您同遊！</p>
+                <p class="mt-4 text-gray-300">謝謝您的配合！期待與您同遊！</p>
             </div>
 
-            <!-- 團費包含與未含項目 -->
-            <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Included and Not Included Sections -->
+            <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
                 <div class="info-list-card">
                     <h2 class="text-2xl font-bold text-center mb-4 text-[#FFD166]">團費包含項目</h2>
                     <ul class="text-gray-300 text-left">
@@ -246,76 +301,62 @@
                     </ul>
                 </div>
             </div>
-            <!-- 團費包含與未含項目結束 -->
-
-            <!-- 行程詳細資訊 -->
-            <div class="lg:col-span-3 card rounded-xl shadow-2xl p-6">
+            
+            <!-- Itinerary Details -->
+            <div class="lg:col-span-3 card rounded-xl shadow-2xl p-6 mt-6">
                 <h2 class="text-2xl font-bold text-center mb-6 text-[#FFD166]">詳細行程 (五天四夜)</h2>
                 
                 <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第一天：桃園國際機場 / 濟州國際機場 → 龍頭岩 + 龍淵峽谷 (巨大火山岩 / 海蝕地形)</h3>
-                    <p class="text-gray-300 itinerary-activity">→ 享用晚餐 → 入住飯店 CHECKIN → 享用飯店設施</p>
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第一天：桃園國際機場 / 濟州國際機場 → 龍頭岩 + 龍淵峽谷</h3>
+                    <p class="text-gray-300 itinerary-activity">抵達濟州島後，前往參觀濟州島的標誌性景點 — <strong>龍頭岩</strong>，欣賞火山噴發後形成的巨大岩石。接著漫步於周邊的 <strong>龍淵峽谷</strong>，感受大自然鬼斧神工的雕刻。傍晚享用豐盛晚餐後，入住飯店並享受飯店設施。</p>
                     <p class="itinerary-meal">早餐: X | 午餐: 花花小點心 | 晚餐: 三姓穴海鮮鍋料理 (W22,500韓幣/人)</p>
                     <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
                 </div>
 
                 <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第二天：飯店 → 城山日出峰 (火山丘 / 世界自然遺產) → 萬丈窟 (世界上最長的熔岩洞) → 濟州城邑民俗村 (贈每人一杯蜂蜜茶或五味子茶) → 東門市場 + 中央地下街 + 黑豬肉一條街 → 返回飯店休憩</h3>
-                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 石鍋拌飯 + 涮涮鍋 (W10,000韓幣/人) | 晚餐: 明倫進士碳烤黑毛豬肉吃到飽 + 季節小菜 (W18,900韓幣/人)</p>
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第二天：城山日出峰 → 萬丈窟 → 濟州城邑民俗村 → 東門市場</h3>
+                    <p class="text-gray-300 itinerary-activity">早晨前往被列為世界自然遺產的 <strong>城山日出峰</strong>，感受壯麗的火山丘景色。隨後探索世界上最長的熔岩洞 <strong>萬丈窟</strong>。接著造訪充滿濟州傳統風情的 <strong>城邑民俗村</strong>。傍晚則前往熱鬧的 <strong>東門市場</strong>、<strong>中央地下街</strong> 及 <strong>黑豬肉一條街</strong>，享受購物與美食的樂趣。</p>
+                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 石鍋拌飯 + 涮涮鍋 (W10,000韓幣/人) | 晚餐: 明倫進士碳烤黑毛豬肉吃到飽 (W18,900韓幣/人)</p>
                     <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
                 </div>
 
                 <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第三天：飯店 → ECOLAND 森林小火車 (森林趣 / 風車 / 海盜船 / 彩虹躺椅 / 哈比人樹洞) → 漢拏樹木園 (十一個主題園區) → 天地淵瀑布 (大長今場景 / 上帝的池塘) → 濟州有林橘子 (贈每人 5 顆橘子) → 返回飯店休憩</h3>
-                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 青花魚定食 (₩11,000韓幣/人) | 晚餐: 活鮑魚 + 碳烤黑毛豬 + 蝦 + 蛋 + 大醬 (₩24,000韓幣/人)</p>
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第三天：ECOLAND 森林小火車 → 漢拏樹木園 → 天地淵瀑布</h3>
+                    <p class="text-gray-300 itinerary-activity">今日將搭乘可愛的 <strong>ECOLAND 森林小火車</strong>，穿梭於美麗的森林中。隨後漫步於擁有十一個主題園區的 <strong>漢拏樹木園</strong>。接著前往壯觀的 <strong>天地淵瀑布</strong> (大長今拍攝場景)。行程中還將造訪 <strong>濟州有林橘子園</strong>，每人可獲贈 5 顆甜美的橘子。</p>
+                    <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 青花魚定食 (₩11,000韓幣/人) | 晚餐: 活鮑魚+碳烤黑毛豬 (₩24,000韓幣/人)</p>
                     <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
                 </div>
 
                 <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第四天：飯店 → 全日自由活動 → 返回飯店休憩</h3>
-                    <p class="text-gray-300 itinerary-activity">此日為全日自由活動時間，您可以自行安排探索濟州島的特色景點、品嚐當地美食或享受飯店設施。領隊導遊將提供協助。</p>
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第四天：全日自由活動</h3>
+                    <p class="text-gray-300 itinerary-activity">此日為全日自由活動時間，您可以自行安排探索濟州島的特色景點、品嚐當地美食或享受飯店設施。領隊導遊將隨時提供協助與建議。</p>
                     <p class="itinerary-meal">早餐: 飯店內用 | 午餐: 方便遊玩, 敬請自理 | 晚餐: 方便遊玩, 敬請自理</p>
                     <p class="text-gray-300 text-sm mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
                 </div>
 
                 <div class="itinerary-day-card">
-                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第五天：飯店出發 → 濟州國際機場 / 桃園國際機場 → 歡樂賦歸</h3>
-                    <p class="text-gray-300 itinerary-activity">享受完早餐後，前往濟州國際機場，搭乘班機返回桃園國際機場，結束愉快的濟州島之旅。</p>
+                    <h3 class="text-xl font-bold text-[#FFD166] mb-2">第五天：濟州國際機場 → 桃園國際機場 → 歡樂賦歸</h3>
+                    <p class="text-gray-300 itinerary-activity">在飯店享用完早餐後，整理行李，帶著滿滿的回憶前往濟州國際機場。搭乘班機返回桃園國際機場，結束這趟精彩的濟州島員工旅遊。</p>
                     <p class="itinerary-meal">早餐: 飯店內用 | 午餐: X | 晚餐: X</p>
                     <p class="text-gray-300 text-sm mt-2">住宿: 溫暖的家</p>
                 </div>
             </div>
-            <!-- 行程詳細資訊結束 -->
 
         </main>
     </div>
 
     <script>
+        // Chart.js Global Configuration
+        Chart.defaults.font.family = "'Noto Sans TC', sans-serif";
+        Chart.defaults.color = '#E0F2F1';
+
         const chartTooltipTitleCallback = (tooltipItems) => {
             const item = tooltipItems[0];
             let label = item.chart.data.labels[item.dataIndex];
-            if (Array.isArray(label)) {
-                return label.join(' ');
-            }
-            return label;
-        };
-        
-        const wrapLabel = (label, maxLength = 16) => {
-            if (label.length <= maxLength) return label;
-            const words = label.split(' ');
-            const lines = [];
-            let currentLine = '';
-            for (const word of words) {
-                if ((currentLine + word).length > maxLength) {
-                    lines.push(currentLine.trim());
-                    currentLine = '';
-                }
-                currentLine += word + ' ';
-            }
-            lines.push(currentLine.trim());
-            return lines.filter(line => line);
+            return Array.isArray(label) ? label.join(' ') : label;
         };
 
+        // Doughnut Chart: Cost Breakdown
         const costBreakdownCtx = document.getElementById('costBreakdownChart').getContext('2d');
         new Chart(costBreakdownCtx, {
             type: 'doughnut',
@@ -326,6 +367,7 @@
                     backgroundColor: ['#06D6A0', '#FFD166'],
                     borderColor: '#073B4C',
                     borderWidth: 4,
+                    hoverOffset: 8
                 }]
             },
             options: {
@@ -334,34 +376,34 @@
                 plugins: {
                     legend: {
                         position: 'bottom',
-                        labels: {
-                            color: '#FFFFFF'
-                        }
+                        labels: { color: '#FFFFFF', padding: 20 }
                     },
                     tooltip: {
-                        callbacks: {
-                            title: chartTooltipTitleCallback
-                        }
+                        callbacks: { title: chartTooltipTitleCallback },
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 10
                     }
                 },
                 cutout: '60%'
             }
         });
 
-        // Define base costs for different scenarios based on user's $2900 / $3900 choice
+        // Bar Chart: Scenario Costs
         const baseCosts = {
             '2900': {
                 '員工本人': 2900,
-                '單人房': 2900 + 9000, // 員工自付額 + 單人房補價差
-                '眷屬 (補助後)': 17900, // 根據使用者提供的數字
-                '9歲以下孩童 (不佔床)': 16900, // 眷屬費用 - 孩童優惠 17900 - 1000
+                '單人房': 2900 + 9000,
+                '眷屬 (補助後)': 17900, 
+                '9歲以下孩童 (不佔床)': 16900,
                 '未滿2歲嬰兒 (不佔床)': 6500
             },
             '3900': {
                 '員工本人': 3900,
-                '單人房': 3900 + 9000, // 員工自付額 + 單人房補價差
-                '眷屬 (補助後)': 18900, // 根據使用者提供的數字
-                '9歲以下孩童 (不佔床)': 17900, // 眷屬費用 - 孩童優惠 18900 - 1000
+                '單人房': 3900 + 9000,
+                '眷屬 (補助後)': 18900, 
+                '9歲以下孩童 (不佔床)': 17900,
                 '未滿2歲嬰兒 (不佔床)': 6500
             }
         };
@@ -375,16 +417,16 @@
         ];
 
         const scenarioCostCtx = document.getElementById('scenarioCostChart').getContext('2d');
-        // Initialize chart with the default selected option (2900)
         let scenarioChart = new Chart(scenarioCostCtx, {
             type: 'bar',
             data: {
                 labels: scenarioLabels,
                 datasets: [{
                     label: '總費用 (元)',
-                    data: scenarioLabels.map(label => baseCosts['2900'][label]), // Default to 2900 plan
-                    backgroundColor: ['#118AB2', '#FFD166', '#06D6A0', '#06D6A0', '#FF6B6B'],
-                    borderRadius: 8
+                    data: scenarioLabels.map(label => baseCosts['2900'][label]),
+                    backgroundColor: ['#118AB2', '#FFD166', '#06D6A0', '#48bfe3', '#FF6B6B'],
+                    borderRadius: 8,
+                    borderWidth: 0
                 }]
             },
             options: {
@@ -394,57 +436,53 @@
                 scales: {
                     x: {
                         beginAtZero: true,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#FFFFFF'
-                        }
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#FFFFFF' }
                     },
                     y: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: '#FFFFFF'
-                        }
+                        grid: { display: false },
+                        ticks: { color: '#FFFFFF', font: { size: 13 } }
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
-                        callbacks: {
-                            title: chartTooltipTitleCallback
-                        }
+                         callbacks: { title: chartTooltipTitleCallback },
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 10
                     }
                 }
             }
         });
 
-        // Add event listeners for radio buttons to update the chart
-        const costOptionRadios = document.querySelectorAll('input[name="costOption"]');
-        costOptionRadios.forEach(radio => {
+        // Event listener for radio buttons
+        document.querySelectorAll('input[name="costOption"]').forEach(radio => {
             radio.addEventListener('change', (event) => {
-                const selectedOption = event.target.value; // '2900' or '3900'
+                const selectedOption = event.target.value;
                 scenarioChart.data.datasets[0].data = scenarioLabels.map(label => baseCosts[selectedOption][label]);
-                scenarioChart.update(); // Update the chart with new data
+                scenarioChart.update();
             });
         });
 
         // Countdown Timer Logic
         const countdownTimerElement = document.getElementById('countdownTimer');
-        // Set the deadline to this Sunday (June 15, 2025) at the end of the day (23:59:59)
-        const deadlineDate = new Date('2025-06-15T23:59:59').getTime();
+        // Set the deadline to the upcoming Sunday at 23:59:59
+        const today = new Date();
+        const dayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, etc.
+        const daysUntilSunday = 7 - dayOfWeek;
+        const deadlineDate = new Date(today);
+        deadlineDate.setDate(today.getDate() + (dayOfWeek === 0 ? 0 : daysUntilSunday)); // If today is Sunday, deadline is today
+        deadlineDate.setHours(23, 59, 59, 999);
 
         const updateCountdown = () => {
             const now = new Date().getTime();
-            const distance = deadlineDate - now;
+            const distance = deadlineDate.getTime() - now;
 
             if (distance < 0) {
                 clearInterval(countdownInterval);
-                countdownTimerElement.innerHTML = '<span class="text-xl font-bold text-[#FF6B6B]">報名已截止！</span>';
+                countdownTimerElement.innerHTML = '<span class="text-xl font-bold text-white">報名已截止！</span>';
                 return;
             }
 
@@ -453,21 +491,22 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+            // Correctly structured HTML for the countdown timer
             countdownTimerElement.innerHTML = `
-                <div>
-                    <span class="countdown-segment">${days}</span>
+                <div class="countdown-segment">
+                    <span>${days.toString().padStart(2, '0')}</span>
                     <span class="countdown-label">天</span>
                 </div>
-                <div>
-                    <span class="countdown-segment">${hours}</span>
+                <div class="countdown-segment">
+                    <span>${hours.toString().padStart(2, '0')}</span>
                     <span class="countdown-label">時</span>
                 </div>
-                <div>
-                    <span class="countdown-segment">${minutes}</span>
+                <div class="countdown-segment">
+                    <span>${minutes.toString().padStart(2, '0')}</span>
                     <span class="countdown-label">分</span>
                 </div>
-                <div>
-                    <span class="countdown-segment">${seconds}</span>
+                <div class="countdown-segment">
+                    <span>${seconds.toString().padStart(2, '0')}</span>
                     <span class="countdown-label">秒</span>
                 </div>
             `;
@@ -478,4 +517,3 @@
     </script>
 </body>
 </html>
-
