@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -320,88 +319,137 @@
                 planA: { base: 2900, label: "若總人數>20位" }
             };
 
+            const employeeName = document.getElementById('regName').value.trim();
+            const isSpecialUser = employeeName === '廖彤婕';
+
             let finalHtml = '';
             
             for (const scenarioKey in scenarios) {
                 const scenario = scenarios[scenarioKey];
                 
-                const hasBonus = document.getElementById('performanceBonus').checked;
+                const hasBonusCheckbox = document.getElementById('performanceBonus').checked;
                 const numAdults = parseInt(numAdultsInput.value) || 0;
                 const numChildren = parseInt(numChildrenInput.value) || 0;
                 const numInfants = parseInt(numInfantsInput.value) || 0;
                 const needsSingleRoom = document.getElementById('singleRoom').checked;
 
                 const companySubsidy = 30000;
-                const familyBonusSubsidy = 15000;
                 const baseEmployeeCost = scenario.base;
-                const totalTourCost = baseEmployeeCost + companySubsidy;
-                const childDiscount = 1000;
+                const companionBaseCost = baseEmployeeCost + companySubsidy;
                 const infantCost = 6500;
                 const singleRoomSupplement = 9000;
                 const adultPassportFee = 1600;
                 const childPassportFee = 1200;
-
-                let tourTotalCost = 0;
+                
+                let subTotal = 0;
                 let passportTotalCost = 0;
                 let breakdownHtml = '<div class="text-left text-sm space-y-1 mt-3">';
-                let bonusApplied = false;
 
-                tourTotalCost += baseEmployeeCost;
+                // 1. ADD BASE COSTS
+                subTotal += baseEmployeeCost;
                 breakdownHtml += `<p>• 員工本人：<span class="font-bold text-white">${baseEmployeeCost.toLocaleString()}</span> 元</p>`;
+
+                if (numAdults > 0) {
+                    subTotal += numAdults * companionBaseCost;
+                    breakdownHtml += `<p>• 眷屬 (成人 ${numAdults}位)：<span class="font-bold text-white">${(numAdults * companionBaseCost).toLocaleString()}</span> 元</p>`;
+                }
+                if (numChildren > 0) {
+                    subTotal += numChildren * companionBaseCost;
+                    breakdownHtml += `<p>• 孩童 (${numChildren}位)：<span class="font-bold text-white">${(numChildren * companionBaseCost).toLocaleString()}</span> 元</p>`;
+                }
+                if (numInfants > 0) {
+                    subTotal += numInfants * infantCost;
+                    breakdownHtml += `<p>• 嬰兒 (${numInfants}位)：<span class="font-bold text-white">${(numInfants * infantCost).toLocaleString()}</span> 元</p>`;
+                }
+
+                // Separator for discounts
+                if (numChildren > 0 || (numAdults > 0 || numChildren > 0)) {
+                    breakdownHtml += `<hr class="border-gray-600 my-2">`;
+                    breakdownHtml += `<p class="text-gray-400">折扣與補助：</p>`;
+                }
+
+                // 2. APPLY DISCOUNTS & BONUSES
+                // Standard Child Discount
+                const standardChildDiscountTotal = 1000 * numChildren;
+                if (standardChildDiscountTotal > 0) {
+                    subTotal -= standardChildDiscountTotal;
+                    breakdownHtml += `<p class="pl-4">└─ 孩童不佔床折扣：<span class="font-bold text-green-400">-${standardChildDiscountTotal.toLocaleString()}</span> 元</p>`;
+                }
+
+                // Special Child Discount
+                if (isSpecialUser) {
+                    let specialChildCount = 0;
+                    for (let i = 1; i <= numChildren; i++) {
+                        const childDob = regForm.querySelector(`[name="child_${i}_dob"]`)?.value;
+                        if (getAge(childDob) < 4) {
+                            specialChildCount++;
+                        }
+                    }
+                    if (specialChildCount > 0) {
+                        const specialChildDiscountTotal = 2500 * specialChildCount;
+                        subTotal -= specialChildDiscountTotal;
+                        breakdownHtml += `<p class="pl-4 text-yellow-400">└─ ⭐ 彤婕專屬-孩童加碼：<span class="font-bold">-${specialChildDiscountTotal.toLocaleString()}</span> 元</p>`;
+                    }
+                }
+                
+                // Bonus Logic
+                if (numAdults > 0 || numChildren > 0) {
+                    if (hasBonusCheckbox) {
+                        const standardBonus = 15000;
+                        subTotal -= standardBonus;
+                        breakdownHtml += `<p class="pl-4">└─ 業績達標補助：<span class="font-bold text-green-400">-${standardBonus.toLocaleString()}</span> 元</p>`;
+
+                        if (isSpecialUser) {
+                            const specialBonus = 5000; // 20000 total - 15000 standard
+                            subTotal -= specialBonus;
+                            breakdownHtml += `<p class="pl-4 text-yellow-400">└─ ⭐ 彤婕專屬-達標加碼：<span class="font-bold">-${specialBonus.toLocaleString()}</span> 元</p>`;
+                        }
+                    } else if (isSpecialUser) {
+                        const specialBonus = 5000;
+                        subTotal -= specialBonus;
+                        breakdownHtml += `<p class="pl-4 text-yellow-400">└─ ⭐ 彤婕專屬-特別補助：<span class="font-bold">-${specialBonus.toLocaleString()}</span> 元</p>`;
+                    }
+                }
+                
+                // 3. APPLY EXTRA FEES
+                // Passport fees
                 const employeeDob = regForm.querySelector('[name="employee_dob"]')?.value;
                 if (regForm.querySelector('[name="employee_renew_passport"]')?.checked) {
                     passportTotalCost += (getAge(employeeDob) < 14 ? childPassportFee : adultPassportFee);
                 }
-
-
                 for (let i = 1; i <= numAdults; i++) {
-                    let adultCost = totalTourCost;
-                    let adultBreakdownText = `• 眷屬 (成人 ${i})：`;
-                    if (hasBonus && !bonusApplied) {
-                        adultCost -= familyBonusSubsidy;
-                        adultBreakdownText = `• 達標眷屬 (成人 ${i})：`;
-                        bonusApplied = true;
-                    }
-                    tourTotalCost += adultCost;
-                    breakdownHtml += `<p>${adultBreakdownText}<span class="font-bold text-white">${adultCost.toLocaleString()}</span> 元</p>`;
                     if (regForm.querySelector(`[name="adult_${i}_renew_passport"]`)?.checked) {
                         const dob = regForm.querySelector(`[name="adult_${i}_dob"]`)?.value;
                         passportTotalCost += (getAge(dob) < 14 ? childPassportFee : adultPassportFee);
                     }
                 }
-
                 for (let i = 1; i <= numChildren; i++) {
-                    let childCost = totalTourCost - childDiscount;
-                    let childBreakdownText = `• 孩童 (${i})：`;
-                    if (hasBonus && !bonusApplied) {
-                        childCost -= familyBonusSubsidy;
-                        childBreakdownText = `• 達標眷屬 (孩童 ${i})：`;
-                        bonusApplied = true;
-                    }
-                    tourTotalCost += childCost;
-                    breakdownHtml += `<p>${childBreakdownText}<span class="font-bold text-white">${childCost.toLocaleString()}</span> 元</p>`;
-                     if (regForm.querySelector(`[name="child_${i}_renew_passport"]`)?.checked) {
+                    if (regForm.querySelector(`[name="child_${i}_renew_passport"]`)?.checked) {
                         passportTotalCost += childPassportFee;
                     }
                 }
-                
-                if (numInfants > 0) {
-                    tourTotalCost += numInfants * infantCost;
-                    breakdownHtml += `<p>• 嬰兒 (${numInfants}位)：<span class="font-bold text-white">${(numInfants * infantCost).toLocaleString()}</span> 元</p>`;
-                    for (let i = 1; i <= numInfants; i++) {
-                        if (regForm.querySelector(`[name="infant_${i}_renew_passport"]`)?.checked) {
-                            passportTotalCost += childPassportFee;
-                        }
+                for (let i = 1; i <= numInfants; i++) {
+                    if (regForm.querySelector(`[name="infant_${i}_renew_passport"]`)?.checked) {
+                        passportTotalCost += childPassportFee;
                     }
                 }
 
-                if (needsSingleRoom) { tourTotalCost += singleRoomSupplement; breakdownHtml += `<p>• 單人房價差：<span class="font-bold text-white">${singleRoomSupplement.toLocaleString()}</span> 元</p>`; }
+                if (needsSingleRoom || passportTotalCost > 0) {
+                    breakdownHtml += `<hr class="border-gray-600 my-2">`;
+                    breakdownHtml += `<p class="text-gray-400">其他費用：</p>`;
+                }
+                
+                if (needsSingleRoom) {
+                    subTotal += singleRoomSupplement;
+                    breakdownHtml += `<p class="pl-4">└─ 單人房價差：<span class="font-bold text-white">+${singleRoomSupplement.toLocaleString()}</span> 元</p>`;
+                }
                 
                 if (passportTotalCost > 0) {
-                     breakdownHtml += `<p>• 護照辦理費總計：<span class="font-bold text-amber-300">${passportTotalCost.toLocaleString()}</span> 元</p>`;
+                    breakdownHtml += `<p class="pl-4">└─ 護照辦理費：<span class="font-bold text-amber-300">+${passportTotalCost.toLocaleString()}</span> 元</p>`;
                 }
 
-                let grandTotal = tourTotalCost + passportTotalCost;
+                let grandTotal = subTotal + passportTotalCost;
+                
                 breakdownHtml += '</div>';
 
                 finalHtml += `
@@ -415,12 +463,15 @@
             resultDiv.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
         }
         
+        // Add event listener to name input to trigger cost calculation
+        document.getElementById('regName').addEventListener('input', calculateTotalCost);
+
         numAdultsInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
         numChildrenInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
         numInfantsInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
         
         regForm.addEventListener('change', (event) => {
-            const numberInputIds = ['numAdults', 'numChildren', 'numInfants'];
+            const numberInputIds = ['numAdults', 'numChildren', 'numInfants', 'regName'];
             if (!numberInputIds.includes(event.target.id)) {
                 calculateTotalCost();
             }
