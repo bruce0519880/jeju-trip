@@ -94,6 +94,11 @@
             content: '✓'; color: #073B4C; font-weight: bold; font-size: 0.8rem;
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
+        input[type="checkbox"]:disabled {
+            border-color: #4B5563;
+            background-color: #374151;
+            cursor: not-allowed;
+        }
         label.inline-flex span { transition: color 0.2s ease-in-out; }
         input[type="checkbox"]:checked + span { color: #FFD166; font-weight: 600; }
         .form-input {
@@ -163,7 +168,12 @@
             <section class="card p-6 md:p-8">
                 <h2 class="card-header">費用試算 & 線上報名</h2>
                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">💰 費用規則</h3><div class="info-list-item"><div><strong>公司補助：</strong><br>每位員工補助 <strong class="text-[#06D6A0]">$30,000</strong> 元。</div></div><div class="info-list-item"><div><strong>員工自付：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>總人數 > 20：自付 $2,900</li><li>總人數 16-20：自付 $3,900</li></ul></div></div><div class="info-list-item"><div><strong>眷屬補助：</strong><br>業績達標者，可為<strong class="text-white">一位同行眷屬</strong> (成人或孩童) 申請 <strong class="text-[#FFD166]">$15,000 元補助</strong>！</div></div><div class="info-list-item"><div><strong>其他優惠：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>孩童不佔床：團費減 $1,000</li><li>嬰兒價：$6,500</li><li>單人房：需補價差 $9,000</li></ul></div></div></div>
+                    <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">💰 費用規則</h3>
+                        <div class="info-list-item"><div><strong>公司補助：</strong><br>正式員工補助 <strong class="text-[#06D6A0]">$30,000</strong> 元。<br>外包人員補助 50% (<strong class="text-[#06D6A0]">$15,000</strong> 元)。</div></div>
+                        <div class="info-list-item"><div><strong>員工自付：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>總人數 > 20：自付 $2,900</li><li>總人數 16-20：自付 $3,900</li></ul></div></div>
+                        <div class="info-list-item"><div><strong>眷屬補助：</strong><br>業績達標者，可為<strong class="text-white">一位同行眷屬</strong> (成人或孩童) 申請 <strong class="text-[#FFD166]">$15,000 元補助</strong>！<br><span class="text-sm text-gray-400">(外包人員不適用)</span></div></div>
+                        <div class="info-list-item"><div><strong>其他優惠：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>孩童不佔床：團費減 $1,000</li><li>嬰兒價：$6,500</li><li>單人房：需補價差 $9,000</li></ul></div></div>
+                    </div>
                     <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">📩 報名流程</h3><div class="info-list-item"><div><strong>步驟一：</strong><br>填寫您與所有同行眷屬的資料，並勾選相關選項。</div></div><div class="info-list-item"><div><strong>步驟二：</strong><br>點擊「送出報名」，確認資料送出成功。</div></div><div class="info-list-item"><div><strong>步驟三 (重要)：</strong><br>請將所有人的<strong class="text-[#FFD166]">護照照片電子檔</strong>，LINE 給<strong class="text-[#FFD166]">主辦人</strong>。</div></div><div class="info-list-item"><div><strong>取消政策：</strong><br>報名後取消，需自付機票取消費 <strong class="text-[#FF6B6B]">$9,000 - $12,000</strong> 元。</div></div></div>
                 </div>
                 <hr class="border-gray-700/50 mb-8">
@@ -188,7 +198,13 @@
                     
                     <div id="companionSection" class="space-y-6"></div>
 
-                    <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">3. 整體選項</legend><div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-8 mt-2 justify-center"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus" name="bonus"><span class="ml-3 text-white">去年業績達標 (享眷屬補助)</span></label><label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom" name="single_room"><span class="ml-3 text-white">需要單人房 (補價差$9,000)</span></label></div></fieldset>
+                    <fieldset class="p-4 border border-gray-600 rounded-lg"><legend class="px-2 text-lg font-semibold text-white">3. 整體選項</legend>
+                        <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8 mt-2 justify-center">
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="isOutsourced" name="is_outsourced"><span class="ml-3 text-white">我是外包人員</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus" name="bonus"><span class="ml-3 text-white">去年業績達標 (享眷屬補助)</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom" name="single_room"><span class="ml-3 text-white">需要單人房 (補價差$9,000)</span></label>
+                        </div>
+                    </fieldset>
 
                     <div id="costResult" class="text-center bg-black/20 p-6 rounded-lg border border-white/10 min-h-[120px] flex flex-col justify-center"><p class="text-gray-400">請填寫人數，下方將顯示費用預估</p></div>
                     <button type="submit" id="submitBtn" class="w-full font-bold py-3 px-8 rounded-lg transition-colors duration-300 text-lg">
@@ -260,6 +276,10 @@
         const hiddenAdultsInput = document.getElementById('hiddenAdults');
         const hiddenChildrenInput = document.getElementById('hiddenChildren');
         const hiddenInfantsInput = document.getElementById('hiddenInfants');
+        const nameInput = document.getElementById('regName');
+        const isOutsourcedCheckbox = document.getElementById('isOutsourced');
+        const performanceBonusCheckbox = document.getElementById('performanceBonus');
+
 
         function generateCompanionFields() {
             const adults = parseInt(numAdultsInput.value) || 0;
@@ -313,29 +333,54 @@
             return age;
         }
 
+        function handleSpecialConditions() {
+            const employeeName = nameInput.value.trim();
+            const isOutsourced = isOutsourcedCheckbox.checked;
+            const isZhang = employeeName === '張仲宇';
+
+            if (isZhang && isOutsourced) {
+                performanceBonusCheckbox.checked = true;
+                performanceBonusCheckbox.disabled = true;
+            } else if (isOutsourced) {
+                performanceBonusCheckbox.checked = false;
+                performanceBonusCheckbox.disabled = true;
+            } else {
+                performanceBonusCheckbox.disabled = false;
+            }
+            calculateTotalCost();
+        }
+
         function calculateTotalCost() {
             const scenarios = {
                 planB: { base: 3900, label: "若總人數16-20位" },
                 planA: { base: 2900, label: "若總人數>20位" }
             };
 
-            const employeeName = document.getElementById('regName').value.trim();
-            const isSpecialUser = employeeName === '廖彤婕';
+            const employeeName = nameInput.value.trim();
+            const isLiao = employeeName === '廖彤婕';
+            const isZhang = employeeName === '張仲宇';
+            const isZhangYiKai = employeeName === '張逸凱';
+            const isOutsourced = isOutsourcedCheckbox.checked;
 
             let finalHtml = '';
             
             for (const scenarioKey in scenarios) {
                 const scenario = scenarios[scenarioKey];
                 
-                const hasBonusCheckbox = document.getElementById('performanceBonus').checked;
+                const hasBonusCheckbox = performanceBonusCheckbox.checked;
                 const numAdults = parseInt(numAdultsInput.value) || 0;
                 const numChildren = parseInt(numChildrenInput.value) || 0;
                 const numInfants = parseInt(numInfantsInput.value) || 0;
                 const needsSingleRoom = document.getElementById('singleRoom').checked;
 
-                const companySubsidy = 30000;
+                // Determine employee's own subsidy
+                let employeeCompanySubsidy = 30000;
+                if (isOutsourced && !isZhang) {
+                    employeeCompanySubsidy = 15000;
+                }
+
                 const baseEmployeeCost = scenario.base;
-                const companionBaseCost = baseEmployeeCost + companySubsidy;
+                const companionBaseCost = baseEmployeeCost + 30000; 
                 const infantCost = 6500;
                 const singleRoomSupplement = 9000;
                 const adultPassportFee = 1600;
@@ -345,9 +390,12 @@
                 let passportTotalCost = 0;
                 let breakdownHtml = '<div class="text-left text-sm space-y-1 mt-3">';
 
-                // 1. ADD BASE COSTS
-                subTotal += baseEmployeeCost;
-                breakdownHtml += `<p>• 員工本人：<span class="font-bold text-white">${baseEmployeeCost.toLocaleString()}</span> 元</p>`;
+                // 1. ADD BASE COSTS & EMPLOYEE SUBSIDY
+                const employeeSelfPay = companionBaseCost - employeeCompanySubsidy;
+                subTotal += employeeSelfPay;
+                breakdownHtml += `<p>• 員工本人團費：<span class="font-bold text-white">${companionBaseCost.toLocaleString()}</span> 元</p>`;
+                breakdownHtml += `<p class="pl-4">└─ 公司補助：<span class="font-bold text-green-400">-${employeeCompanySubsidy.toLocaleString()}</span> 元</p>`;
+
 
                 if (numAdults > 0) {
                     subTotal += numAdults * companionBaseCost;
@@ -363,21 +411,19 @@
                 }
 
                 // Separator for discounts
-                if (numChildren > 0 || (numAdults > 0 || numChildren > 0)) {
-                    breakdownHtml += `<hr class="border-gray-600 my-2">`;
-                    breakdownHtml += `<p class="text-gray-400">折扣與補助：</p>`;
+                if (numChildren > 0 || hasBonusCheckbox || (isLiao && (numAdults>0 || numChildren>0)) ) {
+                     breakdownHtml += `<hr class="border-gray-600 my-2">`;
+                     breakdownHtml += `<p class="text-gray-400">折扣與補助：</p>`;
                 }
 
                 // 2. APPLY DISCOUNTS & BONUSES
-                // Standard Child Discount
                 const standardChildDiscountTotal = 1000 * numChildren;
                 if (standardChildDiscountTotal > 0) {
                     subTotal -= standardChildDiscountTotal;
                     breakdownHtml += `<p class="pl-4">└─ 孩童不佔床折扣：<span class="font-bold text-green-400">-${standardChildDiscountTotal.toLocaleString()}</span> 元</p>`;
                 }
 
-                // Special Child Discount
-                if (isSpecialUser) {
+                if (isLiao) {
                     let specialChildCount = 0;
                     for (let i = 1; i <= numChildren; i++) {
                         const childDob = regForm.querySelector(`[name="child_${i}_dob"]`)?.value;
@@ -392,19 +438,22 @@
                     }
                 }
                 
-                // Bonus Logic
                 if (numAdults > 0 || numChildren > 0) {
                     if (hasBonusCheckbox) {
-                        const standardBonus = 15000;
-                        subTotal -= standardBonus;
-                        breakdownHtml += `<p class="pl-4">└─ 業績達標補助：<span class="font-bold text-green-400">-${standardBonus.toLocaleString()}</span> 元</p>`;
+                        if (isZhangYiKai) {
+                            breakdownHtml += `<p class="pl-4 text-red-400">└─ ⭐ 已將折扣給廖彤婕使用</p>`;
+                        } else if (!isOutsourced || isZhang) {
+                            const standardBonus = 15000;
+                            subTotal -= standardBonus;
+                            breakdownHtml += `<p class="pl-4">└─ 業績達標補助：<span class="font-bold text-green-400">-${standardBonus.toLocaleString()}</span> 元</p>`;
 
-                        if (isSpecialUser) {
-                            const specialBonus = 5000; // 20000 total - 15000 standard
-                            subTotal -= specialBonus;
-                            breakdownHtml += `<p class="pl-4 text-yellow-400">└─ ⭐ 彤婕專屬-達標加碼：<span class="font-bold">-${specialBonus.toLocaleString()}</span> 元</p>`;
+                            if (isLiao) {
+                                const specialBonus = 5000;
+                                subTotal -= specialBonus;
+                                breakdownHtml += `<p class="pl-4 text-yellow-400">└─ ⭐ 彤婕專屬-達標加碼：<span class="font-bold">-${specialBonus.toLocaleString()}</span> 元</p>`;
+                            }
                         }
-                    } else if (isSpecialUser) {
+                    } else if (isLiao) {
                         const specialBonus = 5000;
                         subTotal -= specialBonus;
                         breakdownHtml += `<p class="pl-4 text-yellow-400">└─ ⭐ 彤婕專屬-特別補助：<span class="font-bold">-${specialBonus.toLocaleString()}</span> 元</p>`;
@@ -412,7 +461,6 @@
                 }
                 
                 // 3. APPLY EXTRA FEES
-                // Passport fees
                 const employeeDob = regForm.querySelector('[name="employee_dob"]')?.value;
                 if (regForm.querySelector('[name="employee_renew_passport"]')?.checked) {
                     passportTotalCost += (getAge(employeeDob) < 14 ? childPassportFee : adultPassportFee);
@@ -463,23 +511,23 @@
             resultDiv.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
         }
         
-        // Add event listener to name input to trigger cost calculation
-        document.getElementById('regName').addEventListener('input', calculateTotalCost);
+        nameInput.addEventListener('input', handleSpecialConditions);
+        isOutsourcedCheckbox.addEventListener('change', handleSpecialConditions);
 
         numAdultsInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
         numChildrenInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
         numInfantsInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
         
         regForm.addEventListener('change', (event) => {
-            const numberInputIds = ['numAdults', 'numChildren', 'numInfants', 'regName'];
-            if (!numberInputIds.includes(event.target.id)) {
+            const noTriggerIds = ['regName', 'isOutsourced', 'numAdults', 'numChildren', 'numInfants'];
+            if (!noTriggerIds.includes(event.target.id)) {
                 calculateTotalCost();
             }
         });
 
         document.addEventListener('DOMContentLoaded', () => {
              generateCompanionFields();
-             calculateTotalCost();
+             handleSpecialConditions();
         });
 
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec';
@@ -501,7 +549,7 @@
                         formStatus.style.color = '#06D6A0';
                         form.reset();
                         generateCompanionFields();
-                        calculateTotalCost();
+                        handleSpecialConditions();
                     } else {
                         throw new Error(data.error || 'Unknown error');
                     }
