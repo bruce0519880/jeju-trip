@@ -68,7 +68,7 @@
         .passport-info-item {
             display: flex;
             align-items: flex-start;
-            font-size: 0.95rem; /* Slightly smaller for better fit */
+            font-size: 0.95rem;
             color: #E0F2F1;
             margin-bottom: 0.6rem;
         }
@@ -127,6 +127,30 @@
         #formStatus strong {
             color: #FFD166;
         }
+        /* --- Progress Bar Styles --- */
+        .progress-bar-container {
+            background-color: #073B4C;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid #118AB2;
+        }
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #FFD166, #06D6A0);
+            padding: 0.5rem;
+            text-align: right;
+            color: #073B4C;
+            font-weight: bold;
+            transition: width 0.5s ease-in-out;
+        }
+        /* --- Plan Highlight Style --- */
+        .plan-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .active-plan {
+            border-color: #FFD166;
+            box-shadow: 0 0 20px rgba(255, 209, 102, 0.4);
+        }
     </style>
 </head>
 <body class="p-4 sm:p-6 lg:p-8">
@@ -177,6 +201,16 @@
                     <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">📩 報名流程</h3><div class="info-list-item"><div><strong>步驟一：</strong><br>填寫您與所有同行眷屬的資料，並勾選相關選項。</div></div><div class="info-list-item"><div><strong>步驟二：</strong><br>點擊「送出報名」，確認資料送出成功。</div></div><div class="info-list-item"><div><strong>步驟三 (重要)：</strong><br>請將所有人的<strong class="text-[#FFD166]">護照照片電子檔</strong>，LINE 給<strong class="text-[#FFD166]">主辦人</strong>。</div></div><div class="info-list-item"><div><strong>取消政策：</strong><br>報名後取消，需自付機票取消費 <strong class="text-[#FF6B6B]">$9,000 - $12,000</strong> 元。</div></div></div>
                 </div>
                 <hr class="border-gray-700/50 mb-8">
+
+                <!-- Progress Bar Section -->
+                <div id="progress-container" class="mb-8 p-4 rounded-lg bg-black/20 text-center hidden">
+                    <h3 id="progress-title" class="text-xl font-bold text-white mb-2"></h3>
+                    <div class="progress-bar-container">
+                        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                    </div>
+                    <p id="progress-text" class="mt-2 text-lg"></p>
+                </div>
+
                 <form id="registrationForm" class="space-y-6">
                     <h3 class="text-2xl font-bold text-center text-white">費用試算 & 報名表</h3>
                     
@@ -219,7 +253,6 @@
                 <div class="card p-6"><h3 class="text-xl font-bold text-center mb-4 text-white">團費未含項目</h3><div class="space-y-2 text-gray-200"><p class="info-list-item">證照費：新辦 (換新) 十年效期護照費用 NT$1,600 元。</p><p class="info-list-item">證照費：14 歲以下五年效期護照費用 NT$1,200 元。</p><p class="info-list-item">純係私人之消費：如電話費、洗衣費等。</p><p class="info-list-item">床頭、行李小費及表上未列明之其他行程自費行程。</p><p class="info-list-item">旅遊平安保險及旅遊不便險等其他私人保險項目。</p></div></div>
             </section>
             
-            <!-- New Passport Information Section -->
             <section class="card p-6 md:p-8">
                 <h2 class="card-header">護照換發準備資料</h2>
                 <div class="text-center mb-6 bg-yellow-900/30 text-yellow-300 p-3 rounded-lg">
@@ -279,7 +312,14 @@
         const nameInput = document.getElementById('regName');
         const isOutsourcedCheckbox = document.getElementById('isOutsourced');
         const performanceBonusCheckbox = document.getElementById('performanceBonus');
-
+        
+        const progressContainer = document.getElementById('progress-container');
+        const progressTitle = document.getElementById('progress-title');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        const progressText = document.getElementById('progress-text');
+        
+        let serverHeadcount = 0; // To store headcount from server
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec';
 
         function generateCompanionFields() {
             const adults = parseInt(numAdultsInput.value) || 0;
@@ -315,7 +355,6 @@
                 companionHtml += createCompanionFieldset('infant', i);
             }
             companionSection.innerHTML = companionHtml;
-             // Add event listeners to newly created fields
             regForm.querySelectorAll('#companionSection input').forEach(input => {
                 input.addEventListener('change', calculateTotalCost);
             });
@@ -341,10 +380,8 @@
             const isForcedBonusUser = forcedBonusUsers.includes(employeeName);
             const isZhang = employeeName === '張仲宇';
 
-            // Reset disabled state first
             performanceBonusCheckbox.disabled = false;
 
-            // Apply conditions
             if (isForcedBonusUser) {
                 performanceBonusCheckbox.checked = true;
                 performanceBonusCheckbox.disabled = true;
@@ -356,6 +393,25 @@
                 performanceBonusCheckbox.disabled = true;
             }
             calculateTotalCost();
+        }
+
+        function updateProgressBar(currentCount) {
+            const targetCount = 21;
+            const percentage = Math.min((currentCount / targetCount) * 100, 100);
+            
+            progressContainer.classList.remove('hidden');
+            progressTitle.innerText = `目前報名進度 (${currentCount} / ${targetCount} 人)`;
+            progressBarFill.style.width = `${percentage}%`;
+            progressBarFill.innerText = `${Math.round(percentage)}%`;
+
+            if (currentCount >= targetCount) {
+                progressText.innerText = '目標達成！已解鎖全體優惠價！';
+                progressText.style.color = '#06D6A0';
+            } else {
+                const remaining = targetCount - currentCount;
+                progressText.innerText = `還差 ${remaining} 人即可解鎖全體優惠價！`;
+                progressText.style.color = '#FF6B6B';
+            }
         }
 
         function calculateTotalCost() {
@@ -372,6 +428,11 @@
             const isWeiLing = employeeName === '王唯菱';
             const isChengLin = employeeName === '方成霖';
             const isOutsourced = isOutsourcedCheckbox.checked;
+            
+            const formAdults = parseInt(numAdultsInput.value) || 0;
+            const formChildren = parseInt(numChildrenInput.value) || 0;
+            const formTotal = 1 + formAdults + formChildren; 
+            const totalHeadcount = serverHeadcount + formTotal;
 
             let finalHtml = '';
             
@@ -384,7 +445,6 @@
                 const numInfants = parseInt(numInfantsInput.value) || 0;
                 const needsSingleRoom = document.getElementById('singleRoom').checked;
 
-                // Determine employee's own subsidy
                 let employeeCompanySubsidy = 30000;
                 if (isOutsourced && !isZhang) {
                     employeeCompanySubsidy = 15000;
@@ -401,12 +461,10 @@
                 let passportTotalCost = 0;
                 let breakdownHtml = '<div class="text-left text-sm space-y-1 mt-3">';
 
-                // 1. ADD BASE COSTS & EMPLOYEE SUBSIDY
                 const employeeSelfPay = companionBaseCost - employeeCompanySubsidy;
                 subTotal += employeeSelfPay;
                 breakdownHtml += `<p>• 員工本人團費：<span class="font-bold text-white">${companionBaseCost.toLocaleString()}</span> 元</p>`;
                 breakdownHtml += `<p class="pl-4">└─ 公司補助：<span class="font-bold text-green-400">-${employeeCompanySubsidy.toLocaleString()}</span> 元</p>`;
-
 
                 if (numAdults > 0) {
                     subTotal += numAdults * companionBaseCost;
@@ -421,13 +479,11 @@
                     breakdownHtml += `<p>• 嬰兒 (${numInfants}位)：<span class="font-bold text-white">${(numInfants * infantCost).toLocaleString()}</span> 元</p>`;
                 }
 
-                // Separator for discounts
                 if (numChildren > 0 || hasBonusCheckbox || (isLiao && (numAdults>0 || numChildren>0)) ) {
                      breakdownHtml += `<hr class="border-gray-600 my-2">`;
                      breakdownHtml += `<p class="text-gray-400">折扣與補助：</p>`;
                 }
 
-                // 2. APPLY DISCOUNTS & BONUSES
                 const standardChildDiscountTotal = 1000 * numChildren;
                 if (standardChildDiscountTotal > 0) {
                     subTotal -= standardChildDiscountTotal;
@@ -458,7 +514,6 @@
                             subTotal -= standardBonus;
                             breakdownHtml += `<p class="pl-4">└─ 業績達標補助：<span class="font-bold text-green-400">-${standardBonus.toLocaleString()}</span> 元</p>`;
                             
-                            // Add special remarks for specific users
                             if (isPhoebe) {
                                 breakdownHtml += `<p class="pl-4 text-yellow-400">  (⭐ 上山下海拍影片特別補助)</p>`;
                             } else if (isWeiLing) {
@@ -480,7 +535,6 @@
                     }
                 }
                 
-                // 3. APPLY EXTRA FEES
                 const employeeDob = regForm.querySelector('[name="employee_dob"]')?.value;
                 if (regForm.querySelector('[name="employee_renew_passport"]')?.checked) {
                     passportTotalCost += (getAge(employeeDob) < 14 ? childPassportFee : adultPassportFee);
@@ -521,7 +575,7 @@
                 breakdownHtml += '</div>';
 
                 finalHtml += `
-                    <div class="flex-1 p-4 rounded-lg ${scenarioKey === 'planA' ? 'bg-green-500/10' : 'bg-yellow-500/10'}">
+                    <div id="plan-${scenarioKey}-card" class="plan-card flex-1 p-4 rounded-lg ${scenarioKey === 'planA' ? 'bg-green-500/10' : 'bg-yellow-500/10'}">
                         <p class="font-bold ${scenarioKey === 'planA' ? 'text-green-300' : 'text-yellow-300'}">${scenario.label}費用明細：</p>
                         ${breakdownHtml}
                         <hr class="border-gray-500/50 my-3">
@@ -529,11 +583,53 @@
                     </div>`;
             }
             resultDiv.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
+            
+            // FIX: Highlight the active plan AFTER the HTML is rendered
+            document.getElementById('plan-planA-card')?.classList.toggle('active-plan', totalHeadcount > 20);
+            document.getElementById('plan-planB-card')?.classList.toggle('active-plan', totalHeadcount <= 20);
+        }
+        
+        function handleHeadcountResponse(data) {
+            if (data && data.status === 'success') {
+                serverHeadcount = data.totalCount;
+                updateProgressBar(serverHeadcount);
+                calculateTotalCost(); 
+            } else {
+                console.error("Failed to fetch headcount:", data ? data.message : "No data returned");
+                progressContainer.classList.remove('hidden');
+                progressTitle.innerText = "無法取得即時報名人數";
+            }
+            const scriptTag = document.getElementById('jsonp-script');
+            if (scriptTag) {
+                scriptTag.parentNode.removeChild(scriptTag);
+            }
+        }
+        
+        function fetchHeadcount() {
+            const oldScript = document.getElementById('jsonp-script');
+            if (oldScript) {
+                oldScript.parentNode.removeChild(oldScript);
+            }
+            
+            const script = document.createElement('script');
+            script.id = 'jsonp-script';
+            script.src = scriptURL + "?action=getcount&callback=handleHeadcountResponse&t=" + new Date().getTime(); 
+            
+            script.onerror = () => {
+                console.error("Error fetching headcount: Script load failed.");
+                progressContainer.classList.remove('hidden');
+                progressTitle.innerText = "無法取得即時報名人數";
+                const scriptTag = document.getElementById('jsonp-script');
+                if (scriptTag && scriptTag.parentNode) {
+                    scriptTag.parentNode.removeChild(scriptTag);
+                }
+            };
+            
+            document.body.appendChild(script);
         }
         
         nameInput.addEventListener('input', handleSpecialConditions);
         isOutsourcedCheckbox.addEventListener('change', handleSpecialConditions);
-
         numAdultsInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
         numChildrenInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
         numInfantsInput.addEventListener('input', () => { generateCompanionFields(); calculateTotalCost(); });
@@ -548,9 +644,9 @@
         document.addEventListener('DOMContentLoaded', () => {
              generateCompanionFields();
              handleSpecialConditions();
+             fetchHeadcount();
         });
-
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec';
+        
         const form = document.getElementById('registrationForm');
         const submitBtn = document.getElementById('submitBtn');
         const formStatus = document.getElementById('formStatus');
@@ -570,6 +666,7 @@
                         form.reset();
                         generateCompanionFields();
                         handleSpecialConditions();
+                        fetchHeadcount(); 
                     } else {
                         throw new Error(data.error || 'Unknown error');
                     }
@@ -616,4 +713,3 @@
     </script>
 </body>
 </html>
-
