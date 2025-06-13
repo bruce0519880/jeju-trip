@@ -170,7 +170,7 @@
                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                     <div class="space-y-2"><h3 class="text-xl font-bold text-white mb-4">💰 費用規則</h3>
                         <div class="info-list-item"><div><strong>公司補助：</strong><br>正式員工補助 <strong class="text-[#06D6A0]">$30,000</strong> 元。<br>外包人員補助 50% (<strong class="text-[#06D6A0]">$15,000</strong> 元)。</div></div>
-                        <div class="info-list-item"><div><strong>員工自付：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>總人數 > 20：自付 $2,900</li><li>總人數 16-20：自付 $3,900</li></ul></div></div>
+                        <div class="info-list-item"><div><strong>正式員工自付：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>總人數 > 20：自付 $2,900</li><li>總人數 16-20：自付 $3,900</li></ul></div></div>
                         <div class="info-list-item"><div><strong>眷屬補助：</strong><br>業績達標者，可為<strong class="text-white">一位同行眷屬</strong> (成人或孩童) 申請 <strong class="text-[#FFD166]">$15,000 元補助</strong>！<br><span class="text-sm text-gray-400">(外包人員不適用)</span></div></div>
                         <div class="info-list-item"><div><strong>其他優惠：</strong><br><ul class="list-disc list-inside pl-2 text-gray-300"><li>孩童不佔床：團費減 $1,000</li><li>嬰兒價：$6,500</li><li>單人房：需補價差 $9,000</li></ul></div></div>
                     </div>
@@ -336,16 +336,24 @@
         function handleSpecialConditions() {
             const employeeName = nameInput.value.trim();
             const isOutsourced = isOutsourcedCheckbox.checked;
+
+            const forcedBonusUsers = ['張菲比', '王唯菱', '方成霖'];
+            const isForcedBonusUser = forcedBonusUsers.includes(employeeName);
             const isZhang = employeeName === '張仲宇';
 
-            if (isZhang && isOutsourced) {
+            // Reset disabled state first
+            performanceBonusCheckbox.disabled = false;
+
+            // Apply conditions
+            if (isForcedBonusUser) {
+                performanceBonusCheckbox.checked = true;
+                performanceBonusCheckbox.disabled = true;
+            } else if (isZhang && isOutsourced) {
                 performanceBonusCheckbox.checked = true;
                 performanceBonusCheckbox.disabled = true;
             } else if (isOutsourced) {
                 performanceBonusCheckbox.checked = false;
                 performanceBonusCheckbox.disabled = true;
-            } else {
-                performanceBonusCheckbox.disabled = false;
             }
             calculateTotalCost();
         }
@@ -360,6 +368,9 @@
             const isLiao = employeeName === '廖彤婕';
             const isZhang = employeeName === '張仲宇';
             const isZhangYiKai = employeeName === '張逸凱';
+            const isPhoebe = employeeName === '張菲比';
+            const isWeiLing = employeeName === '王唯菱';
+            const isChengLin = employeeName === '方成霖';
             const isOutsourced = isOutsourcedCheckbox.checked;
 
             let finalHtml = '';
@@ -446,6 +457,15 @@
                             const standardBonus = 15000;
                             subTotal -= standardBonus;
                             breakdownHtml += `<p class="pl-4">└─ 業績達標補助：<span class="font-bold text-green-400">-${standardBonus.toLocaleString()}</span> 元</p>`;
+                            
+                            // Add special remarks for specific users
+                            if (isPhoebe) {
+                                breakdownHtml += `<p class="pl-4 text-yellow-400">  (⭐ 上山下海拍影片特別補助)</p>`;
+                            } else if (isWeiLing) {
+                                breakdownHtml += `<p class="pl-4 text-yellow-400">  (⭐ 廣告費不給花特別補助)</p>`;
+                            } else if (isChengLin) {
+                                breakdownHtml += `<p class="pl-4 text-yellow-400">  (⭐ 公司有事沒事特別補助)</p>`;
+                            }
 
                             if (isLiao) {
                                 const specialBonus = 5000;
