@@ -1,0 +1,122 @@
+<style>
+        /* --- 🎨 濟州島風格配色 (豐富版) --- */
+        :root {
+            --bg-color: #f7fafc;      /* 更輕柔的背景 */
+            --card-bg: #ffffff;
+            --text-primary: #2d3748;  /* 柔和的黑色 */
+            --text-secondary: #4a5568;
+            --accent-orange: #f56565; /* 更活潑的珊瑚橙 */
+            --accent-blue: #4299e1;   /* 清澈的天藍色 */
+            --accent-green: #48bb78;  /* 自然的草綠色 */
+            --highlight-yellow: #f6e05e; /* 明亮的油菜花黃 */
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, var(--accent-orange), var(--highlight-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 1rem;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            font-size: 1.75rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .countdown-segment {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-color: var(--accent-orange);
+            color: white;
+            border-radius: 0.75rem; font-weight: 700; font-size: 1.75rem;
+            min-width: 70px; height: 75px; text-align: center;
+            box-shadow: 0 4px 10px rgba(245, 101, 101, 0.4); line-height: 1.1;
+        }
+        
+        .countdown-label { font-size: 0.8rem; color: white; margin-top: 0.2rem; font-weight: 500; }
+
+        .info-list-item { display: flex; align-items: flex-start; font-size: 1rem; color: var(--text-secondary); margin-bottom: 0.75rem; }
+        .info-list-item::before { content: '✔'; color: var(--accent-green); font-weight: bold; display: inline-block; width: 1em; flex-shrink: 0; margin-right: 0.6em; font-size: 1.2em; line-height: 1.5; }
+        
+        .passport-info-item { display: flex; align-items: flex-start; font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 0.6rem; }
+        .passport-info-item::before { content: '📋'; display: inline-block; width: 1.5em; flex-shrink: 0; margin-right: 0.5em; }
+
+        input[type="checkbox"] {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            border: 2px solid var(--border-color); transition: all 0.2s ease-in-out;
+            outline: none; cursor: pointer; position: relative;
+            border-radius: 4px; width: 1.25rem; height: 1.25rem;
+        }
+        input[type="checkbox"]:checked {
+            background-color: var(--accent-blue); border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.4);
+        }
+        input[type="checkbox"]:checked::before {
+            content: '✓'; color: white; font-weight: bold; font-size: 0.8rem;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        input[type="checkbox"]:disabled { border-color: #cbd5e0; background-color: #e2e8f0; cursor: not-allowed; }
+        label.inline-flex span { transition: color 0.2s ease-in-out; }
+        input[type="checkbox"]:checked + span { color: var(--accent-blue); font-weight: 600; }
+
+        .form-input {
+            background-color: #f7fafc; border: 1px solid var(--border-color);
+            border-radius: 0.5rem; padding: 0.65rem 0.85rem;
+            color: var(--text-primary); width: 100%; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input:focus {
+            outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
+        }
+
+        #submitBtn {
+            background-color: var(--accent-orange);
+            color: white;
+            font-weight: 700;
+        }
+        #submitBtn:hover {
+            background-color: #e53e3e; /* Darker red */
+        }
+        #submitBtn:disabled { background-color: #a0aec0; cursor: not-allowed; }
+
+        #formStatus strong { color: var(--accent-blue); }
+
+        .progress-bar-container { background-color: var(--border-color); border-radius: 9999px; overflow: hidden; }
+        .progress-bar-fill { background: linear-gradient(90deg, var(--highlight-yellow), var(--accent-orange)); height: 1.25rem; text-align: right; color: white; font-weight: bold; transition: width 0.5s ease-in-out; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+        
+        .plan-card { transition: all 0.3s ease; border: 2px solid transparent; }
+        .active-plan { border-color: var(--accent-orange); box-shadow: 0 0 20px rgba(245, 101, 101, 0.3); }
+
+        .itinerary-day {
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-blue);
+            background-color: #f8fafc;
+            border-radius: 0 0.5rem 0.5rem 0;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .itinerary-day:hover {
+            background-color: #edf2f7;
+            border-color: var(--accent-orange);
+        }
+    </style>
