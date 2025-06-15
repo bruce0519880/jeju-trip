@@ -83,23 +83,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Functions
     // =========================================================================
 
-    /**
-     * Section/Page Navigation
-     */
     function showSection(targetId) {
         dom.mainSections.forEach(section => {
             section.classList.toggle('hidden', section.dataset.section !== targetId);
         });
-        
+
         dom.navLinks.forEach(link => {
             link.classList.toggle('active', link.dataset.target === targetId);
         });
 
-        // Close mobile menu after selection
         dom.mobileMenu.menu.classList.add('hidden');
-        window.scrollTo(0, 0); // Scroll to top on page change
+        window.scrollTo(0, 0);
     }
-    
+
     function generateCompanionFields() {
         const adults = parseInt(dom.numAdults.value) || 0;
         const children = parseInt(dom.numChildren.value) || 0;
@@ -107,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('hiddenAdults').value = adults;
         document.getElementById('hiddenChildren').value = children;
         document.getElementById('hiddenInfants').value = infants;
-
         let html = '';
         const createFieldset = (type, index) => {
             const typeText = { adult: '成人', child: '孩童', infant: '嬰兒' }[type];
@@ -116,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i <= adults; i++) html += createFieldset('adult', i);
         for (let i = 1; i <= children; i++) html += createFieldset('child', i);
         for (let i = 1; i <= infants; i++) html += createFieldset('infant', i);
-        
         dom.companionSection.innerHTML = html;
         attachFormValidationListeners();
     }
@@ -124,16 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function getAge(dateString) {
         if (!dateString) return 99;
         const birthDate = new Date(dateString);
-        const ageDifMs = Date.now() - birthDate.getTime();
-        const ageDate = new Date(ageDifMs);
-        return Math.abs(ageDate.getUTCFullYear() - 1970);
+        return Math.abs(new Date(Date.now() - birthDate.getTime()).getUTCFullYear() - 1970);
     }
-    
+
     function handleSpecialConditions() {
         const employeeName = dom.inputs.regName.value.trim();
         const isOutsourced = dom.inputs.isOutsourced.checked;
         const rule = CONFIG.userRules[employeeName] || {};
-
         dom.inputs.performanceBonus.disabled = false;
         if (rule.forceBonus) {
             dom.inputs.performanceBonus.checked = true;
@@ -142,41 +133,34 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.inputs.performanceBonus.checked = false;
             dom.inputs.performanceBonus.disabled = true;
         }
-        
         renderCost();
     }
 
     function updateProgressBar() {
         const target = CONFIG.headcountThreshold;
         const percentage = Math.min((serverHeadcount / target) * 100, 100);
-        
         dom.progress.loader.classList.add('hidden');
         dom.progress.content.classList.remove('hidden');
-
         dom.progress.title.innerText = `目前報名進度 (${serverHeadcount} / ${target} 人)`;
         dom.progress.barFill.style.width = `${percentage}%`;
         dom.progress.barFill.innerText = `${Math.round(percentage)}%`;
-
         if (serverHeadcount >= target) {
             dom.progress.text.innerText = '目標達成！已解鎖全體優惠價！';
             dom.progress.text.style.color = 'var(--accent-teal)';
         } else {
-            const remaining = target - serverHeadcount;
-            dom.progress.text.innerText = `還差 ${remaining} 人即可解鎖全體優惠價！`;
+            dom.progress.text.innerText = `還差 ${target - serverHeadcount} 人即可解鎖全體優惠價！`;
             dom.progress.text.style.color = 'var(--accent-tangerine)';
         }
     }
-    
+
     function renderCost() {
         const formState = getFormState();
         let finalHtml = '';
-        
         ['planB', 'planA'].forEach(planKey => {
             const scenario = CONFIG.costs[planKey];
             const breakdown = calculateBreakdownForScenario(formState, scenario);
             const breakdownHtml = generateBreakdownHtml(breakdown);
             const isActive = (formState.totalHeadcount >= CONFIG.headcountThreshold && planKey === 'planA') || (formState.totalHeadcount < CONFIG.headcountThreshold && planKey === 'planB');
-            
             finalHtml += `<div class="plan-card flex-1 p-4 rounded-lg sub-section-bg ${isActive ? 'active-plan' : ''}" style="background-color: ${planKey === 'planA' ? 'rgba(26, 188, 156, 0.1)' : 'rgba(241, 196, 15, 0.1)'};"><p class="font-bold" style="color: ${planKey === 'planA' ? 'var(--accent-teal)' : '#b5930d'};">${scenario.label}費用明細：</p>${breakdownHtml}<hr class="border-gray-300/50 my-3"><p class="font-bold text-gray-800 text-right">總計：<span class="text-2xl font-black">${breakdown.grandTotal.toLocaleString()}</span> 元</p></div>`;
         });
         dom.costResult.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
@@ -186,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const adults = parseInt(dom.numAdults.value) || 0;
         const children = parseInt(dom.numChildren.value) || 0;
         const infants = parseInt(dom.numInfants.value) || 0;
-        
         let passportRenewals = { adult: 0, child: 0 };
         if (dom.regForm.elements['employee_renew_passport']?.checked) {
             getAge(dom.regForm.elements['employee_dob'].value) < 14 ? passportRenewals.child++ : passportRenewals.adult++;
@@ -220,7 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const childDiscountTotal = CONFIG.costs.childNoBedDiscount * state.counts.children;
         if (childDiscountTotal > 0) { subTotal -= childDiscountTotal; breakdown.discounts.push(`<p class="pl-4">└─ 孩童不佔床折扣：<span class="font-bold" style="color: var(--accent-teal);">- ${childDiscountTotal.toLocaleString()}</span> 元</p>`); }
         if ((state.counts.adults > 0 || state.counts.children > 0) && state.hasBonus) {
-            if (rule.bonusRedirect) { breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 已將達標補助給 ${rule.bonusRedirectTo} 使用</p>`);
+            if (rule.bonusRedirect) {
+                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 已將達標補助給 ${rule.bonusRedirectTo} 使用</p>`);
             } else if (!state.isOutsourced || rule.isOutsourcedSpecial) {
                 subTotal -= CONFIG.subsidies.performanceBonus;
                 breakdown.discounts.push(`<p class="pl-4">└─ 業績達標補助：<span class="font-bold" style="color: var(--accent-teal);">- ${CONFIG.subsidies.performanceBonus.toLocaleString()}</span> 元</p>`);
@@ -234,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (passportTotalCost > 0) { breakdown.grandTotal += passportTotalCost; breakdown.extras.push(`<p class="pl-4">└─ 護照辦理費：<span class="font-bold" style="color: var(--accent-sunny-yellow);">+ ${passportTotalCost.toLocaleString()}</span> 元</p>`); }
         return breakdown;
     }
-    
+
     function generateBreakdownHtml(breakdown) {
         let html = '<div class="text-left text-sm space-y-1 mt-3">';
         html += breakdown.base.join('');
@@ -243,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         html += '</div>';
         return html;
     }
-    
+
     async function fetchHeadcount() {
         dom.progress.loader.classList.remove('hidden');
         dom.progress.content.classList.add('hidden');
@@ -259,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.message || 'Failed to fetch headcount');
             }
         } catch (error) {
-             console.error("Error fetching headcount:", error);
+            console.error("Error fetching headcount:", error);
             dom.progress.loader.classList.add('hidden');
             dom.progress.content.classList.remove('hidden');
             dom.progress.title.innerText = "無法取得即時報名人數";
@@ -330,17 +314,15 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.modal.content.classList.remove('active');
         setTimeout(() => dom.modal.container.classList.add('hidden'), 300);
     }
-    
+
     function updateCountdown() {
-        // --- ✨ 更新重點 ✨ ---
-        // 使用明確的年、月(0-11)、日、時、分、秒來建立日期物件，避免時區問題
-        const deadlineDate = new Date(2025, 5, 16, 23, 59, 59); // 2025年6月16日 23:59:59 (月份是0-indexed)
-        
+        const deadlineDate = new Date(2025, 5, 16, 23, 59, 59); // 2025年6月16日 23:59:59 (月份是0-indexed, 5代表6月)
+
         const distance = deadlineDate.getTime() - new Date().getTime();
         if (distance < 0) {
             if (countdownInterval) clearInterval(countdownInterval);
             dom.countdownTimer.innerHTML = '<span class="text-xl font-bold text-gray-800">報名已截止！</span>';
-            dom.countdownNotice.classList.add('hidden'); // 截止後隱藏提醒文字
+            if (dom.countdownNotice) dom.countdownNotice.classList.add('hidden');
             return;
         }
         const d = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -384,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Mobile menu toggle
         dom.mobileMenu.button.addEventListener('click', () => dom.mobileMenu.menu.classList.toggle('hidden'));
-        
+
         // Modal
         dom.modal.closeBtn.addEventListener('click', hideSuccessModal);
         dom.modal.container.addEventListener('click', (e) => {
