@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================================
-    // CONFIGURATION (集中化設定)
+    // CONFIGURATION
     // =========================================================================
     const CONFIG = {
         scriptURL: 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec',
@@ -40,11 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
         numChildren: document.getElementById('numChildren'),
         numInfants: document.getElementById('numInfants'),
         companionSection: document.getElementById('companionSection'),
-        hidden: {
-            adults: document.getElementById('hiddenAdults'),
-            children: document.getElementById('hiddenChildren'),
-            infants: document.getElementById('hiddenInfants'),
-        },
         inputs: {
             regName: document.getElementById('regName'),
             isOutsourced: document.getElementById('isOutsourced'),
@@ -58,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         formStatus: document.getElementById('formStatus'),
         progress: {
-            container: document.getElementById('progress-container'),
             loader: document.getElementById('progress-loader'),
             content: document.getElementById('progress-content'),
             title: document.getElementById('progress-title'),
@@ -75,6 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
             closeBtn: document.getElementById('closeModalBtn'),
         },
         countdownTimer: document.getElementById('countdownTimer'),
+        countdownNotice: document.getElementById('countdown-notice'),
+        navLinks: document.querySelectorAll('.nav-link, #mobile-menu a'),
+        mainSections: document.querySelectorAll('.main-section'),
     };
 
     // =========================================================================
@@ -86,13 +83,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // Functions
     // =========================================================================
 
+    /**
+     * Section/Page Navigation
+     */
+    function showSection(targetId) {
+        dom.mainSections.forEach(section => {
+            section.classList.toggle('hidden', section.dataset.section !== targetId);
+        });
+        
+        dom.navLinks.forEach(link => {
+            link.classList.toggle('active', link.dataset.target === targetId);
+        });
+
+        // Close mobile menu after selection
+        dom.mobileMenu.menu.classList.add('hidden');
+        window.scrollTo(0, 0); // Scroll to top on page change
+    }
+    
     function generateCompanionFields() {
         const adults = parseInt(dom.numAdults.value) || 0;
         const children = parseInt(dom.numChildren.value) || 0;
         const infants = parseInt(dom.numInfants.value) || 0;
-        dom.hidden.adults.value = adults;
-        dom.hidden.children.value = children;
-        dom.hidden.infants.value = infants;
+        document.getElementById('hiddenAdults').value = adults;
+        document.getElementById('hiddenChildren').value = children;
+        document.getElementById('hiddenInfants').value = infants;
 
         let html = '';
         const createFieldset = (type, index) => {
@@ -163,14 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const breakdownHtml = generateBreakdownHtml(breakdown);
             const isActive = (formState.totalHeadcount >= CONFIG.headcountThreshold && planKey === 'planA') || (formState.totalHeadcount < CONFIG.headcountThreshold && planKey === 'planB');
             
-            finalHtml += `<div class="plan-card flex-1 p-4 rounded-lg sub-section-bg ${isActive ? 'active-plan' : ''}" style="background-color: ${planKey === 'planA' ? 'rgba(26, 188, 156, 0.1)' : 'rgba(241, 196, 15, 0.1)'};">
-                <p class="font-bold" style="color: ${planKey === 'planA' ? 'var(--accent-teal)' : '#b5930d'};">${scenario.label}費用明細：</p>
-                ${breakdownHtml}
-                <hr class="border-gray-300/50 my-3">
-                <p class="font-bold text-gray-800 text-right">總計：<span class="text-2xl font-black">${breakdown.grandTotal.toLocaleString()}</span> 元</p>
-            </div>`;
+            finalHtml += `<div class="plan-card flex-1 p-4 rounded-lg sub-section-bg ${isActive ? 'active-plan' : ''}" style="background-color: ${planKey === 'planA' ? 'rgba(26, 188, 156, 0.1)' : 'rgba(241, 196, 15, 0.1)'};"><p class="font-bold" style="color: ${planKey === 'planA' ? 'var(--accent-teal)' : '#b5930d'};">${scenario.label}費用明細：</p>${breakdownHtml}<hr class="border-gray-300/50 my-3"><p class="font-bold text-gray-800 text-right">總計：<span class="text-2xl font-black">${breakdown.grandTotal.toLocaleString()}</span> 元</p></div>`;
         });
-
         dom.costResult.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
     }
 
@@ -181,13 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let passportRenewals = { adult: 0, child: 0 };
         if (dom.regForm.elements['employee_renew_passport']?.checked) {
-            const age = getAge(dom.regForm.elements['employee_dob'].value);
-            age < 14 ? passportRenewals.child++ : passportRenewals.adult++;
+            getAge(dom.regForm.elements['employee_dob'].value) < 14 ? passportRenewals.child++ : passportRenewals.adult++;
         }
         for (let i = 1; i <= adults; i++) if (dom.regForm.elements[`adult_${i}_renew_passport`]?.checked) passportRenewals.adult++;
         for (let i = 1; i <= children; i++) if (dom.regForm.elements[`child_${i}_renew_passport`]?.checked) passportRenewals.child++;
         for (let i = 1; i <= infants; i++) if (dom.regForm.elements[`infant_${i}_renew_passport`]?.checked) passportRenewals.child++;
-
         return {
             employeeName: dom.inputs.regName.value.trim(),
             isOutsourced: dom.inputs.isOutsourced.checked,
@@ -203,138 +209,87 @@ document.addEventListener('DOMContentLoaded', () => {
         const rule = CONFIG.userRules[state.employeeName] || {};
         const companionBaseCost = scenario.base + CONFIG.subsidies.company;
         let subTotal = 0;
-        let breakdown = {
-            base: [],
-            discounts: [],
-            extras: [],
-            grandTotal: 0
-        };
-
-        // Base Costs
+        let breakdown = { base: [], discounts: [], extras: [], grandTotal: 0 };
         const employeeCompanySubsidy = (state.isOutsourced && !rule.isOutsourcedSpecial) ? CONFIG.subsidies.outsourced : CONFIG.subsidies.company;
-        const employeeCost = companionBaseCost - employeeCompanySubsidy;
-        subTotal += employeeCost;
+        subTotal += (companionBaseCost - employeeCompanySubsidy);
         breakdown.base.push(`• 員工本人團費：<span class="font-bold text-gray-800">${companionBaseCost.toLocaleString()}</span> 元`);
         breakdown.base.push(`<p class="pl-4">└─ 公司補助：<span class="font-bold" style="color: var(--accent-teal);">- ${employeeCompanySubsidy.toLocaleString()}</span> 元</p>`);
-
-        if (state.counts.adults > 0) {
-            const cost = state.counts.adults * companionBaseCost;
-            subTotal += cost;
-            breakdown.base.push(`• 眷屬 (成人 ${state.counts.adults}位)：<span class="font-bold text-gray-800">${cost.toLocaleString()}</span> 元`);
-        }
-        if (state.counts.children > 0) {
-            const cost = state.counts.children * companionBaseCost;
-            subTotal += cost;
-            breakdown.base.push(`• 孩童 (${state.counts.children}位)：<span class="font-bold text-gray-800">${cost.toLocaleString()}</span> 元`);
-        }
-        if (state.counts.infants > 0) {
-            const cost = state.counts.infants * CONFIG.costs.infant;
-            subTotal += cost;
-            breakdown.base.push(`• 嬰兒 (${state.counts.infants}位)：<span class="font-bold text-gray-800">${cost.toLocaleString()}</span> 元`);
-        }
-        
-        // Discounts
+        if (state.counts.adults > 0) { subTotal += state.counts.adults * companionBaseCost; breakdown.base.push(`• 眷屬 (成人 ${state.counts.adults}位)：<span class="font-bold text-gray-800">${(state.counts.adults * companionBaseCost).toLocaleString()}</span> 元`); }
+        if (state.counts.children > 0) { subTotal += state.counts.children * companionBaseCost; breakdown.base.push(`• 孩童 (${state.counts.children}位)：<span class="font-bold text-gray-800">${(state.counts.children * companionBaseCost).toLocaleString()}</span> 元`); }
+        if (state.counts.infants > 0) { subTotal += state.counts.infants * CONFIG.costs.infant; breakdown.base.push(`• 嬰兒 (${state.counts.infants}位)：<span class="font-bold text-gray-800">${(state.counts.infants * CONFIG.costs.infant).toLocaleString()}</span> 元`); }
         const childDiscountTotal = CONFIG.costs.childNoBedDiscount * state.counts.children;
-        if (childDiscountTotal > 0) {
-            subTotal -= childDiscountTotal;
-            breakdown.discounts.push(`<p class="pl-4">└─ 孩童不佔床折扣：<span class="font-bold" style="color: var(--accent-teal);">- ${childDiscountTotal.toLocaleString()}</span> 元</p>`);
-        }
+        if (childDiscountTotal > 0) { subTotal -= childDiscountTotal; breakdown.discounts.push(`<p class="pl-4">└─ 孩童不佔床折扣：<span class="font-bold" style="color: var(--accent-teal);">- ${childDiscountTotal.toLocaleString()}</span> 元</p>`); }
         if ((state.counts.adults > 0 || state.counts.children > 0) && state.hasBonus) {
-            if (rule.bonusRedirect) {
-                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 已將達標補助給 ${rule.bonusRedirectTo} 使用</p>`);
+            if (rule.bonusRedirect) { breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 已將達標補助給 ${rule.bonusRedirectTo} 使用</p>`);
             } else if (!state.isOutsourced || rule.isOutsourcedSpecial) {
-                const bonus = CONFIG.subsidies.performanceBonus;
-                subTotal -= bonus;
-                breakdown.discounts.push(`<p class="pl-4">└─ 業績達標補助：<span class="font-bold" style="color: var(--accent-teal);">- ${bonus.toLocaleString()}</span> 元</p>`);
+                subTotal -= CONFIG.subsidies.performanceBonus;
+                breakdown.discounts.push(`<p class="pl-4">└─ 業績達標補助：<span class="font-bold" style="color: var(--accent-teal);">- ${CONFIG.subsidies.performanceBonus.toLocaleString()}</span> 元</p>`);
                 if (rule.bonusText) breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">  (${rule.bonusText})</p>`);
             }
         }
-        if (rule.specialBonus) {
-            subTotal -= rule.specialBonus;
-            breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 專屬-特別補助：<span class="font-bold">- ${rule.specialBonus.toLocaleString()}</span> 元</p>`);
-        }
-
-        // Extras
+        if (rule.specialBonus) { subTotal -= rule.specialBonus; breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 專屬-特別補助：<span class="font-bold">- ${rule.specialBonus.toLocaleString()}</span> 元</p>`); }
         breakdown.grandTotal = subTotal;
-        if (state.needsSingleRoom) {
-            const cost = CONFIG.costs.singleRoomSupplement;
-            breakdown.grandTotal += cost;
-            breakdown.extras.push(`<p class="pl-4">└─ 單人房價差：<span class="font-bold text-gray-800">+ ${cost.toLocaleString()}</span> 元</p>`);
-        }
+        if (state.needsSingleRoom) { breakdown.grandTotal += CONFIG.costs.singleRoomSupplement; breakdown.extras.push(`<p class="pl-4">└─ 單人房價差：<span class="font-bold text-gray-800">+ ${CONFIG.costs.singleRoomSupplement.toLocaleString()}</span> 元</p>`); }
         const passportTotalCost = (state.passportRenewals.adult * CONFIG.costs.passportAdult) + (state.passportRenewals.child * CONFIG.costs.passportChild);
-        if (passportTotalCost > 0) {
-            breakdown.grandTotal += passportTotalCost;
-            breakdown.extras.push(`<p class="pl-4">└─ 護照辦理費：<span class="font-bold" style="color: var(--accent-sunny-yellow);">+ ${passportTotalCost.toLocaleString()}</span> 元</p>`);
-        }
-
+        if (passportTotalCost > 0) { breakdown.grandTotal += passportTotalCost; breakdown.extras.push(`<p class="pl-4">└─ 護照辦理費：<span class="font-bold" style="color: var(--accent-sunny-yellow);">+ ${passportTotalCost.toLocaleString()}</span> 元</p>`); }
         return breakdown;
     }
     
     function generateBreakdownHtml(breakdown) {
         let html = '<div class="text-left text-sm space-y-1 mt-3">';
         html += breakdown.base.join('');
-        if (breakdown.discounts.length > 0) {
-            html += `<hr class="border-gray-300 my-2"><p class="text-gray-500">折扣與補助：</p>${breakdown.discounts.join('')}`;
-        }
-        if (breakdown.extras.length > 0) {
-            html += `<hr class="border-gray-300 my-2"><p class="text-gray-500">其他費用：</p>${breakdown.extras.join('')}`;
-        }
+        if (breakdown.discounts.length > 0) { html += `<hr class="border-gray-300 my-2"><p class="text-gray-500">折扣與補助：</p>${breakdown.discounts.join('')}`; }
+        if (breakdown.extras.length > 0) { html += `<hr class="border-gray-300 my-2"><p class="text-gray-500">其他費用：</p>${breakdown.extras.join('')}`; }
         html += '</div>';
         return html;
     }
-
-    function fetchHeadcount() {
+    
+    async function fetchHeadcount() {
         dom.progress.loader.classList.remove('hidden');
         dom.progress.content.classList.add('hidden');
-
-        fetch(`${CONFIG.scriptURL}?action=getcount&t=${new Date().getTime()}`)
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.status === 'success') {
-                    serverHeadcount = data.totalCount;
-                    updateProgressBar();
-                    renderCost();
-                } else {
-                    throw new Error(data.message || 'Failed to fetch headcount');
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching headcount:", error);
-                dom.progress.loader.classList.add('hidden');
-                dom.progress.content.classList.remove('hidden');
-                dom.progress.title.innerText = "無法取得即時報名人數";
-            });
+        try {
+            const response = await fetch(`${CONFIG.scriptURL}?action=getcount&t=${new Date().getTime()}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            if (data && data.status === 'success') {
+                serverHeadcount = data.totalCount;
+                updateProgressBar();
+                renderCost();
+            } else {
+                throw new Error(data.message || 'Failed to fetch headcount');
+            }
+        } catch (error) {
+             console.error("Error fetching headcount:", error);
+            dom.progress.loader.classList.add('hidden');
+            dom.progress.content.classList.remove('hidden');
+            dom.progress.title.innerText = "無法取得即時報名人數";
+            dom.progress.text.innerText = "請稍後再試或聯繫主辦人。";
+        }
     }
 
-
-    function handleFormSubmit(e) {
+    async function handleFormSubmit(e) {
         e.preventDefault();
         if (!validateForm()) return;
-
         setSubmitButtonState(true);
-        
-        fetch(CONFIG.scriptURL, { method: 'POST', body: new FormData(dom.regForm) })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-                    showSuccessModal();
-                    dom.regForm.reset();
-                    generateCompanionFields();
-                    handleSpecialConditions();
-                    fetchHeadcount();
-                } else {
-                    throw new Error(data.error || 'Unknown error from server');
-                }
-            })
-            .catch(error => {
-                dom.formStatus.textContent = '報名失敗，請稍後再試或聯繫主辦人。';
-                dom.formStatus.style.color = 'var(--accent-tangerine)';
-                console.error('Error!', error.message);
-            })
-            .finally(() => setSubmitButtonState(false));
+        try {
+            const response = await fetch(CONFIG.scriptURL, { method: 'POST', body: new FormData(dom.regForm) });
+            const data = await response.json();
+            if (data.result === 'success') {
+                showSuccessModal();
+                dom.regForm.reset();
+                generateCompanionFields();
+                handleSpecialConditions();
+                await fetchHeadcount();
+            } else {
+                throw new Error(data.error || 'Unknown server error');
+            }
+        } catch (error) {
+            dom.formStatus.textContent = '報名失敗，請稍後再試或聯繫主辦人。';
+            dom.formStatus.style.color = 'var(--accent-tangerine)';
+            console.error('Error!', error.message);
+        } finally {
+            setSubmitButtonState(false);
+        }
     }
 
     // =========================================================================
@@ -350,19 +305,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function validateForm() {
         let allValid = true;
         dom.regForm.querySelectorAll('input[required]').forEach(input => {
-            if (!input.value.trim()) {
-                input.classList.add('invalid-input');
-                allValid = false;
-            } else {
-                input.classList.remove('invalid-input');
-            }
+            const isValid = input.value.trim() !== '';
+            input.classList.toggle('invalid-input', !isValid);
+            if (!isValid) allValid = false;
         });
-        if (!allValid) {
-            dom.formStatus.textContent = '請填寫所有標示為必填的欄位。';
-            dom.formStatus.style.color = 'var(--accent-tangerine)';
-        } else {
-            dom.formStatus.textContent = '';
-        }
+        dom.formStatus.textContent = allValid ? '' : '請填寫所有標示為必填的欄位。';
+        dom.formStatus.style.color = 'var(--accent-tangerine)';
         return allValid;
     }
 
@@ -384,16 +332,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function updateCountdown() {
-        const deadlineDate = new Date();
-        const dayOfWeek = deadlineDate.getDay();
-        const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
-        deadlineDate.setDate(deadlineDate.getDate() + daysUntilSunday);
-        deadlineDate.setHours(23, 59, 59, 999);
+        // --- ✨ 更新重點 ✨ ---
+        // 將截止日期直接設定為 2025/6/16 結束時
+        const deadlineDate = new Date('2025-06-16T23:59:59');
         
         const distance = deadlineDate.getTime() - new Date().getTime();
         if (distance < 0) {
             if (countdownInterval) clearInterval(countdownInterval);
             dom.countdownTimer.innerHTML = '<span class="text-xl font-bold text-gray-800">報名已截止！</span>';
+            dom.countdownNotice.classList.add('hidden'); // 截止後隱藏提醒文字
             return;
         }
         const d = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -408,27 +355,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners
     // =========================================================================
     function setupEventListeners() {
+        // Page navigation
+        dom.navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = e.currentTarget.dataset.target;
+                if (targetId) {
+                    showSection(targetId);
+                }
+            });
+        });
+
+        // Form logic
         dom.inputs.regName.addEventListener('input', handleSpecialConditions);
         dom.inputs.isOutsourced.addEventListener('change', handleSpecialConditions);
-        
         [dom.numAdults, dom.numChildren, dom.numInfants].forEach(input => {
             input.addEventListener('input', () => {
                 generateCompanionFields();
                 renderCost();
             });
         });
-
         dom.regForm.addEventListener('change', (event) => {
             if (!['regName', 'isOutsourced', 'numAdults', 'numChildren', 'numInfants'].includes(event.target.id)) {
                 renderCost();
             }
         });
-
         dom.regForm.addEventListener('submit', handleFormSubmit);
 
+        // Mobile menu toggle
         dom.mobileMenu.button.addEventListener('click', () => dom.mobileMenu.menu.classList.toggle('hidden'));
-        dom.mobileMenu.menu.addEventListener('click', () => dom.mobileMenu.menu.classList.add('hidden'));
-
+        
+        // Modal
         dom.modal.closeBtn.addEventListener('click', hideSuccessModal);
         dom.modal.container.addEventListener('click', (e) => {
             if (e.target === dom.modal.container) hideSuccessModal();
@@ -446,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
         countdownInterval = setInterval(updateCountdown, 1000);
         setupEventListeners();
         attachFormValidationListeners();
+        showSection('summary'); // Show the summary section by default
     }
 
     init();
