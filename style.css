@@ -1,6 +1,6 @@
 :root {
-    --bg-light: #f8f9fa; 
-    --text-dark: #343a40; 
+    --bg-light: #f8f9fa;
+    --text-dark: #343a40;
     --accent-tangerine: #FF7A59;
     --accent-teal: #1ABC9C;
     --accent-sunny-yellow: #F1C40F;
@@ -8,47 +8,349 @@
     --bg-card-green: #f0fdfa;
     --bg-card-pink: #fff5f5;
     --bg-card-blue: #f7faff;
+    --bg-card-sky: #f0f9ff;
+    /* New color for Map */
 }
-html { scroll-behavior: smooth; }
-body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-light); color: var(--text-dark); line-height: 1.7; }
-.nav-link { position: relative; transition: color 0.3s ease; }
-.nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%; transform: translateX(-50%); background-color: var(--accent-tangerine); transition: width 0.3s ease; }
-.nav-link:hover { color: var(--accent-tangerine); }
-.nav-link:hover::after { width: 100%; }
-.gradient-text { background: linear-gradient(45deg, var(--accent-tangerine), var(--accent-sunny-yellow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.card { scroll-margin-top: 100px; border: 1px solid #dee2e6; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; border-radius: 1rem; }
-.card:hover { transform: translateY(-6px); box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12); }
-#summary.card { background-color: var(--bg-card-yellow); }
-#itinerary.card { background-color: var(--bg-card-green); }
-#registration.card { background-color: var(--bg-card-pink); }
-#passport-section.card, .dual-card-container > .card { background-color: var(--bg-card-blue); }
-.countdown-segment { display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: var(--accent-tangerine); color: #FFFFFF; border-radius: 0.5rem; font-weight: 700; font-size: 1.75rem; min-width: 65px; height: 70px; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); line-height: 1.1; }
-.countdown-label { font-size: 0.8rem; color: #FFFFFF; margin-top: 0.2rem; font-weight: 500; }
-.info-list-item { display: flex; align-items: flex-start; font-size: 1rem; color: var(--text-dark); margin-bottom: 0.75rem; }
-.info-list-item::before { content: '🍊'; display: inline-block; width: 1em; flex-shrink: 0; margin-right: 0.6em; font-size: 1.1em; line-height: 1.6; }
-.passport-info-item { display: flex; align-items: flex-start; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 0.6rem; }
-.passport-info-item::before { content: '📄'; display: inline-block; width: 1.5em; flex-shrink: 0; margin-right: 0.5em; }
-input[type="checkbox"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; border: 2px solid var(--accent-teal); transition: all 0.2s ease-in-out; outline: none; cursor: pointer; position: relative; border-radius: 4px; width: 1.25rem; height: 1.25rem; background-color: #ffffff; }
-input[type="checkbox"]:checked { background-color: var(--accent-tangerine); border-color: var(--accent-tangerine); box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.3); }
-input[type="checkbox"]:checked::before { content: '✔'; color: #ffffff; font-weight: bold; font-size: 0.9rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-input[type="checkbox"]:disabled { border-color: #adb5bd; background-color: #e9ecef; cursor: not-allowed; }
-label.inline-flex span { transition: color 0.2s ease-in-out; }
-input[type="checkbox"]:checked + span { color: var(--accent-tangerine); font-weight: 600; }
-.form-input { background-color: #ffffff; border: 1px solid #ced4da; border-radius: 0.5rem; padding: 0.5rem 0.75rem; color: var(--text-dark); width: 100%; transition: border-color 0.2s, box-shadow 0.2s; }
-.form-input:focus { outline: none; border-color: var(--accent-tangerine); box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.25); }
-.form-input.invalid-input { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25); }
-.card-header { font-size: 1.75rem; font-weight: 900; margin-bottom: 1.5rem; text-align: center; color: var(--accent-tangerine); }
-#submitBtn { background-color: var(--accent-tangerine); color: white; font-weight: bold; transition: background-color 0.3s, transform 0.2s; box-shadow: 0 4px 15px rgba(255, 122, 89, 0.4); display: flex; align-items: center; justify-content: center; }
-#submitBtn:hover { background-color: var(--accent-sunny-yellow); color: var(--text-dark); transform: scale(1.02) translateY(-2px); box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4); }
-#submitBtn:disabled { background-color: #adb5bd; color: #6c757d; cursor: not-allowed; transform: scale(1); box-shadow: none; }
-#formStatus strong { color: var(--accent-tangerine); }
-.progress-bar-container { background-color: #e9ecef; border-radius: 0.5rem; overflow: hidden; border: 1px solid #dee2e6; }
-.progress-bar-fill { background: linear-gradient(90deg, var(--accent-tangerine), var(--accent-sunny-yellow)); padding: 0.5rem; text-align: right; color: var(--text-dark); font-weight: bold; transition: width 0.5s ease-in-out; }
-.plan-card { transition: all 0.3s ease; border: 2px solid transparent; }
-.active-plan { border-color: var(--accent-tangerine); box-shadow: 0 0 25px rgba(255, 122, 89, 0.5); }
-.sub-section-bg { background-color: rgba(255, 255, 255, 0.6); border: 1px solid rgba(0,0,0,0.05); }
-.spinner { border: 3px solid rgba(255, 255, 255, 0.3); border-top-color: #ffffff; border-radius: 50%; width: 1.25rem; height: 1.25rem; animation: spin 0.8s linear infinite; }
-.progress-spinner { border: 4px solid #e9ecef; border-top-color: var(--accent-tangerine); width: 2rem; height: 2rem; animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-#modal-content { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
-#modal-content.active { transform: scale(1); opacity: 1; }
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.7;
+}
+
+/* Nav Link Styling */
+.nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+    padding-bottom: 6px;
+    cursor: pointer;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--accent-tangerine);
+    transition: width 0.3s ease;
+    border-radius: 2px;
+}
+
+.nav-link:hover {
+    color: var(--accent-tangerine);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Active Nav Link Style */
+.nav-link.active {
+    color: var(--accent-tangerine);
+    font-weight: 700;
+}
+
+.nav-link.active::after {
+    width: 100%;
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, var(--accent-tangerine), var(--accent-sunny-yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+#summary.card {
+    background-color: var(--bg-card-yellow);
+}
+
+#itinerary.card {
+    background-color: var(--bg-card-green);
+}
+
+#map.card {
+    background-color: var(--bg-card-sky);
+}
+
+/* Map Color */
+#registration.card {
+    background-color: var(--bg-card-pink);
+}
+
+#passport-info.card,
+.dual-card-container>.card {
+    background-color: var(--bg-card-blue);
+}
+
+.countdown-segment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-tangerine);
+    color: #FFFFFF;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    font-size: 1.75rem;
+    min-width: 65px;
+    height: 70px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    line-height: 1.1;
+}
+
+.countdown-label {
+    font-size: 0.8rem;
+    color: #FFFFFF;
+    margin-top: 0.2rem;
+    font-weight: 500;
+}
+
+.info-list-item {
+    display: flex;
+    align-items: flex-start;
+    font-size: 1rem;
+    color: var(--text-dark);
+    margin-bottom: 0.75rem;
+}
+
+.info-list-item::before {
+    content: '🍊';
+    display: inline-block;
+    width: 1em;
+    flex-shrink: 0;
+    margin-right: 0.6em;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.passport-info-item {
+    display: flex;
+    align-items: flex-start;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin-bottom: 0.6rem;
+}
+
+.passport-info-item::before {
+    content: '📄';
+    display: inline-block;
+    width: 1.5em;
+    flex-shrink: 0;
+    margin-right: 0.5em;
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid var(--accent-teal);
+    transition: all 0.2s ease-in-out;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    border-radius: 4px;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: #ffffff;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--accent-tangerine);
+    border-color: var(--accent-tangerine);
+    box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.3);
+}
+
+input[type="checkbox"]:checked::before {
+    content: '✔';
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.9rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+input[type="checkbox"]:disabled {
+    border-color: #adb5bd;
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+label.inline-flex span {
+    transition: color 0.2s ease-in-out;
+}
+
+input[type="checkbox"]:checked+span {
+    color: var(--accent-tangerine);
+    font-weight: 600;
+}
+
+.form-input {
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-dark);
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-tangerine);
+    box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.25);
+}
+
+.form-input.invalid-input {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+}
+
+.card-header {
+    font-size: 1.75rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--accent-tangerine);
+}
+
+#submitBtn {
+    background-color: var(--accent-tangerine);
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 122, 89, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#submitBtn:hover {
+    background-color: var(--accent-sunny-yellow);
+    color: var(--text-dark);
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+}
+
+#submitBtn:disabled {
+    background-color: #adb5bd;
+    color: #6c757d;
+    cursor: not-allowed;
+    transform: scale(1);
+    box-shadow: none;
+}
+
+#formStatus strong {
+    color: var(--accent-tangerine);
+}
+
+.progress-bar-container {
+    background-color: #e9ecef;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+}
+
+.progress-bar-fill {
+    background: linear-gradient(90deg, var(--accent-tangerine), var(--accent-sunny-yellow));
+    padding: 0.5rem;
+    text-align: right;
+    color: var(--text-dark);
+    font-weight: bold;
+    transition: width 0.5s ease-in-out;
+}
+
+.plan-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.active-plan {
+    border-color: var(--accent-tangerine);
+    box-shadow: 0 0 25px rgba(255, 122, 89, 0.5);
+}
+
+.sub-section-bg {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    animation: spin 0.8s linear infinite;
+}
+
+.progress-spinner {
+    border: 4px solid #e9ecef;
+    border-top-color: var(--accent-tangerine);
+    width: 2rem;
+    height: 2rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#modal-content {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+#modal-content.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Section transition */
+.main-section {
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Responsive Iframe for Map */
+.map-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 75%;
+    /* 4:3 Aspect Ratio */
+    border-radius: 0.75rem;
+    /* Match card border radius */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
