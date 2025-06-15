@@ -333,8 +333,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function updateCountdown() {
         // --- ✨ 更新重點 ✨ ---
-        // 將截止日期直接設定為 2025/6/16 結束時
-        const deadlineDate = new Date('2025-06-16T23:59:59');
+        // 使用明確的年、月(0-11)、日、時、分、秒來建立日期物件，避免時區問題
+        const deadlineDate = new Date(2025, 5, 16, 23, 59, 59); // 2025年6月16日 23:59:59 (月份是0-indexed)
         
         const distance = deadlineDate.getTime() - new Date().getTime();
         if (distance < 0) {
