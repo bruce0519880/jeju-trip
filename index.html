@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+
     <!-- 引用外部 CSS 檔案 -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="p-4 sm:p-6 lg:p-8">
 
     <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-md shadow-md mb-8 rounded-lg">
@@ -21,21 +24,37 @@
                 <div class="hidden md:flex items-center space-x-8" id="main-nav">
                     <a class="nav-link" data-target="summary">旅行摘要</a>
                     <a class="nav-link" data-target="itinerary">詳細行程</a>
+                    <a class="nav-link" data-target="map">互動地圖</a>
                     <a class="nav-link" data-target="registration">費用與報名</a>
                     <a class="nav-link" data-target="passport-info">護照資訊</a>
                 </div>
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
                     </button>
                 </div>
             </div>
         </div>
         <div id="mobile-menu" class="hidden md:hidden bg-white rounded-b-lg shadow-xl">
-            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="summary">旅行摘要</a>
-            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="itinerary">詳細行程</a>
-            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="registration">費用與報名</a>
-            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white rounded-b-lg" data-target="passport-info">護照資訊</a>
+            <a href="#"
+                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
+                data-target="summary">旅行摘要</a>
+            <a href="#"
+                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
+                data-target="itinerary">詳細行程</a>
+            <a href="#"
+                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
+                data-target="map">互動地圖</a>
+            <a href="#"
+                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
+                data-target="registration">費用與報名</a>
+            <a href="#"
+                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white rounded-b-lg"
+                data-target="passport-info">護照資訊</a>
         </div>
     </nav>
 
@@ -50,47 +69,154 @@
                 <h2 class="card-header">旅行摘要</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div class="text-center md:text-left">
-                        <div class="mb-6"><h3 class="text-lg font-bold text-gray-800">旅行日期</h3><p class="text-3xl font-black" style="color: var(--accent-teal);">2025年 11月 10日 (一) - 11月 14日 (五)</p><p class="text-gray-600">五天四夜，享受海島風光</p></div>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-gray-800">旅行日期</h3>
+                            <p class="text-3xl font-black" style="color: var(--accent-teal);">2025年 11月 10日 (一) - 11月
+                                14日 (五)</p>
+                            <p class="text-gray-600">五天四夜，享受海島風光</p>
+                        </div>
                         <div class="p-4 rounded-lg sub-section-bg">
-                            <h3 class="text-lg font-bold text-gray-800">報名倒數中 <span style="color: var(--accent-tangerine);">(延長至 6/16 截止)</span></h3>
-                            <div id="countdownTimer" class="flex justify-center md:justify-start items-start mt-2 space-x-2 md:space-x-3"></div>
-                            <p id="countdown-notice" class="text-xs text-red-600 mt-2 font-semibold">因尚有多人未填寫報名資訊，故特別延長一天，請盡速報名以免廠商報價過期！</p>
+                            <h3 class="text-lg font-bold text-gray-800">報名倒數中 <span
+                                    style="color: var(--accent-tangerine);">(延長至 6/16 截止)</span></h3>
+                            <div id="countdownTimer"
+                                class="flex justify-center md:justify-start items-start mt-2 space-x-2 md:space-x-3">
+                            </div>
+                            <p id="countdown-notice" class="text-xs text-red-600 mt-2 font-semibold">
+                                因尚有多人未填寫報名資訊，故特別延長一天，請盡速報名以免廠商報價過期！</p>
                         </div>
                     </div>
                     <div class="space-y-4 p-4 rounded-lg sub-section-bg">
-                        <div class="text-center"><h3 class="text-lg font-bold text-gray-800">✈️ 去程 TPE → CJU</h3><p class="text-2xl font-bold text-gray-800">14:25 - 17:30</p><p class="text-sm text-gray-500">德威航空 TW688</p></div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-bold text-gray-800">✈️ 去程 TPE → CJU</h3>
+                            <p class="text-2xl font-bold text-gray-800">14:25 - 17:30</p>
+                            <p class="text-sm text-gray-500">德威航空 TW688</p>
+                        </div>
                         <hr class="border-gray-300">
-                        <div class="text-center"><h3 class="text-lg font-bold text-gray-800">✈️ 回程 CJU → TPE</h3><p class="text-2xl font-bold text-gray-800">12:20 - 13:25</p><p class="text-sm text-gray-500">德威航空 TW687</p></div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-bold text-gray-800">✈️ 回程 CJU → TPE</h3>
+                            <p class="text-2xl font-bold text-gray-800">12:20 - 13:25</p>
+                            <p class="text-sm text-gray-500">德威航空 TW687</p>
+                        </div>
                     </div>
                 </div>
             </section>
-            
+
             <section id="itinerary" data-section="itinerary" class="main-section card p-6 md:p-8">
                 <h2 class="card-header" style="color: var(--accent-teal);">詳細行程</h2>
                 <div class="space-y-6">
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);"><h3 class="text-xl font-bold text-gray-800 mb-2">第一天：桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷</h3><p class="text-gray-600">桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷(巨大火山岩/海蝕地形)→享用晚餐→入住飯店 CHECKIN→享用飯店設施</p><p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:X | 午餐:花花小點心 | 晚餐:三姓穴海鮮鍋料理 (W22,500韓幣/人)</p><p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p></div>
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);"><h3 class="text-xl font-bold text-gray-800 mb-2">第二天：城山日出峰→萬丈窟→濟州城邑民俗村→東門市場</h3><p class="text-gray-600">飯店→城山日出峰(火山丘/世界自然遺產)→萬丈窟(世界上最長的熔岩洞)→濟州城邑民俗村(贈每人一杯蜂蜜茶或五味子茶)→東門市場+中央地下街+黑豬肉一條街→返回飯店休憩</p><p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:石鍋拌飯+涮涮鍋 (W10,000韓幣/人) | 晚餐:明倫進士碳烤黑毛豬肉吃到飽+季節小菜 (W18,900韓幣/人)</p><p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p></div>
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);"><h3 class="text-xl font-bold text-gray-800 mb-2">第三天：ECOLAND森林小火車→漢拏樹木園→天地淵瀑布</h3><p class="text-gray-600">飯店→ECOLAND 森林小火車(森林趣/風車/海盜船/彩虹躺椅/哈比人樹洞)→漢拏樹木園(十一個主題園區)→天地淵瀑布(大長今場景/上帝的池塘)→濟州有林橘子(贈每人5顆橘子)→返回飯店休憩</p><p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:青花魚定食 (₩11,000韓幣/人) | 晚餐:活鮑魚+碳烤黑毛豬+蝦+蛋+大醬 (₩24,000韓幣/人)</p><p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p></div>
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);"><h3 class="text-xl font-bold text-gray-800 mb-2">第四天：全日自由活動</h3><p class="text-gray-600">飯店→全日自由活動→返回飯店休憩</p><p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午、晚餐:方便遊玩,敬請自理</p><p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p></div>
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);"><h3 class="text-xl font-bold text-gray-800 mb-2">第五天：返回溫暖的家</h3><p class="text-gray-600">飯店出發→濟州國際機場/桃園國際機場→歡樂賦歸</p><p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:X | 晚餐:X</p><p class="text-sm text-gray-500 mt-2">住宿: 溫暖的家</p></div>
+                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">第一天：桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷</h3>
+                        <p class="text-gray-600">桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷(巨大火山岩/海蝕地形)→享用晚餐→入住飯店 CHECKIN→享用飯店設施</p>
+                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:X | 午餐:花花小點心 |
+                            晚餐:三姓穴海鮮鍋料理 (W22,500韓幣/人)</p>
+                        <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                    </div>
+                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">第二天：城山日出峰→萬丈窟→濟州城邑民俗村→東門市場</h3>
+                        <p class="text-gray-600">
+                            飯店→城山日出峰(火山丘/世界自然遺產)→萬丈窟(世界上最長的熔岩洞)→濟州城邑民俗村(贈每人一杯蜂蜜茶或五味子茶)→東門市場+中央地下街+黑豬肉一條街→返回飯店休憩</p>
+                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:石鍋拌飯+涮涮鍋
+                            (W10,000韓幣/人) | 晚餐:明倫進士碳烤黑毛豬肉吃到飽+季節小菜 (W18,900韓幣/人)</p>
+                        <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                    </div>
+                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">第三天：ECOLAND森林小火車→漢拏樹木園→天地淵瀑布</h3>
+                        <p class="text-gray-600">飯店→ECOLAND
+                            森林小火車(森林趣/風車/海盜船/彩虹躺椅/哈比人樹洞)→漢拏樹木園(十一個主題園區)→天地淵瀑布(大長今場景/上帝的池塘)→濟州有林橘子(贈每人5顆橘子)→返回飯店休憩</p>
+                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:青花魚定食
+                            (₩11,000韓幣/人) | 晚餐:活鮑魚+碳烤黑毛豬+蝦+蛋+大醬 (₩24,000韓幣/人)</p>
+                        <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                    </div>
+                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">第四天：全日自由活動</h3>
+                        <p class="text-gray-600">飯店→全日自由活動→返回飯店休憩</p>
+                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午、晚餐:方便遊玩,敬請自理
+                        </p>
+                        <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                    </div>
+                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">第五天：返回溫暖的家</h3>
+                        <p class="text-gray-600">飯店出發→濟州國際機場/桃園國際機場→歡樂賦歸</p>
+                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:X | 晚餐:X</p>
+                        <p class="text-sm text-gray-500 mt-2">住宿: 溫暖的家</p>
+                    </div>
                 </div>
             </section>
-            
+
+            <section id="map" data-section="map" class="main-section card p-6 md:p-8">
+                <h2 class="card-header" style="color: var(--accent-teal);">互動式旅遊地圖</h2>
+                <p class="text-center text-gray-600 mb-6">您可以在地圖上自由縮放、拖曳，點擊地標可以查看更多資訊。特別推薦在「全日自由活動」時參考！</p>
+                <div class="map-container">
+                    <iframe
+                        src="https://www.google.com/maps/d/u/3/embed?mid=1g2SJi8dLOyFMvDvPwpCr5NA3Q-XsP-c&ehbc=2E312F&noprof=1"
+                        width="640" height="480"></iframe>
+                </div>
+            </section>
+
             <section id="registration" data-section="registration" class="main-section card p-6 md:p-8">
                 <h2 class="card-header">費用試算 & 線上報名</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <div class="space-y-2"><h3 class="text-xl font-bold text-gray-800 mb-4">💰 費用規則</h3><div class="info-list-item"><div><strong>公司補助：</strong><br>正式員工補助 <strong style="color: var(--accent-teal);">$30,000</strong> 元。<br>外包人員補助 50% (<strong style="color: var(--accent-teal);">$15,000</strong> 元)。</div></div><div class="info-list-item"><div><strong>正式員工自付：</strong><br><ul class="list-disc list-inside pl-2 text-gray-600"><li>總人數 > 20：自付 $2,900</li><li>總人數 16-20：自付 $3,900</li></ul></div></div><div class="info-list-item"><div><strong>眷屬補助：</strong><br><strong class="text-gray-800">一位同行眷屬</strong> (成人或孩童) 申請 <strong style="color: var(--accent-tangerine);">$15,000 元補助</strong>！<br><span class="text-sm text-gray-500">(外包人員不適用)</span></div></div><div class="info-list-item"><div><strong>其他優惠：</strong><br><ul class="list-disc list-inside pl-2 text-gray-600"><li>孩童不佔床：團費減 $1,000</li><li>嬰兒價：$6,500</li><li>單人房：需補價差 $9,000</li></ul></div></div></div>
-                    <div class="space-y-2"><h3 class="text-xl font-bold text-gray-800 mb-4">📩 報名流程</h3><div class="info-list-item"><div><strong>步驟一：</strong><br>填寫您與所有同行眷屬的資料，並勾選相關選項。</div></div><div class="info-list-item"><div><strong>步驟二：</strong><br>點擊「送出報名」，確認資料送出成功。</div></div><div class="info-list-item"><div><strong>步驟三 (重要)：</strong><br>請將所有人的<strong style="color: var(--accent-tangerine);">護照照片電子檔</strong>，LINE 給<strong style="color: var(--accent-tangerine);">主辦人</strong>。</div></div><div class="info-list-item"><div><strong>取消政策：</strong><br>報名後取消，需自付機票取消費 <strong style="color: var(--accent-tangerine);">$9,000 - $12,000</strong> 元。</div></div></div>
+                    <div class="space-y-2">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">💰 費用規則</h3>
+                        <div class="info-list-item">
+                            <div><strong>公司補助：</strong><br>正式員工補助 <strong
+                                    style="color: var(--accent-teal);">$30,000</strong> 元。<br>外包人員補助 50% (<strong
+                                    style="color: var(--accent-teal);">$15,000</strong> 元)。</div>
+                        </div>
+                        <div class="info-list-item">
+                            <div><strong>正式員工自付：</strong><br>
+                                <ul class="list-disc list-inside pl-2 text-gray-600">
+                                    <li>總人數 > 20：自付 $2,900</li>
+                                    <li>總人數 16-20：自付 $3,900</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="info-list-item">
+                            <div><strong>眷屬補助：</strong><br><strong class="text-gray-800">一位同行眷屬</strong> (成人或孩童) 申請
+                                <strong style="color: var(--accent-tangerine);">$15,000 元補助</strong>！<br><span
+                                    class="text-sm text-gray-500">(外包人員不適用)</span></div>
+                        </div>
+                        <div class="info-list-item">
+                            <div><strong>其他優惠：</strong><br>
+                                <ul class="list-disc list-inside pl-2 text-gray-600">
+                                    <li>孩童不佔床：團費減 $1,000</li>
+                                    <li>嬰兒價：$6,500</li>
+                                    <li>單人房：需補價差 $9,000</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">📩 報名流程</h3>
+                        <div class="info-list-item">
+                            <div><strong>步驟一：</strong><br>填寫您與所有同行眷屬的資料，並勾選相關選項。</div>
+                        </div>
+                        <div class="info-list-item">
+                            <div><strong>步驟二：</strong><br>點擊「送出報名」，確認資料送出成功。</div>
+                        </div>
+                        <div class="info-list-item">
+                            <div><strong>步驟三 (重要)：</strong><br>請將所有人的<strong
+                                    style="color: var(--accent-tangerine);">護照照片電子檔</strong>，LINE 給<strong
+                                    style="color: var(--accent-tangerine);">主辦人</strong>。</div>
+                        </div>
+                        <div class="info-list-item">
+                            <div><strong>取消政策：</strong><br>報名後取消，需自付機票取消費 <strong
+                                    style="color: var(--accent-tangerine);">$9,000 - $12,000</strong> 元。</div>
+                        </div>
+                    </div>
                 </div>
                 <hr class="border-gray-300/50 mb-8">
 
                 <div id="progress-container" class="mb-8 p-4 rounded-lg sub-section-bg text-center">
                     <div id="progress-loader" class="flex justify-center items-center h-24">
-                        <div class="progress-spinner" role="status"></div><span class="ml-4 text-gray-600">正在讀取最新報名進度...</span>
+                        <div class="progress-spinner" role="status"></div><span
+                            class="ml-4 text-gray-600">正在讀取最新報名進度...</span>
                     </div>
                     <div id="progress-content" class="hidden">
                         <h3 id="progress-title" class="text-xl font-bold text-gray-800 mb-2"></h3>
-                        <div class="progress-bar-container"><div id="progress-bar-fill" class="progress-bar-fill"></div></div>
+                        <div class="progress-bar-container">
+                            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                        </div>
                         <p id="progress-text" class="mt-2 text-lg"></p>
                     </div>
                 </div>
@@ -100,72 +226,154 @@
                     <fieldset class="p-4 border border-gray-300 rounded-lg">
                         <legend class="px-2 text-lg font-semibold text-gray-800">1. 同行人數 (員工本人免填)</legend>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
-                            <div><label for="numAdults" class="block text-sm font-medium text-gray-600 mb-1">眷屬 (成人)</label><input type="number" id="numAdults" class="form-input" value="0" min="0"></div>
-                            <div><label for="numChildren" class="block text-sm font-medium text-gray-600 mb-1">孩童 (不佔床)</label><input type="number" id="numChildren" class="form-input" value="0" min="0"></div>
-                            <div><label for="numInfants" class="block text-sm font-medium text-gray-600 mb-1">嬰兒 (2歲以下)</label><input type="number" id="numInfants" class="form-input" value="0" min="0"></div>
+                            <div><label for="numAdults" class="block text-sm font-medium text-gray-600 mb-1">眷屬
+                                    (成人)</label><input type="number" id="numAdults" class="form-input" value="0"
+                                    min="0"></div>
+                            <div><label for="numChildren" class="block text-sm font-medium text-gray-600 mb-1">孩童
+                                    (不佔床)</label><input type="number" id="numChildren" class="form-input" value="0"
+                                    min="0"></div>
+                            <div><label for="numInfants" class="block text-sm font-medium text-gray-600 mb-1">嬰兒
+                                    (2歲以下)</label><input type="number" id="numInfants" class="form-input" value="0"
+                                    min="0"></div>
                         </div>
                     </fieldset>
-                    <input type="hidden" id="hiddenAdults" name="adults"><input type="hidden" id="hiddenChildren" name="children"><input type="hidden" id="hiddenInfants" name="infants">
+                    <input type="hidden" id="hiddenAdults" name="adults"><input type="hidden" id="hiddenChildren"
+                        name="children"><input type="hidden" id="hiddenInfants" name="infants">
                     <fieldset class="p-4 border border-gray-300 rounded-lg">
                         <legend class="px-2 text-lg font-semibold text-gray-800">2. 您的資料</legend>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-                            <div><label for="regName" class="block text-sm font-medium text-gray-600 mb-1">您的姓名</label><input type="text" id="regName" name="employee_name" class="form-input" placeholder="請輸入中文姓名" required></div>
-                            <div><label class="block text-sm font-medium text-gray-600 mb-1">出生年月日</label><input type="date" name="employee_dob" class="form-input" required></div>
+                            <div><label for="regName"
+                                    class="block text-sm font-medium text-gray-600 mb-1">您的姓名</label><input type="text"
+                                    id="regName" name="employee_name" class="form-input" placeholder="請輸入中文姓名" required>
+                            </div>
+                            <div><label class="block text-sm font-medium text-gray-600 mb-1">出生年月日</label><input
+                                    type="date" name="employee_dob" class="form-input" required></div>
                         </div>
                         <div class="mt-4">
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="employee_renew_passport"><span class="ml-3 text-gray-800">需要新辦/換新護照</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                    name="employee_renew_passport"><span
+                                    class="ml-3 text-gray-800">需要新辦/換新護照</span></label>
                         </div>
                     </fieldset>
                     <div id="companionSection" class="space-y-6"></div>
                     <fieldset class="p-4 border border-gray-300 rounded-lg">
                         <legend class="px-2 text-lg font-semibold text-gray-800">3. 整體選項</legend>
                         <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8 mt-2 justify-center">
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="isOutsourced" name="is_outsourced"><span class="ml-3 text-gray-800">我是外包人員</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="performanceBonus" name="bonus"><span class="ml-3 text-gray-800">去年業績達標 (享眷屬補助)</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" id="singleRoom" name="single_room"><span class="ml-3 text-gray-800">需要單人房 (補價差$9,000)</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                    id="isOutsourced" name="is_outsourced"><span
+                                    class="ml-3 text-gray-800">我是外包人員</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                    id="performanceBonus" name="bonus"><span class="ml-3 text-gray-800">去年業績達標
+                                    (享眷屬補助)</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                    id="singleRoom" name="single_room"><span class="ml-3 text-gray-800">需要單人房
+                                    (補價差$9,000)</span></label>
                         </div>
                     </fieldset>
-                    <div id="costResult" class="bg-gray-50 p-6 rounded-lg border border-gray-200 min-h-[120px] flex flex-col justify-center text-center"><p class="text-gray-500">請填寫人數，下方將顯示費用預估</p></div>
-                    <button type="submit" id="submitBtn" class="w-full font-bold py-3 px-8 rounded-lg text-lg"><span id="submitBtnText">送出報名</span><div id="submitSpinner" class="spinner hidden ml-3"></div></button>
+                    <div id="costResult"
+                        class="bg-gray-50 p-6 rounded-lg border border-gray-200 min-h-[120px] flex flex-col justify-center text-center">
+                        <p class="text-gray-500">請填寫人數，下方將顯示費用預估</p>
+                    </div>
+                    <button type="submit" id="submitBtn" class="w-full font-bold py-3 px-8 rounded-lg text-lg"><span
+                            id="submitBtnText">送出報名</span>
+                        <div id="submitSpinner" class="spinner hidden ml-3"></div>
+                    </button>
                     <div id="formStatus" class="text-center mt-4 h-6"></div>
                 </form>
             </section>
-            
+
             <section id="passport-info" data-section="passport-info" class="main-section card p-6 md:p-8">
                 <h2 class="card-header">護照換發準備資料</h2>
-                <div class="text-center mb-6 p-3 rounded-lg" style="background-color: rgba(241, 196, 15, 0.15); color: #856404;">
+                <div class="text-center mb-6 p-3 rounded-lg"
+                    style="background-color: rgba(241, 196, 15, 0.15); color: #856404;">
                     <p>外交部工作天數約為 12-15 個工作天 (不含假日)，身份證則須 4-6 個工作天後回件。</p>
                     <p>如需使用到身份證正本，再請特別留意唷！</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="sub-section-bg p-4 rounded-lg">
                         <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">成人</h3>
-                        <div class="space-y-2 text-gray-700"><p class="passport-info-item">護照申請書 (公司有可填寫)</p><p class="passport-info-item">半年內的兩吋白底大頭照 2 張</p><p class="passport-info-item">身分證正本</p><p class="passport-info-item">舊護照 (建議可帶來方便確認英文別名，避免勾選錯誤浪費送件時間)</p><p class="passport-info-item">人別確認 (首次申辦才需檢附)</p><p class="passport-info-item">費用: 1600 元 (專案優惠價)</p></div>
+                        <div class="space-y-2 text-gray-700">
+                            <p class="passport-info-item">護照申請書 (公司有可填寫)</p>
+                            <p class="passport-info-item">半年內的兩吋白底大頭照 2 張</p>
+                            <p class="passport-info-item">身分證正本</p>
+                            <p class="passport-info-item">舊護照 (建議可帶來方便確認英文別名，避免勾選錯誤浪費送件時間)</p>
+                            <p class="passport-info-item">人別確認 (首次申辦才需檢附)</p>
+                            <p class="passport-info-item">費用: 1600 元 (專案優惠價)</p>
+                        </div>
                     </div>
                     <div class="sub-section-bg p-4 rounded-lg">
                         <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">滿 14-18 歲</h3>
-                        <div class="space-y-2 text-gray-700"><p class="passport-info-item">護照申請書 (公司有可填寫)</p><p class="passport-info-item">半年內拍的兩吋白底大頭照 2 張</p><p class="passport-info-item">身分證正本及監護人身份證正本 (若有監護權問題，需提供三個月內戶籍謄本正本一份)</p><p class="passport-info-item">舊護照 (建議可帶來方便確認英文別名，避免勾選錯誤浪費送件時間)</p><p class="passport-info-item">人別確認 (首次申辦才需檢附)</p><p class="passport-info-item">費用: 1600 元 (專案優惠價)</p></div>
+                        <div class="space-y-2 text-gray-700">
+                            <p class="passport-info-item">護照申請書 (公司有可填寫)</p>
+                            <p class="passport-info-item">半年內拍的兩吋白底大頭照 2 張</p>
+                            <p class="passport-info-item">身分證正本及監護人身份證正本 (若有監護權問題，需提供三個月內戶籍謄本正本一份)</p>
+                            <p class="passport-info-item">舊護照 (建議可帶來方便確認英文別名，避免勾選錯誤浪費送件時間)</p>
+                            <p class="passport-info-item">人別確認 (首次申辦才需檢附)</p>
+                            <p class="passport-info-item">費用: 1600 元 (專案優惠價)</p>
+                        </div>
                     </div>
                     <div class="sub-section-bg p-4 rounded-lg">
                         <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">14 歲以下</h3>
-                        <div class="space-y-2 text-gray-700"><p class="passport-info-item">護照申請書 (公司有可填寫)</p><p class="passport-info-item">半年内拍的兩吋白底大頭照 2 張</p><p class="passport-info-item">戶口名簿正本 (記事不可省略) 或 3 個月內辦理之戶籍謄本(詳細記事)正本</p><p class="passport-info-item">舊護照 (建議可帶來方便確認英文別名)</p><p class="passport-info-item">監護人身份證正本</p><p class="passport-info-item">人別確認 (首次申辦才需檢附)</p><p class="passport-info-item">費用: 1200 元 (專案優惠價)</p></div>
+                        <div class="space-y-2 text-gray-700">
+                            <p class="passport-info-item">護照申請書 (公司有可填寫)</p>
+                            <p class="passport-info-item">半年内拍的兩吋白底大頭照 2 張</p>
+                            <p class="passport-info-item">戶口名簿正本 (記事不可省略) 或 3 個月內辦理之戶籍謄本(詳細記事)正本</p>
+                            <p class="passport-info-item">舊護照 (建議可帶來方便確認英文別名)</p>
+                            <p class="passport-info-item">監護人身份證正本</p>
+                            <p class="passport-info-item">人別確認 (首次申辦才需檢附)</p>
+                            <p class="passport-info-item">費用: 1200 元 (專案優惠價)</p>
+                        </div>
                     </div>
                 </div>
-                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 dual-card-container">
-                    <div class="card p-6"><h3 class="text-xl font-bold text-center mb-4 text-gray-800">團費包含項目</h3><div class="space-y-2 text-gray-700"><p class="info-list-item">交通費：行程表內團體遊覽車，德威航空來回經濟艙團體機票。</p><p class="info-list-item">稅捐：各地機場稅、燃料稅、稅金。</p><p class="info-list-item">餐食：行程內列明之餐食，盡量安排適合國人口味。</p><p class="info-list-item">住宿：行程表內飯店住宿（兩人一室為原則），需達 10 間以上。</p><p class="info-list-item">遊覽費：行程內旅遊活動之門票、手續費。</p><p class="info-list-item">保險費：每人全程旅遊責任保險新台幣伍佰萬元及貳十萬元意外醫療險。</p><p class="info-list-item">贈禮：花花專屬贈品、旅遊手冊、企業紀念布條、花花筆、夾鏈袋、網卡。</p><p class="info-list-item">小費：司機、領隊、導遊小費 (每日 NT$300 x 5 天，共 NT$1,500/人，已包含)。</p><p class="info-list-item">領隊導遊：達 16 人以上派遣合格專業領隊 1 位，當地導遊 1 位。</p><p class="info-list-item">飲用水：礦泉水無限提供。</p></div></div>
-                    <div class="card p-6"><h3 class="text-xl font-bold text-center mb-4 text-gray-800">團費未含項目</h3><div class="space-y-2 text-gray-700"><p class="info-list-item">證照費：新辦 (換新) 十年效期護照費用 NT$1,600 元。</p><p class="info-list-item">證照費：14 歲以下五年效期護照費用 NT$1,200 元。</p><p class="info-list-item">純係私人之消費：如電話費、洗衣費等。</p><p class="info-list-item">床頭、行李小費及表上未列明之其他行程自費行程。</p><p class="info-list-item">旅遊平安保險及旅遊不便險等其他私人保險項目。</p></div></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 dual-card-container">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-bold text-center mb-4 text-gray-800">團費包含項目</h3>
+                        <div class="space-y-2 text-gray-700">
+                            <p class="info-list-item">交通費：行程表內團體遊覽車，德威航空來回經濟艙團體機票。</p>
+                            <p class="info-list-item">稅捐：各地機場稅、燃料稅、稅金。</p>
+                            <p class="info-list-item">餐食：行程內列明之餐食，盡量安排適合國人口味。</p>
+                            <p class="info-list-item">住宿：行程表內飯店住宿（兩人一室為原則），需達 10 間以上。</p>
+                            <p class="info-list-item">遊覽費：行程內旅遊活動之門票、手續費。</p>
+                            <p class="info-list-item">保險費：每人全程旅遊責任保險新台幣伍佰萬元及貳十萬元意外醫療險。</p>
+                            <p class="info-list-item">贈禮：花花專屬贈品、旅遊手冊、企業紀念布條、花花筆、夾鏈袋、網卡。</p>
+                            <p class="info-list-item">小費：司機、領隊、導遊小費 (每日 NT$300 x 5 天，共 NT$1,500/人，已包含)。</p>
+                            <p class="info-list-item">領隊導遊：達 16 人以上派遣合格專業領隊 1 位，當地導遊 1 位。</p>
+                            <p class="info-list-item">飲用水：礦泉水無限提供。</p>
+                        </div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-bold text-center mb-4 text-gray-800">團費未含項目</h3>
+                        <div class="space-y-2 text-gray-700">
+                            <p class="info-list-item">證照費：新辦 (換新) 十年效期護照費用 NT$1,600 元。</p>
+                            <p class="info-list-item">證照費：14 歲以下五年效期護照費用 NT$1,200 元。</p>
+                            <p class="info-list-item">純係私人之消費：如電話費、洗衣費等。</p>
+                            <p class="info-list-item">床頭、行李小費及表上未列明之其他行程自費行程。</p>
+                            <p class="info-list-item">旅遊平安保險及旅遊不便險等其他私人保險項目。</p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <div id="successModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform transition-all scale-95 opacity-0" id="modal-content">
-            <div class="w-16 h-16 bg-green-100 rounded-full mx-auto flex items-center justify-center mb-4"><svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div><h3 class="text-2xl font-bold text-gray-800 mb-2">報名成功！</h3><p class="text-gray-600 mb-6">請記得將所有人的護照照片<br><strong class="text-[var(--accent-tangerine)]">LINE 給主辦人</strong>，才算完成所有步驟喔！</p><button id="closeModalBtn" class="bg-[var(--accent-teal)] text-white font-bold py-2 px-6 rounded-lg w-full transition-transform hover:scale-105">太棒了！</button>
+    <div id="successModal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform transition-all scale-95 opacity-0"
+            id="modal-content">
+            <div class="w-16 h-16 bg-green-100 rounded-full mx-auto flex items-center justify-center mb-4"><svg
+                    class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg></div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">報名成功！</h3>
+            <p class="text-gray-600 mb-6">請記得將所有人的護照照片<br><strong class="text-[var(--accent-tangerine)]">LINE
+                    給主辦人</strong>，才算完成所有步驟喔！</p><button id="closeModalBtn"
+                class="bg-[var(--accent-teal)] text-white font-bold py-2 px-6 rounded-lg w-full transition-transform hover:scale-105">太棒了！</button>
         </div>
     </div>
-    
+
     <!-- 引用外部 JavaScript 檔案 -->
     <script src="script.js"></script>
 </body>
+
 </html>
