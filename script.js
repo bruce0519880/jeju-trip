@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // =========================================================================
-    // CONFIGURATION
-    // =========================================================================
     const CONFIG = {
         scriptURL: 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec',
         costs: {
@@ -29,10 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
             '張逸凱': { bonusRedirect: true, bonusRedirectTo: '廖彤婕' }
         }
     };
-
-    // =========================================================================
-    // DOM Elements
-    // =========================================================================
     const dom = {
         regForm: document.getElementById('registrationForm'),
         costResult: document.getElementById('costResult'),
@@ -72,29 +65,31 @@ document.addEventListener('DOMContentLoaded', () => {
         countdownNotice: document.getElementById('countdown-notice'),
         navLinks: document.querySelectorAll('.nav-link, #mobile-menu a'),
         mainSections: document.querySelectorAll('.main-section'),
+        floatingBtn: document.getElementById('floating-signup-btn'),
     };
 
-    // =========================================================================
-    // State
-    // =========================================================================
     let serverHeadcount = 0;
-
-    // =========================================================================
-    // Functions
-    // =========================================================================
 
     function showSection(targetId) {
         dom.mainSections.forEach(section => {
-            section.classList.toggle('hidden', section.dataset.section !== targetId);
+            if (section.dataset.section === targetId) {
+                section.classList.remove('hidden');
+            } else {
+                section.classList.add('hidden');
+            }
         });
-
         dom.navLinks.forEach(link => {
             link.classList.toggle('active', link.dataset.target === targetId);
         });
 
+        if (dom.floatingBtn) {
+            dom.floatingBtn.classList.toggle('hidden', targetId === 'registration');
+        }
+
         dom.mobileMenu.menu.classList.add('hidden');
         window.scrollTo(0, 0);
     }
+
 
     function generateCompanionFields() {
         const adults = parseInt(dom.numAdults.value) || 0;
@@ -117,8 +112,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getAge(dateString) {
         if (!dateString) return 99;
+        const today = new Date();
         const birthDate = new Date(dateString);
-        return Math.abs(new Date(Date.now() - birthDate.getTime()).getUTCFullYear() - 1970);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
     }
 
     function handleSpecialConditions() {
@@ -155,6 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCost() {
         const formState = getFormState();
+        if ((formState.counts.adults + formState.counts.children + formState.counts.infants) === 0 && !formState.employeeName) {
+            dom.costResult.innerHTML = `<p class="text-gray-500">請填寫人數與姓名，下方將顯示費用預估</p>`;
+            return;
+        }
         let finalHtml = '';
         ['planB', 'planA'].forEach(planKey => {
             const scenario = CONFIG.costs[planKey];
@@ -170,13 +175,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const adults = parseInt(dom.numAdults.value) || 0;
         const children = parseInt(dom.numChildren.value) || 0;
         const infants = parseInt(dom.numInfants.value) || 0;
+
         let passportRenewals = { adult: 0, child: 0 };
         if (dom.regForm.elements['employee_renew_passport']?.checked) {
             getAge(dom.regForm.elements['employee_dob'].value) < 14 ? passportRenewals.child++ : passportRenewals.adult++;
         }
+
+        let childrenAges = [];
+        for (let i = 1; i <= children; i++) {
+            if (dom.regForm.elements[`child_${i}_renew_passport`]?.checked) passportRenewals.child++;
+            const dob = dom.regForm.elements[`child_${i}_dob`]?.value;
+            childrenAges.push(getAge(dob));
+        }
+
         for (let i = 1; i <= adults; i++) if (dom.regForm.elements[`adult_${i}_renew_passport`]?.checked) passportRenewals.adult++;
-        for (let i = 1; i <= children; i++) if (dom.regForm.elements[`child_${i}_renew_passport`]?.checked) passportRenewals.child++;
         for (let i = 1; i <= infants; i++) if (dom.regForm.elements[`infant_${i}_renew_passport`]?.checked) passportRenewals.child++;
+
         return {
             employeeName: dom.inputs.regName.value.trim(),
             isOutsourced: dom.inputs.isOutsourced.checked,
@@ -185,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
             counts: { adults, children, infants },
             passportRenewals: passportRenewals,
             totalHeadcount: serverHeadcount + 1 + adults + children,
+            childrenAges: childrenAges,
         };
     }
 
@@ -194,28 +209,64 @@ document.addEventListener('DOMContentLoaded', () => {
         let subTotal = 0;
         let breakdown = { base: [], discounts: [], extras: [], grandTotal: 0 };
         const employeeCompanySubsidy = (state.isOutsourced && !rule.isOutsourcedSpecial) ? CONFIG.subsidies.outsourced : CONFIG.subsidies.company;
+
         subTotal += (companionBaseCost - employeeCompanySubsidy);
         breakdown.base.push(`• 員工本人團費：<span class="font-bold text-gray-800">${companionBaseCost.toLocaleString()}</span> 元`);
         breakdown.base.push(`<p class="pl-4">└─ 公司補助：<span class="font-bold" style="color: var(--accent-teal);">- ${employeeCompanySubsidy.toLocaleString()}</span> 元</p>`);
+
         if (state.counts.adults > 0) { subTotal += state.counts.adults * companionBaseCost; breakdown.base.push(`• 眷屬 (成人 ${state.counts.adults}位)：<span class="font-bold text-gray-800">${(state.counts.adults * companionBaseCost).toLocaleString()}</span> 元`); }
         if (state.counts.children > 0) { subTotal += state.counts.children * companionBaseCost; breakdown.base.push(`• 孩童 (${state.counts.children}位)：<span class="font-bold text-gray-800">${(state.counts.children * companionBaseCost).toLocaleString()}</span> 元`); }
         if (state.counts.infants > 0) { subTotal += state.counts.infants * CONFIG.costs.infant; breakdown.base.push(`• 嬰兒 (${state.counts.infants}位)：<span class="font-bold text-gray-800">${(state.counts.infants * CONFIG.costs.infant).toLocaleString()}</span> 元`); }
-        const childDiscountTotal = CONFIG.costs.childNoBedDiscount * state.counts.children;
-        if (childDiscountTotal > 0) { subTotal -= childDiscountTotal; breakdown.discounts.push(`<p class="pl-4">└─ 孩童不佔床折扣：<span class="font-bold" style="color: var(--accent-teal);">- ${childDiscountTotal.toLocaleString()}</span> 元</p>`); }
+
+        // **修正：處理孩童折扣新規**
+        let standardChildDiscount = 0;
+        let specialChildDiscount = 0;
+        if (state.counts.children > 0) {
+            state.childrenAges.forEach(age => {
+                // 規則1：一般孩童折扣 (9歲以下)
+                if (age < 9) {
+                    standardChildDiscount += CONFIG.costs.childNoBedDiscount;
+                    // 規則2：廖彤婕特殊折扣 (4歲以下)
+                    if (state.employeeName === '廖彤婕' && age < 4) {
+                        specialChildDiscount += rule.specialChildDiscount;
+                    }
+                }
+            });
+        }
+
+        // **修正：分開列出折扣**
+        if (standardChildDiscount > 0) {
+            subTotal -= standardChildDiscount;
+            breakdown.discounts.push(`<p class="pl-4">└─ 孩童不佔床折扣 (9歲以下)：<span class="font-bold" style="color: var(--accent-teal);">- ${standardChildDiscount.toLocaleString()}</span> 元</p>`);
+        }
+        if (specialChildDiscount > 0) {
+            subTotal -= specialChildDiscount;
+            breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 專屬-孩童特別折扣 (4歲以下)：<span class="font-bold">- ${specialChildDiscount.toLocaleString()}</span> 元</p>`);
+        }
+
         if ((state.counts.adults > 0 || state.counts.children > 0) && state.hasBonus) {
             if (rule.bonusRedirect) {
                 breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 已將達標補助給 ${rule.bonusRedirectTo} 使用</p>`);
             } else if (!state.isOutsourced || rule.isOutsourcedSpecial) {
                 subTotal -= CONFIG.subsidies.performanceBonus;
                 breakdown.discounts.push(`<p class="pl-4">└─ 業績達標補助：<span class="font-bold" style="color: var(--accent-teal);">- ${CONFIG.subsidies.performanceBonus.toLocaleString()}</span> 元</p>`);
-                if (rule.bonusText) breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">  (${rule.bonusText})</p>`);
+                if (rule.bonusText) {
+                    breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">  (${rule.bonusText})</p>`);
+                }
             }
         }
-        if (rule.specialBonus) { subTotal -= rule.specialBonus; breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 專屬-特別補助：<span class="font-bold">- ${rule.specialBonus.toLocaleString()}</span> 元</p>`); }
+
+        if (rule.specialBonus && state.hasBonus) {
+            subTotal -= rule.specialBonus;
+            breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 業績達標-特別補助：<span class="font-bold">- ${rule.specialBonus.toLocaleString()}</span> 元</p>`);
+        }
+
         breakdown.grandTotal = subTotal;
+
         if (state.needsSingleRoom) { breakdown.grandTotal += CONFIG.costs.singleRoomSupplement; breakdown.extras.push(`<p class="pl-4">└─ 單人房價差：<span class="font-bold text-gray-800">+ ${CONFIG.costs.singleRoomSupplement.toLocaleString()}</span> 元</p>`); }
         const passportTotalCost = (state.passportRenewals.adult * CONFIG.costs.passportAdult) + (state.passportRenewals.child * CONFIG.costs.passportChild);
         if (passportTotalCost > 0) { breakdown.grandTotal += passportTotalCost; breakdown.extras.push(`<p class="pl-4">└─ 護照辦理費：<span class="font-bold" style="color: var(--accent-sunny-yellow);">+ ${passportTotalCost.toLocaleString()}</span> 元</p>`); }
+
         return breakdown;
     }
 
@@ -276,10 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // =========================================================================
-    // Helper Functions
-    // =========================================================================
-
     function setSubmitButtonState(isSubmitting) {
         dom.submitBtn.btn.disabled = isSubmitting;
         dom.submitBtn.text.textContent = isSubmitting ? '傳送中...' : '送出報名';
@@ -316,9 +363,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCountdown() {
-        const deadlineDate = new Date(2025, 5, 16, 23, 59, 59); // 2025年6月16日 23:59:59 (月份是0-indexed, 5代表6月)
+        const deadlineDate = new Date('2025-06-16T23:59:59');
+        const now = new Date().getTime();
+        const distance = deadlineDate.getTime() - now;
 
-        const distance = deadlineDate.getTime() - new Date().getTime();
+        const hoursLeft = distance / (1000 * 60 * 60);
+        if (hoursLeft > 0 && hoursLeft < 24) {
+            dom.countdownTimer.classList.add('urgent-countdown');
+        } else {
+            dom.countdownTimer.classList.remove('urgent-countdown');
+        }
+
         if (distance < 0) {
             if (countdownInterval) clearInterval(countdownInterval);
             dom.countdownTimer.innerHTML = '<span class="text-xl font-bold text-gray-800">報名已截止！</span>';
@@ -333,11 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     let countdownInterval = null;
 
-    // =========================================================================
-    // Event Listeners
-    // =========================================================================
     function setupEventListeners() {
-        // Page navigation
         dom.navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -348,7 +399,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Form logic
         dom.inputs.regName.addEventListener('input', handleSpecialConditions);
         dom.inputs.isOutsourced.addEventListener('change', handleSpecialConditions);
         [dom.numAdults, dom.numChildren, dom.numInfants].forEach(input => {
@@ -358,25 +408,24 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         dom.regForm.addEventListener('change', (event) => {
-            if (!['regName', 'isOutsourced', 'numAdults', 'numChildren', 'numInfants'].includes(event.target.id)) {
+            if (!['regName', 'isOutsourced'].includes(event.target.id)) {
                 renderCost();
             }
         });
         dom.regForm.addEventListener('submit', handleFormSubmit);
-
-        // Mobile menu toggle
         dom.mobileMenu.button.addEventListener('click', () => dom.mobileMenu.menu.classList.toggle('hidden'));
-
-        // Modal
         dom.modal.closeBtn.addEventListener('click', hideSuccessModal);
         dom.modal.container.addEventListener('click', (e) => {
             if (e.target === dom.modal.container) hideSuccessModal();
         });
+        if (dom.floatingBtn) {
+            dom.floatingBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSection('registration');
+            });
+        }
     }
 
-    // =========================================================================
-    // Initialization
-    // =========================================================================
     function init() {
         generateCompanionFields();
         handleSpecialConditions();
@@ -385,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
         countdownInterval = setInterval(updateCountdown, 1000);
         setupEventListeners();
         attachFormValidationListeners();
-        showSection('summary'); // Show the summary section by default
+        showSection('summary');
     }
 
     init();

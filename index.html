@@ -10,8 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
         rel="stylesheet">
-
-    <!-- 引用外部 CSS 檔案 -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -25,11 +23,12 @@
                     <a class="nav-link" data-target="summary">旅行摘要</a>
                     <a class="nav-link" data-target="itinerary">詳細行程</a>
                     <a class="nav-link" data-target="map">互動地圖</a>
-                    <a class="nav-link" data-target="registration">費用與報名</a>
+                    <a class="nav-link" data-target="checklist">準備清單</a>
+                    <a class="nav-link" data-target="faq">常見問題</a>
                     <a class="nav-link" data-target="passport-info">護照資訊</a>
                 </div>
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-button" class="text-gray-800 focus:outline-none">
+                    <button id="mobile-menu-button" class="text-gray-800 focus:outline-none" aria-label="開啟主選單">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -51,14 +50,20 @@
                 data-target="map">互動地圖</a>
             <a href="#"
                 class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
-                data-target="registration">費用與報名</a>
+                data-target="checklist">準備清單</a>
             <a href="#"
-                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white rounded-b-lg"
+                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
+                data-target="faq">常見問題</a>
+            <a href="#"
+                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
                 data-target="passport-info">護照資訊</a>
+            <a href="#"
+                class="block py-3 px-6 text-sm text-gray-700 bg-[var(--accent-tangerine)] text-white font-bold text-center"
+                data-target="registration">立即報名</a>
         </div>
     </nav>
 
-    <div class="container mx-auto max-w-5xl">
+    <div class="container mx-auto max-w-7xl">
         <header class="text-center my-8 md:my-12">
             <h1 class="text-4xl md:text-6xl font-black gradient-text leading-tight">2025 員工國外旅遊</h1>
             <p class="text-2xl md:text-4xl font-bold text-gray-800 mt-2">韓國濟州島之旅 🇰🇷</p>
@@ -66,7 +71,7 @@
 
         <main class="space-y-8">
             <section id="summary" data-section="summary" class="main-section card p-6 md:p-8">
-                <h2 class="card-header">旅行摘要</h2>
+                <h2 class="card-header">📅 旅行摘要</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div class="text-center md:text-left">
                         <div class="mb-6">
@@ -102,17 +107,29 @@
             </section>
 
             <section id="itinerary" data-section="itinerary" class="main-section card p-6 md:p-8">
-                <h2 class="card-header" style="color: var(--accent-teal);">詳細行程</h2>
+                <h2 class="card-header">✈️ 詳細行程</h2>
                 <div class="space-y-6">
                     <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">第一天：桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">第一天：桃園國際機場/濟州國際機場→<a
+                                href="https://www.google.com/maps/search/?api=1&query=濟州島龍頭岩" target="_blank"
+                                class="itinerary-link">龍頭岩</a>+<a
+                                href="https://www.google.com/maps/search/?api=1&query=濟州島龍淵峽谷" target="_blank"
+                                class="itinerary-link">龍淵峽谷</a></h3>
                         <p class="text-gray-600">桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷(巨大火山岩/海蝕地形)→享用晚餐→入住飯店 CHECKIN→享用飯店設施</p>
                         <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:X | 午餐:花花小點心 |
                             晚餐:三姓穴海鮮鍋料理 (W22,500韓幣/人)</p>
                         <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
                     </div>
                     <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">第二天：城山日出峰→萬丈窟→濟州城邑民俗村→東門市場</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">第二天：<a
+                                href="https://www.google.com/maps/search/?api=1&query=城山日出峰" target="_blank"
+                                class="itinerary-link">城山日出峰</a>→<a
+                                href="https://www.google.com/maps/search/?api=1&query=萬丈窟" target="_blank"
+                                class="itinerary-link">萬丈窟</a>→<a
+                                href="https://www.google.com/maps/search/?api=1&query=濟州城邑民俗村" target="_blank"
+                                class="itinerary-link">濟州城邑民俗村</a>→<a
+                                href="https://www.google.com/maps/search/?api=1&query=濟州東門市場" target="_blank"
+                                class="itinerary-link">東門市場</a></h3>
                         <p class="text-gray-600">
                             飯店→城山日出峰(火山丘/世界自然遺產)→萬丈窟(世界上最長的熔岩洞)→濟州城邑民俗村(贈每人一杯蜂蜜茶或五味子茶)→東門市場+中央地下街+黑豬肉一條街→返回飯店休憩</p>
                         <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:石鍋拌飯+涮涮鍋
@@ -120,7 +137,13 @@
                         <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
                     </div>
                     <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">第三天：ECOLAND森林小火車→漢拏樹木園→天地淵瀑布</h3>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">第三天：<a
+                                href="https://www.google.com/maps/search/?api=1&query=ECOLAND森林小火車" target="_blank"
+                                class="itinerary-link">ECOLAND森林小火車</a>→<a
+                                href="https://www.google.com/maps/search/?api=1&query=漢拏樹木園" target="_blank"
+                                class="itinerary-link">漢拏樹木園</a>→<a
+                                href="https://www.google.com/maps/search/?api=1&query=天地淵瀑布" target="_blank"
+                                class="itinerary-link">天地淵瀑布</a></h3>
                         <p class="text-gray-600">飯店→ECOLAND
                             森林小火車(森林趣/風車/海盜船/彩虹躺椅/哈比人樹洞)→漢拏樹木園(十一個主題園區)→天地淵瀑布(大長今場景/上帝的池塘)→濟州有林橘子(贈每人5顆橘子)→返回飯店休憩</p>
                         <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:青花魚定食
@@ -144,146 +167,240 @@
             </section>
 
             <section id="map" data-section="map" class="main-section card p-6 md:p-8">
-                <h2 class="card-header" style="color: var(--accent-teal);">互動式旅遊地圖</h2>
+                <h2 class="card-header">🗺️ 互動式旅遊地圖</h2>
                 <p class="text-center text-gray-600 mb-6">您可以在地圖上自由縮放、拖曳，點擊地標可以查看更多資訊。特別推薦在「全日自由活動」時參考！</p>
                 <div class="map-container">
-                    <iframe
-                        src="https://www.google.com/maps/d/u/3/embed?mid=1g2SJi8dLOyFMvDvPwpCr5NA3Q-XsP-c&ehbc=2E312F&noprof=1"
-                        width="640" height="480"></iframe>
+                    <iframe src="https://www.google.com/maps/d/embed?mid=1_6w3m3z_wZ9fJ9dY8eXcQ8bA7rY&ehbc=2E312F"
+                        width="640" height="480" title="景點互動地圖"></iframe>
+                </div>
+            </section>
+
+            <section id="checklist" data-section="checklist" class="main-section card p-6 md:p-8">
+                <h2 class="card-header">🧳 行前準備清單</h2>
+                <p class="text-center text-gray-600 mb-8">這是一份建議清單，您可以根據個人需求調整。勾選起來，讓準備過程更輕鬆！</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-3xl mx-auto">
+                    <div class="checklist-category">
+                        <h3 class="checklist-header">重要證件與金錢</h3>
+                        <div class="checklist-item"><label><input type="checkbox"><span>護照 (效期需六個月以上)</span></label>
+                        </div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>身分證</span></label></div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>少量韓元現金</span></label></div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>信用卡 (海外回饋卡)</span></label></div>
+                    </div>
+                    <div class="checklist-category">
+                        <h3 class="checklist-header">電子用品</h3>
+                        <div class="checklist-item"><label><input type="checkbox"><span>手機與充電器</span></label></div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>韓國轉接頭 (兩腳圓型)</span></label>
+                        </div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>行動電源</span></label></div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>相機與備用電池</span></label></div>
+                    </div>
+                    <div class="checklist-category">
+                        <h3 class="checklist-header">衣物與盥洗</h3>
+                        <div class="checklist-item"><label><input type="checkbox"><span>保暖防風外套</span></label></div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>圍巾、帽子、手套</span></label></div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>換洗衣物 (洋蔥式穿搭)</span></label>
+                        </div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>個人盥洗用品、保養品</span></label></div>
+                    </div>
+                    <div class="checklist-category">
+                        <h3 class="checklist-header">個人藥品與其他</h3>
+                        <div class="checklist-item"><label><input type="checkbox"><span>個人常備藥品 (暈車、腸胃藥等)</span></label>
+                        </div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>雨具 (摺疊傘)</span></label></div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>太陽眼鏡、防曬乳</span></label></div>
+                        <div class="checklist-item"><label><input type="checkbox"><span>購物用環保袋</span></label></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="faq" data-section="faq" class="main-section card p-6 md:p-8">
+                <h2 class="card-header">❓ 常見問題 Q&A</h2>
+                <div class="space-y-4">
+                    <details class="faq-item">
+                        <summary class="faq-question">11月的濟州島天氣如何？該怎麼穿搭？</summary>
+                        <div class="faq-answer">
+                            <p>11月的濟州島已進入秋末，天氣通常涼爽，日夜溫差較大。平均溫度約在攝氏 10-17 度之間。</p>
+                            <p><strong>穿搭建議：</strong>請採「洋蔥式」穿法。建議攜帶薄長袖、毛衣、以及一件防風保暖的外套。若要去漢拏山等山區，建議穿著更保暖的衣物。圍巾和帽子也是很好的保暖配件。
+                            </p>
+                        </div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">需要換多少韓元？當地刷卡方便嗎？</summary>
+                        <div class="faq-answer">
+                            <p><strong>換匯建議：</strong>建議在台灣先換好少量韓元（約台幣
+                                3000-5000元），用於支付剛抵達時的交通、小吃等費用。若有大額換匯需求，到濟州市區的換錢所匯率通常會比在台灣或韓國機場好。</p>
+                            <p><strong>刷卡：</strong>濟州島大部分的店家、餐廳、免稅店都接受信用卡（VISA, MasterCard），非常方便。但傳統市場、路邊小吃攤可能仍以現金交易為主。
+                            </p>
+                        </div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">韓國的電壓與插座規格？</summary>
+                        <div class="faq-answer">
+                            <p>韓國的標準電壓是 <strong>220V</strong>，頻率為 60Hz。插座則是「<strong>兩腳圓形</strong>」的規格 (歐規 F
+                                型)。台灣的電器（如手機充電器）大多是 110V-240V 的國際通用電壓，可以直接使用，但<strong>務必需要準備轉接頭</strong>。</p>
+                        </div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">飯店有提供免費 Wi-Fi 嗎？</summary>
+                        <div class="faq-answer">
+                            <p>是的，我們入住的韋斯立飯店 (Whistle Lark) 大廳及客房內都有提供免費的 Wi-Fi 服務。此外，團體行程的遊覽車上也會提供 Wi-Fi 分享器供大家使用。</p>
+                        </div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">如果有素食或特殊餐飲需求怎麼辦？</summary>
+                        <div class="faq-answer">
+                            <p>若您有素食、不吃牛/豬肉或其他特殊餐飲需求，請務必在<strong>報名完成後，立即主動告知主辦人</strong>。我們會請旅行社盡力為您安排，但因國外飲食習慣不同，餐點內容可能會以蔬菜、豆腐、雞蛋、海苔等當地食材為主，敬請理解。
+                            </p>
+                        </div>
+                    </details>
                 </div>
             </section>
 
             <section id="registration" data-section="registration" class="main-section card p-6 md:p-8">
-                <h2 class="card-header">費用試算 & 線上報名</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <div class="space-y-2">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">💰 費用規則</h3>
-                        <div class="info-list-item">
-                            <div><strong>公司補助：</strong><br>正式員工補助 <strong
-                                    style="color: var(--accent-teal);">$30,000</strong> 元。<br>外包人員補助 50% (<strong
-                                    style="color: var(--accent-teal);">$15,000</strong> 元)。</div>
-                        </div>
-                        <div class="info-list-item">
-                            <div><strong>正式員工自付：</strong><br>
-                                <ul class="list-disc list-inside pl-2 text-gray-600">
-                                    <li>總人數 > 20：自付 $2,900</li>
-                                    <li>總人數 16-20：自付 $3,900</li>
-                                </ul>
+                <h2 class="card-header">💳 費用與報名</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">💰 費用規則</h3>
+                            <div class="space-y-4">
+                                <div class="info-list-item">
+                                    <div><strong>公司補助：</strong><br>正式員工補助 <strong
+                                            style="color: var(--accent-teal);">$30,000</strong> 元。<br>外包人員補助 50%
+                                        (<strong style="color: var(--accent-teal);">$15,000</strong> 元)。</div>
+                                </div>
+                                <div class="info-list-item">
+                                    <div><strong>正式員工自付：</strong><br>
+                                        <ul class="list-disc list-inside pl-2 text-gray-600">
+                                            <li>總人數 > 20：自付 $2,900</li>
+                                            <li>總人數 16-20：自付 $3,900</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="info-list-item">
+                                    <div><strong>眷屬補助：</strong><br>
+                                        一位同行眷屬 (成人或孩童) 申請 <strong style="color: var(--accent-tangerine);">$15,000
+                                            元補助</strong>！<br>
+                                        <span class="text-sm text-gray-500">(外包不適用)</span>
+                                    </div>
+                                </div>
+                                <div class="info-list-item">
+                                    <div><strong>其他優惠：</strong><br>
+                                        <ul class="list-disc list-inside pl-2 text-gray-600">
+                                            <li>孩童不佔床 (9歲以下)：團費減 $1,000</li>
+                                            <li>嬰兒價：$6,500</li>
+                                            <li>單人房：需補價差 $9,000</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="info-list-item">
-                            <div><strong>眷屬補助：</strong><br><strong class="text-gray-800">一位同行眷屬</strong> (成人或孩童) 申請
-                                <strong style="color: var(--accent-tangerine);">$15,000 元補助</strong>！<br><span
-                                    class="text-sm text-gray-500">(外包人員不適用)</span></div>
-                        </div>
-                        <div class="info-list-item">
-                            <div><strong>其他優惠：</strong><br>
-                                <ul class="list-disc list-inside pl-2 text-gray-600">
-                                    <li>孩童不佔床：團費減 $1,000</li>
-                                    <li>嬰兒價：$6,500</li>
-                                    <li>單人房：需補價差 $9,000</li>
-                                </ul>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">📩 報名流程</h3>
+                            <div class="space-y-4">
+                                <div class="info-list-item">
+                                    <div><strong>步驟一：</strong><br>填寫您與所有同行眷屬的資料，並勾選相關選項。</div>
+                                </div>
+                                <div class="info-list-item">
+                                    <div><strong>步驟二：</strong><br>點擊「送出報名」，確認資料送出成功。</div>
+                                </div>
+                                <div class="info-list-item">
+                                    <div><strong>步驟三 (重要)：</strong><br>請將所有人的<strong
+                                            style="color: var(--accent-tangerine);">護照照片電子檔</strong>，LINE 給<strong
+                                            style="color: var(--accent-tangerine);">主辦人</strong>。</div>
+                                </div>
+                                <div class="info-list-item">
+                                    <div><strong>取消政策：</strong><br>報名後取消，需自付機票取消費 <strong
+                                            style="color: var(--accent-tangerine);">$9,000 - $12,000</strong> 元。</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="space-y-2">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">📩 報名流程</h3>
-                        <div class="info-list-item">
-                            <div><strong>步驟一：</strong><br>填寫您與所有同行眷屬的資料，並勾選相關選項。</div>
+                    <div>
+                        <div id="progress-container" class="mb-8 p-4 rounded-lg sub-section-bg text-center">
+                            <div id="progress-loader" class="flex justify-center items-center h-24">
+                                <div class="progress-spinner" role="status"></div><span
+                                    class="ml-4 text-gray-600">正在讀取最新報名進度...</span>
+                            </div>
+                            <div id="progress-content" class="hidden">
+                                <h3 id="progress-title" class="text-xl font-bold text-gray-800 mb-2"></h3>
+                                <div class="progress-bar-container">
+                                    <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                                </div>
+                                <p id="progress-text" class="mt-2 text-lg"></p>
+                            </div>
                         </div>
-                        <div class="info-list-item">
-                            <div><strong>步驟二：</strong><br>點擊「送出報名」，確認資料送出成功。</div>
-                        </div>
-                        <div class="info-list-item">
-                            <div><strong>步驟三 (重要)：</strong><br>請將所有人的<strong
-                                    style="color: var(--accent-tangerine);">護照照片電子檔</strong>，LINE 給<strong
-                                    style="color: var(--accent-tangerine);">主辦人</strong>。</div>
-                        </div>
-                        <div class="info-list-item">
-                            <div><strong>取消政策：</strong><br>報名後取消，需自付機票取消費 <strong
-                                    style="color: var(--accent-tangerine);">$9,000 - $12,000</strong> 元。</div>
-                        </div>
+                        <form id="registrationForm" class="space-y-6">
+                            <h3 class="text-2xl font-bold text-center text-gray-800">費用試算 & 報名表</h3>
+                            <fieldset class="p-4 border border-gray-300 rounded-lg">
+                                <legend class="px-2 text-lg font-semibold text-gray-800">1. 同行人數 (員工本人免填)</legend>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
+                                    <div><label for="numAdults" class="block text-sm font-medium text-gray-600 mb-1">眷屬
+                                            (成人)</label><input type="number" id="numAdults" class="form-input" value="0"
+                                            min="0"></div>
+                                    <div><label for="numChildren"
+                                            class="block text-sm font-medium text-gray-600 mb-1">孩童
+                                            (9歲以下不佔床)</label><input type="number" id="numChildren" class="form-input"
+                                            value="0" min="0"></div>
+                                    <div><label for="numInfants" class="block text-sm font-medium text-gray-600 mb-1">嬰兒
+                                            (2歲以下)</label><input type="number" id="numInfants" class="form-input"
+                                            value="0" min="0"></div>
+                                </div>
+                            </fieldset>
+                            <input type="hidden" id="hiddenAdults" name="adults"><input type="hidden"
+                                id="hiddenChildren" name="children"><input type="hidden" id="hiddenInfants"
+                                name="infants">
+                            <fieldset class="p-4 border border-gray-300 rounded-lg">
+                                <legend class="px-2 text-lg font-semibold text-gray-800">2. 您的資料</legend>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                                    <div>
+                                        <label for="regName"
+                                            class="block text-sm font-medium text-gray-600 mb-1">您的姓名</label>
+                                        <input type="text" id="regName" name="employee_name" class="form-input"
+                                            placeholder="請輸入中文姓名" required>
+                                    </div>
+                                    <div><label class="block text-sm font-medium text-gray-600 mb-1">出生年月日</label><input
+                                            type="date" name="employee_dob" class="form-input" required></div>
+                                </div>
+                                <div class="mt-4">
+                                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                            name="employee_renew_passport"><span
+                                            class="ml-3 text-gray-800">需要新辦/換新護照</span></label>
+                                </div>
+                            </fieldset>
+                            <div id="companionSection" class="space-y-6"></div>
+                            <fieldset class="p-4 border border-gray-300 rounded-lg">
+                                <legend class="px-2 text-lg font-semibold text-gray-800">3. 整體選項</legend>
+                                <div
+                                    class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8 mt-2 justify-center">
+                                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                            id="isOutsourced" name="is_outsourced"><span
+                                            class="ml-3 text-gray-800">我是外包人員</span></label>
+                                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                            id="performanceBonus" name="bonus"><span class="ml-3 text-gray-800">去年業績達標
+                                            (享眷屬補助)</span></label>
+                                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                            id="singleRoom" name="single_room"><span class="ml-3 text-gray-800">需要單人房
+                                            (補價差$9,000)</span></label>
+                                </div>
+                            </fieldset>
+                            <div id="costResult"
+                                class="bg-gray-50 p-6 rounded-lg border border-gray-200 min-h-[120px] flex flex-col justify-center text-center">
+                                <p class="text-gray-500">請填寫人數與姓名，下方將顯示費用預估</p>
+                            </div>
+                            <button type="submit" id="submitBtn"
+                                class="w-full font-bold py-3 px-8 rounded-lg text-lg"><span
+                                    id="submitBtnText">送出報名</span>
+                                <div id="submitSpinner" class="spinner hidden ml-3"></div>
+                            </button>
+                            <div id="formStatus" class="text-center mt-4 h-6"></div>
+                        </form>
                     </div>
                 </div>
-                <hr class="border-gray-300/50 mb-8">
-
-                <div id="progress-container" class="mb-8 p-4 rounded-lg sub-section-bg text-center">
-                    <div id="progress-loader" class="flex justify-center items-center h-24">
-                        <div class="progress-spinner" role="status"></div><span
-                            class="ml-4 text-gray-600">正在讀取最新報名進度...</span>
-                    </div>
-                    <div id="progress-content" class="hidden">
-                        <h3 id="progress-title" class="text-xl font-bold text-gray-800 mb-2"></h3>
-                        <div class="progress-bar-container">
-                            <div id="progress-bar-fill" class="progress-bar-fill"></div>
-                        </div>
-                        <p id="progress-text" class="mt-2 text-lg"></p>
-                    </div>
-                </div>
-
-                <form id="registrationForm" class="space-y-6">
-                    <h3 class="text-2xl font-bold text-center text-gray-800">費用試算 & 報名表</h3>
-                    <fieldset class="p-4 border border-gray-300 rounded-lg">
-                        <legend class="px-2 text-lg font-semibold text-gray-800">1. 同行人數 (員工本人免填)</legend>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
-                            <div><label for="numAdults" class="block text-sm font-medium text-gray-600 mb-1">眷屬
-                                    (成人)</label><input type="number" id="numAdults" class="form-input" value="0"
-                                    min="0"></div>
-                            <div><label for="numChildren" class="block text-sm font-medium text-gray-600 mb-1">孩童
-                                    (不佔床)</label><input type="number" id="numChildren" class="form-input" value="0"
-                                    min="0"></div>
-                            <div><label for="numInfants" class="block text-sm font-medium text-gray-600 mb-1">嬰兒
-                                    (2歲以下)</label><input type="number" id="numInfants" class="form-input" value="0"
-                                    min="0"></div>
-                        </div>
-                    </fieldset>
-                    <input type="hidden" id="hiddenAdults" name="adults"><input type="hidden" id="hiddenChildren"
-                        name="children"><input type="hidden" id="hiddenInfants" name="infants">
-                    <fieldset class="p-4 border border-gray-300 rounded-lg">
-                        <legend class="px-2 text-lg font-semibold text-gray-800">2. 您的資料</legend>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-                            <div><label for="regName"
-                                    class="block text-sm font-medium text-gray-600 mb-1">您的姓名</label><input type="text"
-                                    id="regName" name="employee_name" class="form-input" placeholder="請輸入中文姓名" required>
-                            </div>
-                            <div><label class="block text-sm font-medium text-gray-600 mb-1">出生年月日</label><input
-                                    type="date" name="employee_dob" class="form-input" required></div>
-                        </div>
-                        <div class="mt-4">
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
-                                    name="employee_renew_passport"><span
-                                    class="ml-3 text-gray-800">需要新辦/換新護照</span></label>
-                        </div>
-                    </fieldset>
-                    <div id="companionSection" class="space-y-6"></div>
-                    <fieldset class="p-4 border border-gray-300 rounded-lg">
-                        <legend class="px-2 text-lg font-semibold text-gray-800">3. 整體選項</legend>
-                        <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8 mt-2 justify-center">
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
-                                    id="isOutsourced" name="is_outsourced"><span
-                                    class="ml-3 text-gray-800">我是外包人員</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
-                                    id="performanceBonus" name="bonus"><span class="ml-3 text-gray-800">去年業績達標
-                                    (享眷屬補助)</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
-                                    id="singleRoom" name="single_room"><span class="ml-3 text-gray-800">需要單人房
-                                    (補價差$9,000)</span></label>
-                        </div>
-                    </fieldset>
-                    <div id="costResult"
-                        class="bg-gray-50 p-6 rounded-lg border border-gray-200 min-h-[120px] flex flex-col justify-center text-center">
-                        <p class="text-gray-500">請填寫人數，下方將顯示費用預估</p>
-                    </div>
-                    <button type="submit" id="submitBtn" class="w-full font-bold py-3 px-8 rounded-lg text-lg"><span
-                            id="submitBtnText">送出報名</span>
-                        <div id="submitSpinner" class="spinner hidden ml-3"></div>
-                    </button>
-                    <div id="formStatus" class="text-center mt-4 h-6"></div>
-                </form>
             </section>
 
             <section id="passport-info" data-section="passport-info" class="main-section card p-6 md:p-8">
-                <h2 class="card-header">護照換發準備資料</h2>
+                <h2 class="card-header">📄 護照資訊 & 費用細項</h2>
                 <div class="text-center mb-6 p-3 rounded-lg"
                     style="background-color: rgba(241, 196, 15, 0.15); color: #856404;">
                     <p>外交部工作天數約為 12-15 個工作天 (不含假日)，身份證則須 4-6 個工作天後回件。</p>
@@ -305,7 +422,7 @@
                         <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">滿 14-18 歲</h3>
                         <div class="space-y-2 text-gray-700">
                             <p class="passport-info-item">護照申請書 (公司有可填寫)</p>
-                            <p class="passport-info-item">半年內拍的兩吋白底大頭照 2 張</p>
+                            <p class="passport-info-item">半年内拍的兩吋白底大頭照 2 張</p>
                             <p class="passport-info-item">身分證正本及監護人身份證正本 (若有監護權問題，需提供三個月內戶籍謄本正本一份)</p>
                             <p class="passport-info-item">舊護照 (建議可帶來方便確認英文別名，避免勾選錯誤浪費送件時間)</p>
                             <p class="passport-info-item">人別確認 (首次申辦才需檢附)</p>
@@ -325,7 +442,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 dual-card-container">
+                <h3 class="text-xl font-bold text-gray-800 text-center mt-12 mb-4">團費細項說明</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4 dual-card-container">
                     <div class="card p-6">
                         <h3 class="text-xl font-bold text-center mb-4 text-gray-800">團費包含項目</h3>
                         <div class="space-y-2 text-gray-700">
@@ -356,6 +474,18 @@
         </main>
     </div>
 
+    <footer class="main-footer">
+        <p>© 2025 城市工程 員工旅遊福利委員會</p>
+    </footer>
+
+    <button id="floating-signup-btn" class="floating-signup-btn nav-link" data-target="registration">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-2">
+            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+        </svg>
+        <span>立即報名</span>
+    </button>
+
     <div id="successModal"
         class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform transition-all scale-95 opacity-0"
@@ -372,7 +502,6 @@
         </div>
     </div>
 
-    <!-- 引用外部 JavaScript 檔案 -->
     <script src="script.js"></script>
 </body>
 

@@ -6,10 +6,11 @@
     --accent-sunny-yellow: #F1C40F;
     --bg-card-yellow: #fffbeb;
     --bg-card-green: #f0fdfa;
+    --bg-card-purple: #f8f7ff;
     --bg-card-pink: #fff5f5;
     --bg-card-blue: #f7faff;
     --bg-card-sky: #f0f9ff;
-    /* New color for Map */
+    --bg-card-checklist: #fefeff;
 }
 
 html {
@@ -44,15 +45,14 @@ body {
     border-radius: 2px;
 }
 
-.nav-link:hover {
+.nav-link:not(.signup-button):not(.floating-signup-btn):hover {
     color: var(--accent-tangerine);
 }
 
-.nav-link:hover::after {
+.nav-link:not(.signup-button):not(.floating-signup-btn):hover::after {
     width: 100%;
 }
 
-/* Active Nav Link Style */
 .nav-link.active {
     color: var(--accent-tangerine);
     font-weight: 700;
@@ -61,6 +61,25 @@ body {
 .nav-link.active::after {
     width: 100%;
 }
+
+.signup-button {
+    background-color: var(--accent-tangerine);
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 999px;
+    transition: background-color 0.3s, transform 0.2s;
+    font-weight: 700;
+}
+
+.signup-button:hover {
+    background-color: #ff6347;
+    transform: translateY(-2px);
+}
+
+.signup-button::after {
+    display: none;
+}
+
 
 .gradient-text {
     background: linear-gradient(45deg, var(--accent-tangerine), var(--accent-sunny-yellow));
@@ -77,9 +96,10 @@ body {
 
 .card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
 }
 
+/* Enhanced Hover Effect */
 #summary.card {
     background-color: var(--bg-card-yellow);
 }
@@ -92,7 +112,14 @@ body {
     background-color: var(--bg-card-sky);
 }
 
-/* Map Color */
+#checklist.card {
+    background-color: var(--bg-card-checklist);
+}
+
+#faq.card {
+    background-color: var(--bg-card-purple);
+}
+
 #registration.card {
     background-color: var(--bg-card-pink);
 }
@@ -117,6 +144,7 @@ body {
     text-align: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     line-height: 1.1;
+    transition: background-color 0.3s ease;
 }
 
 .countdown-label {
@@ -124,6 +152,11 @@ body {
     color: #FFFFFF;
     margin-top: 0.2rem;
     font-weight: 500;
+}
+
+/* 倒數提醒 (Urgent Countdown) */
+.urgent-countdown .countdown-segment {
+    background-color: #dc2626;
 }
 
 .info-list-item {
@@ -173,6 +206,7 @@ input[type="checkbox"] {
     width: 1.25rem;
     height: 1.25rem;
     background-color: #ffffff;
+    flex-shrink: 0;
 }
 
 input[type="checkbox"]:checked {
@@ -334,15 +368,83 @@ input[type="checkbox"]:checked+span {
     transition: opacity 0.4s ease-in-out;
 }
 
-/* Responsive Iframe for Map */
+/* 行程表連結優化 (Itinerary Link) */
+.itinerary-link {
+    text-decoration: underline;
+    text-decoration-color: var(--accent-teal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    transition: all 0.2s ease-in-out;
+}
+
+.itinerary-link:hover {
+    color: var(--accent-tangerine);
+    background-color: rgba(255, 122, 89, 0.1);
+}
+
+
+/* FAQ Styles */
+.faq-item {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1rem;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.faq-question {
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dark);
+}
+
+.faq-question::-webkit-details-marker {
+    display: none;
+}
+
+.faq-question::marker {
+    display: none;
+}
+
+.faq-question::after {
+    content: '+';
+    font-size: 1.5rem;
+    color: var(--accent-teal);
+    transition: transform 0.3s ease;
+}
+
+details[open]>summary.faq-question::after {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+    padding-top: 1rem;
+    color: #4b5563;
+    line-height: 1.8;
+}
+
+.faq-answer p {
+    margin-bottom: 0.75rem;
+}
+
+.faq-answer p:last-child {
+    margin-bottom: 0;
+}
+
+/* Map Container */
 .map-container {
     position: relative;
     overflow: hidden;
     width: 100%;
     padding-top: 75%;
-    /* 4:3 Aspect Ratio */
     border-radius: 0.75rem;
-    /* Match card border radius */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -353,4 +455,73 @@ input[type="checkbox"]:checked+span {
     width: 100%;
     height: 100%;
     border: 0;
+}
+
+/* 準備清單 (Checklist) */
+.checklist-category {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.checklist-header {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent-teal);
+    margin-bottom: 0.75rem;
+    border-bottom: 2px solid var(--accent-teal);
+    padding-bottom: 0.5rem;
+}
+
+.checklist-item {
+    margin-bottom: 0.5rem;
+}
+
+.checklist-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checklist-item span {
+    margin-left: 0.75rem;
+    transition: all 0.2s;
+}
+
+.checklist-item input[type="checkbox"]:checked+span {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+/* Floating Signup Button */
+.floating-signup-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: var(--accent-tangerine);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    box-shadow: 0 8px 25px rgba(255, 122, 89, 0.4);
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    z-index: 50;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+.floating-signup-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(255, 122, 89, 0.5);
+}
+
+/* Footer Styles */
+.main-footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #dee2e6;
+    color: #6c757d;
+    font-size: 0.9rem;
 }
