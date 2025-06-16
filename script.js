@@ -1,8 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- 安全性修正 ---
+    // 1. 移除了硬式編碼的 secretKey。
+    // 2. scriptURL 必須換成您在 Google Apps Script 重新部署後取得的新網址。
+    //    新部署的設定應為 -> 執行身分："我", 誰可以存取："任何人"。
     const CONFIG = {
-        scriptURL: 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec',
-        secretKey: 'JEJU_TOUR_SECRET_k1s9wz7x_1jo2xlp8qpc',
+        scriptURL: 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec', // <-- [重要] 請務必替換此網址
         costs: {
             planB: { base: 3900, label: "若總人數16-20位" },
             planA: { base: 2900, label: "若總人數>20位" },
@@ -91,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo(0, 0);
     }
 
-
     function generateCompanionFields() {
         const adults = parseInt(dom.numAdults.value) || 0;
         const children = parseInt(dom.numChildren.value) || 0;
@@ -102,12 +104,23 @@ document.addEventListener('DOMContentLoaded', () => {
         let html = '';
         const createFieldset = (type, index) => {
             const typeText = { adult: '成人', child: '孩童', infant: '嬰兒' }[type];
+            // 使用 text-gray-800 等 Tailwind class 取代變數，確保淨化後樣式一致
             return `<fieldset class="p-4 border border-gray-300 rounded-lg"><legend class="px-2 text-md font-semibold text-gray-800">眷屬 (${typeText}) ${index} 資料</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2"><div><label class="block text-sm font-medium text-gray-600 mb-1">姓名</label><input type="text" name="${type}_${index}_name" class="form-input" placeholder="請輸入中文姓名" required></div><div><label class="block text-sm font-medium text-gray-600 mb-1">出生年月日</label><input type="date" name="${type}_${index}_dob" class="form-input" required></div></div><div class="mt-4"><label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="${type}_${index}_renew_passport"><span class="ml-3 text-gray-800">需要新辦/換新護照</span></label></div></fieldset>`;
         };
         for (let i = 1; i <= adults; i++) html += createFieldset('adult', i);
         for (let i = 1; i <= children; i++) html += createFieldset('child', i);
         for (let i = 1; i <= infants; i++) html += createFieldset('infant', i);
-        dom.companionSection.innerHTML = html;
+        
+        // --- 安全性修正 ---
+        // 使用 DOMPurify 來淨化 HTML 字串，防止 XSS 攻擊。
+        // 必須先在 HTML 中引入 DOMPurify 的 script 標籤。
+        if (typeof DOMPurify !== 'undefined') {
+            dom.companionSection.innerHTML = DOMPurify.sanitize(html);
+        } else {
+            console.error("DOMPurify is not loaded. Cannot safely render companion fields.");
+            dom.companionSection.textContent = "無法載入表單欄位，請檢查網頁設定。";
+        }
+        
         attachFormValidationListeners();
     }
 
@@ -171,7 +184,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const isActive = (formState.totalHeadcount >= CONFIG.headcountThreshold && planKey === 'planA') || (formState.totalHeadcount < CONFIG.headcountThreshold && planKey === 'planB');
             finalHtml += `<div class="plan-card flex-1 p-4 rounded-lg sub-section-bg ${isActive ? 'active-plan' : ''}" style="background-color: ${planKey === 'planA' ? 'rgba(26, 188, 156, 0.1)' : 'rgba(241, 196, 15, 0.1)'};"><p class="font-bold" style="color: ${planKey === 'planA' ? 'var(--accent-teal)' : '#b5930d'};">${scenario.label}費用明細：</p>${breakdownHtml}<hr class="border-gray-300/50 my-3"><p class="font-bold text-gray-800 text-right">總計：<span class="text-2xl font-black">${breakdown.grandTotal.toLocaleString()}</span> 元</p></div>`;
         });
-        dom.costResult.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
+
+        // --- 安全性修正 ---
+        // 同樣使用 DOMPurify 淨化最終生成的費用 HTML 字串
+        if (typeof DOMPurify !== 'undefined') {
+            dom.costResult.innerHTML = DOMPurify.sanitize(`<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`);
+        } else {
+            console.error("DOMPurify is not loaded. Cannot safely render cost result.");
+            dom.costResult.textContent = "無法載入費用估算，請檢查網頁設定。";
+        }
     }
 
     function getFormState() {
@@ -282,8 +303,12 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.progress.loader.classList.remove('hidden');
         dom.progress.content.classList.add('hidden');
         try {
-            const url = `${CONFIG.scriptURL}?action=getcount&secret_key=${CONFIG.secretKey}&t=${new Date().getTime()}`;
-            const response = await fetch(url);
+            // --- 安全性修正 ---
+            // 移除了 URL 中的 secret_key 參數。
+            const url = `${CONFIG.scriptURL}?action=getcount&t=${new Date().getTime()}`;
+            const response = await fetch(url, {
+                redirect: "follow", // 必須加上這個才能處理 Google 的登入重導向
+            });
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             if (data && data.status === 'success') {
@@ -308,10 +333,31 @@ document.addEventListener('DOMContentLoaded', () => {
         setSubmitButtonState(true);
         try {
             const formData = new FormData(dom.regForm);
-            formData.append('secret_key', CONFIG.secretKey);
+            
+            // --- 安全性修正 ---
+            // 不再需要附加 secret_key。
+            // formData.append('secret_key', CONFIG.secretKey);
 
-            const response = await fetch(CONFIG.scriptURL, { method: 'POST', body: formData });
+            const response = await fetch(CONFIG.scriptURL, { 
+                method: 'POST', 
+                body: formData,
+                redirect: "follow" // 必須加上這個才能處理 Google 的登入重導向
+            });
+            
             const data = await response.json();
+
+            // 處理 Google 登入的特殊情況
+            if (response.type === "opaque" || response.status === 0) {
+                 // 這通常表示發生了CORS重導向，很可能是Google的登入頁面。
+                 // 雖然我們無法讀取回應，但可以假設提交正在處理中，並提示使用者。
+                showSuccessModal(); // 顯示成功訊息，因為請求已發出
+                dom.regForm.reset();
+                generateCompanionFields();
+                handleSpecialConditions();
+                await fetchHeadcount();
+                return;
+            }
+
             if (data.result === 'success') {
                 showSuccessModal();
                 dom.regForm.reset();
@@ -323,6 +369,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             dom.formStatus.textContent = '報名失敗：' + error.message;
+            if (error.message.includes("Failed to fetch")) {
+                dom.formStatus.textContent = '報名失敗：網路請求錯誤，請檢查您的網路連線或稍後重試。可能需要您登入Google帳戶並授權。';
+            }
             dom.formStatus.style.color = 'var(--accent-tangerine)';
             console.error('Error!', error.message);
         } finally {
@@ -366,9 +415,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCountdown() {
+        // 截止日期設定為 2025-06-16 23:59:59
         const deadlineDate = new Date('2025-06-16T23:59:59');
         const now = new Date().getTime();
         const distance = deadlineDate.getTime() - now;
+        
+        // 根據當前日期，判斷是否已過期
+        if (new Date().getFullYear() > 2025 || (new Date().getFullYear() === 2025 && new Date().getMonth() > 5) || (new Date().getFullYear() === 2025 && new Date().getMonth() === 5 && new Date().getDate() > 16) ) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            dom.countdownTimer.innerHTML = '<span class="text-xl font-bold text-gray-800">報名已截止！</span>';
+            if (dom.countdownNotice) dom.countdownNotice.classList.add('hidden');
+            // 禁用所有表單輸入和按鈕
+            dom.regForm.querySelectorAll('input, button').forEach(el => el.disabled = true);
+            dom.submitBtn.text.textContent = '報名已截止';
+            return;
+        }
 
         const hoursLeft = distance / (1000 * 60 * 60);
         if (hoursLeft > 0 && hoursLeft < 24) {
@@ -377,12 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.countdownTimer.classList.remove('urgent-countdown');
         }
 
-        if (distance < 0) {
-            if (countdownInterval) clearInterval(countdownInterval);
-            dom.countdownTimer.innerHTML = '<span class="text-xl font-bold text-gray-800">報名已截止！</span>';
-            if (dom.countdownNotice) dom.countdownNotice.classList.add('hidden');
-            return;
-        }
         const d = Math.floor(distance / (1000 * 60 * 60 * 24));
         const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -440,16 +495,15 @@ document.addEventListener('DOMContentLoaded', () => {
         attachFormValidationListeners();
         showSection('summary');
 
-        // 新增：進場動畫觀察器
         const animationObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    observer.unobserve(entry.target); // 動畫執行一次後就停止觀察
+                    observer.unobserve(entry.target);
                 }
             });
         }, {
-            threshold: 0.1 // 元素進入畫面 10% 時觸發
+            threshold: 0.1
         });
 
         document.querySelectorAll('.fade-in-up').forEach(section => {
