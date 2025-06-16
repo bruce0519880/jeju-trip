@@ -1,3 +1,6 @@
+/* ==========================================================================
+   1. :root Variables - 變數定義
+   ========================================================================== */
 :root {
     --bg-light: #f8f9fa;
     --text-dark: #343a40;
@@ -13,6 +16,10 @@
     --bg-card-checklist: #fefeff;
 }
 
+
+/* ==========================================================================
+   2. General & Typography - 通用基礎與文字排版
+   ========================================================================== */
 html {
     scroll-behavior: smooth;
 }
@@ -22,13 +29,101 @@ body {
     background-color: var(--bg-light);
     color: var(--text-dark);
     line-height: 1.7;
+    /* 柔和的漸層背景，取代原本的雜訊紋理 */
+    background-image: linear-gradient(to top, #f8f9fa, #f0fdfa);
 }
 
 p {
     line-height: 1.8;
 }
 
-/* Nav Link Styling */
+.gradient-text {
+    background: linear-gradient(45deg, var(--accent-tangerine), var(--accent-sunny-yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* ==========================================================================
+   3. Layout & Card Styles - 主要佈局與卡片
+   ========================================================================== */
+.main-section {
+    transition: opacity 0.4s ease-in-out;
+}
+
+.card {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* 卡片背景色 */
+#summary.card {
+    background-color: var(--bg-card-yellow);
+}
+
+#itinerary.card {
+    background-color: var(--bg-card-green);
+}
+
+#map.card {
+    background-color: var(--bg-card-sky);
+}
+
+#checklist.card {
+    background-color: var(--bg-card-checklist);
+}
+
+#faq.card {
+    background-color: var(--bg-card-purple);
+}
+
+#registration.card {
+    background-color: var(--bg-card-pink);
+}
+
+#passport-info.card,
+.dual-card-container>.card {
+    background-color: var(--bg-card-blue);
+}
+
+/* 卡片標題 */
+.card-header {
+    background: linear-gradient(45deg, var(--accent-tangerine), var(--accent-sunny-yellow));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    margin: -2rem -2rem 1.5rem -2rem;
+    border-radius: 1rem 1rem 0 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/* 覆蓋行程卡片的標題，因其有獨立設計 */
+#itinerary .card-header {
+    background: none;
+    color: var(--accent-tangerine);
+    margin: 0 0 1.5rem 0;
+    border-radius: 0;
+    text-shadow: none;
+    padding: 0;
+    font-size: 1.75rem;
+}
+
+.sub-section-bg {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================================
+   4. Navigation - 導覽列
+   ========================================================================== */
 .nav-link {
     position: relative;
     transition: color 0.3s ease;
@@ -66,73 +161,12 @@ p {
     width: 100%;
 }
 
-.signup-button {
-    background-color: var(--accent-tangerine);
-    color: white !important;
-    padding: 8px 16px;
-    border-radius: 999px;
-    transition: background-color 0.3s, transform 0.2s;
-    font-weight: 700;
-}
 
-.signup-button:hover {
-    background-color: #ff6347;
-    transform: translateY(-2px);
-}
+/* ==========================================================================
+   5. Component Styles - 元件樣式
+   ========================================================================== */
 
-.signup-button::after {
-    display: none;
-}
-
-
-.gradient-text {
-    background: linear-gradient(45deg, var(--accent-tangerine), var(--accent-sunny-yellow));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.card {
-    border: 1px solid #dee2e6;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 1rem;
-}
-
-.card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
-}
-
-/* Enhanced Hover Effect */
-#summary.card {
-    background-color: var(--bg-card-yellow);
-}
-
-#itinerary.card {
-    background-color: var(--bg-card-green);
-}
-
-#map.card {
-    background-color: var(--bg-card-sky);
-}
-
-#checklist.card {
-    background-color: var(--bg-card-checklist);
-}
-
-#faq.card {
-    background-color: var(--bg-card-purple);
-}
-
-#registration.card {
-    background-color: var(--bg-card-pink);
-}
-
-#passport-info.card,
-.dual-card-container>.card {
-    background-color: var(--bg-card-blue);
-}
-
+/* --- Countdown Timer --- */
 .countdown-segment {
     display: flex;
     flex-direction: column;
@@ -158,11 +192,213 @@ p {
     font-weight: 500;
 }
 
-/* 倒數提醒 (Urgent Countdown) */
 .urgent-countdown .countdown-segment {
     background-color: #dc2626;
 }
 
+/* --- Itinerary Box --- */
+.itinerary-day-box {
+    position: relative;
+    border: 1px solid #e0f2f1;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.itinerary-day-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.itinerary-day-box::before,
+.itinerary-day-box::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--accent-teal);
+    border-style: solid;
+}
+
+.itinerary-day-box::before {
+    top: 0;
+    left: 0;
+    border-width: 3px 0 0 3px;
+    border-top-left-radius: 0.5rem;
+}
+
+.itinerary-day-box::after {
+    bottom: 0;
+    right: 0;
+    border-width: 0 3px 3px 0;
+    border-bottom-right-radius: 0.5rem;
+}
+
+.itinerary-header {
+    background-image: linear-gradient(45deg, var(--accent-teal), #24c6a8);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.itinerary-content {
+    padding: 1.5rem;
+}
+
+.itinerary-link {
+    text-decoration: underline;
+    text-decoration-color: var(--accent-teal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    transition: all 0.2s ease-in-out;
+}
+
+.itinerary-link:hover {
+    color: var(--accent-tangerine);
+    background-color: rgba(255, 122, 89, 0.1);
+}
+
+/* --- Map --- */
+.map-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 75%;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* --- Checklist --- */
+.checklist-category {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.checklist-header {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent-teal);
+    margin-bottom: 0.75rem;
+    border-bottom: 2px solid var(--accent-teal);
+    padding-bottom: 0.5rem;
+}
+
+.checklist-item {
+    margin-bottom: 0.5rem;
+}
+
+.checklist-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checklist-item input[type="checkbox"]+span {
+    position: relative;
+    margin-left: 0.75rem;
+    transition: all 0.2s;
+}
+
+.checklist-item input[type="checkbox"]+span::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--accent-tangerine);
+    transition: width 0.3s ease;
+}
+
+.checklist-item input[type="checkbox"]:checked+span {
+    color: #9ca3af;
+}
+
+.checklist-item input[type="checkbox"]:checked+span::after {
+    width: 100%;
+}
+
+
+/* --- FAQ --- */
+.faq-item {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1rem;
+    transition: margin-bottom 0.3s ease;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.faq-question {
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dark);
+    transition: color 0.3s ease;
+}
+
+.faq-question:hover {
+    color: var(--accent-tangerine);
+}
+
+.faq-question::-webkit-details-marker,
+.faq-question::marker {
+    display: none;
+}
+
+.faq-question::after {
+    content: '+';
+    font-size: 1.5rem;
+    color: var(--accent-teal);
+    transition: transform 0.3s ease;
+}
+
+details[open]>summary.faq-question::after {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    color: #4b5563;
+    line-height: 1.8;
+    transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1), padding-top 0.5s ease;
+}
+
+details[open]>.faq-answer {
+    max-height: 500px;
+    padding-top: 1rem;
+}
+
+.faq-answer p {
+    margin-bottom: 0.75rem;
+}
+
+.faq-answer p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* --- Passport & Info Lists --- */
 .info-list-item {
     display: flex;
     align-items: flex-start;
@@ -197,6 +433,20 @@ p {
     margin-right: 0.5em;
 }
 
+#passport-info .text-center.mb-6 {
+    border-left: 5px solid var(--accent-sunny-yellow);
+    background-color: rgba(241, 196, 15, 0.1) !important;
+    text-align: left !important;
+    padding: 1rem 1.5rem !important;
+    font-weight: 500;
+}
+
+
+/* ==========================================================================
+   6. Form & Button Styles - 表單與按鈕
+   ========================================================================== */
+
+/* --- Form Fields --- */
 input[type="checkbox"] {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -266,258 +516,55 @@ input[type="checkbox"]:checked+span {
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
 }
 
-.card-header {
-    font-size: 1.75rem;
-    font-weight: 900;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    color: var(--accent-tangerine);
+form fieldset {
+    border-color: #e5e7eb;
+    transition: border-color 0.3s ease;
 }
 
+form fieldset:focus-within {
+    border-color: var(--accent-tangerine);
+}
+
+form label {
+    transition: color 0.3s ease;
+}
+
+form :focus-within label {
+    color: var(--accent-tangerine);
+    font-weight: 600;
+}
+
+/* --- Buttons --- */
 #submitBtn {
-    background-color: var(--accent-tangerine);
     color: white;
     font-weight: bold;
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 15px rgba(255, 122, 89, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
+    background-image: linear-gradient(45deg, var(--accent-tangerine), #ff5e3a);
+    box-shadow: 0 0 20px rgba(255, 122, 89, 0.5);
+    animation: pulse-glow 2s infinite ease-in-out;
 }
 
 #submitBtn:hover {
-    background-color: var(--accent-sunny-yellow);
-    color: var(--text-dark);
     transform: scale(1.02) translateY(-2px);
-    box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
 }
 
 #submitBtn:active {
     transform: scale(0.98) translateY(0);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 #submitBtn:disabled {
     background-color: #adb5bd;
+    background-image: none;
     color: #6c757d;
     cursor: not-allowed;
     transform: scale(1);
     box-shadow: none;
+    animation: none;
 }
 
-#formStatus strong {
-    color: var(--accent-tangerine);
-}
-
-.progress-bar-container {
-    background-color: #e9ecef;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    border: 1px solid #dee2e6;
-}
-
-.progress-bar-fill {
-    background: linear-gradient(90deg, var(--accent-tangerine), var(--accent-sunny-yellow));
-    padding: 0.5rem;
-    text-align: right;
-    color: var(--text-dark);
-    font-weight: bold;
-    transition: width 0.5s ease-in-out;
-}
-
-.plan-card {
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.active-plan {
-    border-color: var(--accent-tangerine);
-    box-shadow: 0 0 25px rgba(255, 122, 89, 0.5);
-}
-
-.sub-section-bg {
-    background-color: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.spinner {
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    width: 1.25rem;
-    height: 1.25rem;
-    animation: spin 0.8s linear infinite;
-}
-
-.progress-spinner {
-    border: 4px solid #e9ecef;
-    border-top-color: var(--accent-tangerine);
-    width: 2rem;
-    height: 2rem;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-#modal-content {
-    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-}
-
-#modal-content.active {
-    transform: scale(1);
-    opacity: 1;
-}
-
-/* Section transition */
-.main-section {
-    transition: opacity 0.4s ease-in-out;
-}
-
-/* 進場動畫效果 */
-.fade-in-up {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.fade-in-up.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-
-/* 行程表連結優化 (Itinerary Link) */
-.itinerary-link {
-    text-decoration: underline;
-    text-decoration-color: var(--accent-teal);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 3px;
-    transition: all 0.2s ease-in-out;
-}
-
-.itinerary-link:hover {
-    color: var(--accent-tangerine);
-    background-color: rgba(255, 122, 89, 0.1);
-}
-
-
-/* FAQ Styles */
-.faq-item {
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 1rem;
-}
-
-.faq-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.faq-question {
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--text-dark);
-}
-
-.faq-question::-webkit-details-marker {
-    display: none;
-}
-
-.faq-question::marker {
-    display: none;
-}
-
-.faq-question::after {
-    content: '+';
-    font-size: 1.5rem;
-    color: var(--accent-teal);
-    transition: transform 0.3s ease;
-}
-
-details[open]>summary.faq-question::after {
-    transform: rotate(45deg);
-}
-
-.faq-answer {
-    padding-top: 1rem;
-    color: #4b5563;
-    line-height: 1.8;
-}
-
-.faq-answer p {
-    margin-bottom: 0.75rem;
-    line-height: 1.85;
-}
-
-.faq-answer p:last-child {
-    margin-bottom: 0;
-}
-
-/* Map Container */
-.map-container {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    padding-top: 75%;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.map-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-}
-
-/* 準備清單 (Checklist) */
-.checklist-category {
-    background-color: rgba(255, 255, 255, 0.7);
-    padding: 1rem;
-    border-radius: 0.75rem;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.checklist-header {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--accent-teal);
-    margin-bottom: 0.75rem;
-    border-bottom: 2px solid var(--accent-teal);
-    padding-bottom: 0.5rem;
-}
-
-.checklist-item {
-    margin-bottom: 0.5rem;
-}
-
-.checklist-item label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-.checklist-item span {
-    margin-left: 0.75rem;
-    transition: all 0.2s;
-}
-
-.checklist-item input[type="checkbox"]:checked+span {
-    text-decoration: line-through;
-    color: #9ca3af;
-}
-
-/* Floating Signup Button */
 .floating-signup-btn {
     position: fixed;
     bottom: 2rem;
@@ -545,7 +592,89 @@ details[open]>summary.faq-question::after {
 }
 
 
-/* Footer Styles */
+/* --- Progress Bar --- */
+.progress-bar-container {
+    background-color: #e9ecef;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+}
+
+.progress-bar-fill {
+    background: linear-gradient(90deg, var(--accent-tangerine), var(--accent-sunny-yellow));
+    padding: 0.5rem;
+    text-align: right;
+    color: var(--text-dark);
+    font-weight: bold;
+    transition: width 0.5s ease-in-out;
+}
+
+.plan-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.active-plan {
+    border-color: var(--accent-tangerine);
+    box-shadow: 0 0 25px rgba(255, 122, 89, 0.5);
+}
+
+
+/* ==========================================================================
+   7. Animations & Spinners - 動畫與讀取圖示
+   ========================================================================== */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    animation: spin 0.8s linear infinite;
+}
+
+.progress-spinner {
+    border: 4px solid #e9ecef;
+    border-top-color: var(--accent-tangerine);
+    width: 2rem;
+    height: 2rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 20px rgba(255, 122, 89, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 35px rgba(255, 122, 89, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 20px rgba(255, 122, 89, 0.5);
+    }
+}
+
+
+/* ==========================================================================
+   8. Others (Footer, Modal) - 其他
+   ========================================================================== */
 .main-footer {
     text-align: center;
     margin-top: 2.5rem;
@@ -555,64 +684,11 @@ details[open]>summary.faq-question::after {
     font-size: 0.9rem;
 }
 
-/* style.css (請取代上一版的行程樣式) */
-
-/* 每日行程的特殊邊框容器 */
-.itinerary-day-box {
-    position: relative;
-    border: 1px solid #e0f2f1;
-    background-color: #ffffff;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    /* 加入動態效果 */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+#modal-content {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
 }
 
-/* 滑鼠懸浮時的浮起效果 */
-.itinerary-day-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
-}
-
-/* 使用 ::before 和 ::after 偽元素來製作 L 型邊角 */
-.itinerary-day-box::before,
-.itinerary-day-box::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-color: var(--accent-teal);
-    border-style: solid;
-}
-
-/* 左上角的 L 型 */
-.itinerary-day-box::before {
-    top: 0;
-    left: 0;
-    border-width: 3px 0 0 3px;
-    border-top-left-radius: 0.5rem;
-}
-
-/* 右下角的 L 型 */
-.itinerary-day-box::after {
-    bottom: 0;
-    right: 0;
-    border-width: 0 3px 3px 0;
-    border-bottom-right-radius: 0.5rem;
-}
-
-/* 行程標題的樣式 (漸層綠底白字) */
-.itinerary-header {
-    background-image: linear-gradient(45deg, var(--accent-teal), #24c6a8);
-    /* 改為漸層色 */
-    color: white;
-    padding: 0.75rem 1.5rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    /* 加上文字陰影 */
-}
-
-/* 行程內容的留白 */
-.itinerary-content {
-    padding: 1.5rem;
+#modal-content.active {
+    transform: scale(1);
+    opacity: 1;
 }
