@@ -1,12 +1,10 @@
-// sw.js (v4 最終生產版本)
-
-const CACHE_NAME = 'jeju-tour-cache-v4'; // <--- 版本號升級到 v4
+// sw.js (v5) - 更新 manifest 的最終版本
+const CACHE_NAME = 'jeju-tour-cache-v5'; // <-- 版本號升級到 v5
 const urlsToCache = [
-    // 所有路徑都使用相對於根域名的絕對路徑，確保路徑正確
     '/jeju-trip/index.html',
     '/jeju-trip/style.css',
     '/jeju-trip/script.js',
-    '/jeju-trip/manifest.json',
+    '/jeju-trip/manifest.json', // <-- 確保更新後的 manifest 被快取
     '/jeju-trip/images/icon-192.png',
     '/jeju-trip/images/icon-512.png'
 ];
