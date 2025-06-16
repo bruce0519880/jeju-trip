@@ -1,9 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // ⭐ [恢復] 將計算邏輯和規則移回前端，以提供即時體驗
     const CONFIG = {
         scriptURL: 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec',
         secretKey: 'JEJU_TOUR_SECRET_k1s9wz7x_1jo2xlp8qpc',
+        costs: {
+            planB: { base: 3900, label: "若總人數16-20位" },
+            planA: { base: 2900, label: "若總人數>20位" },
+            infant: 6500,
+            singleRoomSupplement: 9000,
+            passportAdult: 1600,
+            passportChild: 1200,
+            childNoBedDiscount: 1000,
+        },
+        subsidies: {
+            company: 30000,
+            outsourced: 15000,
+            performanceBonus: 15000,
+        },
         headcountThreshold: 21,
+        userRules: {
+            '張菲比': { forceBonus: true, bonusText: '⭐ 上山下海拍影片特別補助' },
+            '王唯菱': { forceBonus: true, bonusText: '⭐ 廣告費不給花特別補助' },
+            '方成霖': { forceBonus: true, bonusText: '⭐ 公司有事沒事特別補助' },
+            '張仲宇': { isOutsourcedSpecial: true },
+            '廖彤婕': { specialChildDiscount: 2500, specialBonus: 5000, forceBonus: true }, // <-- 恢復並加入新規則
+            '張逸凱': { bonusRedirect: true, bonusRedirectTo: '廖彤婕' }
+        }
     };
     const dom = {
         regForm: document.getElementById('registrationForm'),
@@ -60,9 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.navLinks.forEach(link => {
             link.classList.toggle('active', link.dataset.target === targetId);
         });
+
         if (dom.floatingBtn) {
             dom.floatingBtn.classList.toggle('hidden', targetId === 'registration');
         }
+
         dom.mobileMenu.menu.classList.add('hidden');
         window.scrollTo(0, 0);
     }
@@ -87,11 +112,33 @@ document.addEventListener('DOMContentLoaded', () => {
         attachFormValidationListeners();
     }
 
-    // ⭐ [重構] 前端不再處理特殊規則，只根據 isOutsourced 禁用達標選項
+    function getAge(dateString) {
+        if (!dateString) return 99;
+        const today = new Date();
+        const birthDate = new Date(dateString);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    // ⭐ [恢復] 原有的 handleSpecialConditions 函式，提供強制勾選等即時 UX
     function handleSpecialConditions() {
-        dom.inputs.performanceBonus.disabled = dom.inputs.isOutsourced.checked;
-        if (dom.inputs.isOutsourced.checked) {
+        const employeeName = dom.inputs.regName.value.trim();
+        const isOutsourced = dom.inputs.isOutsourced.checked;
+        const rule = CONFIG.userRules[employeeName] || {};
+
+        // 重設為可操作狀態
+        dom.inputs.performanceBonus.disabled = false;
+
+        if (rule.forceBonus) {
+            dom.inputs.performanceBonus.checked = true;
+            dom.inputs.performanceBonus.disabled = true;
+        } else if (isOutsourced && !rule.isOutsourcedSpecial) {
             dom.inputs.performanceBonus.checked = false;
+            dom.inputs.performanceBonus.disabled = true;
         }
         renderCost();
     }
@@ -113,52 +160,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function getAge(dateString) {
-        if (!dateString) return 99;
-        const today = new Date();
-        const birthDate = new Date(dateString);
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
-        return age;
-    }
-
-    // ⭐ [重構] 費用計算函式，現在是向後端發送請求
-    async function renderCost() {
-        const formState = getFormStateForCalc();
+    // ⭐ [恢復] 前端即時計算邏輯
+    function renderCost() {
+        const formState = getFormState();
         if ((formState.counts.adults + formState.counts.children + formState.counts.infants) === 0 && !formState.employeeName) {
             dom.costResult.innerHTML = `<p class="text-gray-500">請填寫人數與姓名，下方將顯示費用預估</p>`;
             return;
         }
-
-        dom.costResult.innerHTML = `<div class="flex justify-center items-center"><div class="progress-spinner"></div><span class="ml-4">正在即時試算費用...</span></div>`;
-
-        try {
-            const url = `${CONFIG.scriptURL}?action=calculate_cost&secret_key=${CONFIG.secretKey}`;
-            const response = await fetch(url, {
-                method: 'POST',
-                body: JSON.stringify(formState),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' } // Apps Script POST text/plain
-            });
-            if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
-
-            const data = await response.json();
-            if (data.status !== 'success') throw new Error(data.message || 'Calculation failed');
-
-            let finalHtml = '';
-            [data.planB, data.planA].forEach(plan => {
-                const breakdownHtml = generateBreakdownHtml(plan);
-                finalHtml += `<div class="plan-card flex-1 p-4 rounded-lg sub-section-bg ${plan.isActive ? 'active-plan' : ''}" style="background-color: ${plan.planLabel.includes('>20') ? 'rgba(26, 188, 156, 0.1)' : 'rgba(241, 196, 15, 0.1)'};"><p class="font-bold" style="color: ${plan.planLabel.includes('>20') ? 'var(--accent-teal)' : '#b5930d'};">${plan.planLabel}費用明細：</p>${breakdownHtml}<hr class="border-gray-300/50 my-3"><p class="font-bold text-gray-800 text-right">總計：<span class="text-2xl font-black">${plan.grandTotal.toLocaleString()}</span> 元</p></div>`;
-            });
-            dom.costResult.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
-
-        } catch (error) {
-            dom.costResult.innerHTML = `<p class="text-red-600">費用試算失敗：${error.message}</p>`;
-        }
+        let finalHtml = '';
+        ['planB', 'planA'].forEach(planKey => {
+            const scenario = CONFIG.costs[planKey];
+            const breakdown = calculateBreakdownForScenario(formState, scenario);
+            const breakdownHtml = generateBreakdownHtml(breakdown);
+            const isActive = (formState.totalHeadcount >= CONFIG.headcountThreshold && planKey === 'planA') || (formState.totalHeadcount < CONFIG.headcountThreshold && planKey === 'planB');
+            finalHtml += `<div class="plan-card flex-1 p-4 rounded-lg sub-section-bg ${isActive ? 'active-plan' : ''}" style="background-color: ${planKey === 'planA' ? 'rgba(26, 188, 156, 0.1)' : 'rgba(241, 196, 15, 0.1)'};"><p class="font-bold" style="color: ${planKey === 'planA' ? 'var(--accent-teal)' : '#b5930d'};">${scenario.label}費用明細：</p>${breakdownHtml}<hr class="border-gray-300/50 my-3"><p class="font-bold text-gray-800 text-right">總計：<span class="text-2xl font-black">${breakdown.grandTotal.toLocaleString()}</span> 元</p></div>`;
+        });
+        dom.costResult.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
     }
 
-    // ⭐ [新增] 專門用於計算請求的資料獲取函式
-    function getFormStateForCalc() {
+    function getFormState() {
         const adults = parseInt(dom.numAdults.value) || 0;
         const children = parseInt(dom.numChildren.value) || 0;
         const infants = parseInt(dom.numInfants.value) || 0;
@@ -168,10 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
             getAge(dom.regForm.elements['employee_dob'].value) < 14 ? passportRenewals.child++ : passportRenewals.adult++;
         }
 
-        let childrenDobs = [];
+        let childrenAges = [];
         for (let i = 1; i <= children; i++) {
             if (dom.regForm.elements[`child_${i}_renew_passport`]?.checked) passportRenewals.child++;
-            childrenDobs.push(dom.regForm.elements[`child_${i}_dob`]?.value || '');
+            const dob = dom.regForm.elements[`child_${i}_dob`]?.value;
+            childrenAges.push(getAge(dob));
         }
 
         for (let i = 1; i <= adults; i++) if (dom.regForm.elements[`adult_${i}_renew_passport`]?.checked) passportRenewals.adult++;
@@ -184,11 +205,74 @@ document.addEventListener('DOMContentLoaded', () => {
             needsSingleRoom: dom.inputs.singleRoom.checked,
             counts: { adults, children, infants },
             passportRenewals: passportRenewals,
-            childrenDobs: childrenDobs,
+            totalHeadcount: serverHeadcount + 1 + adults + children,
+            childrenAges: childrenAges,
         };
     }
 
-    // ⭐ [重構] 前端現在只負責渲染後端傳來的HTML結構
+    function calculateBreakdownForScenario(state, scenario) {
+        const rule = CONFIG.userRules[state.employeeName] || {};
+        const companionBaseCost = scenario.base + CONFIG.subsidies.company;
+        let subTotal = 0;
+        let breakdown = { base: [], discounts: [], extras: [], grandTotal: 0 };
+        const employeeCompanySubsidy = (state.isOutsourced && !rule.isOutsourcedSpecial) ? CONFIG.subsidies.outsourced : CONFIG.subsidies.company;
+
+        subTotal += (companionBaseCost - employeeCompanySubsidy);
+        breakdown.base.push(`• 員工本人團費：<span class="font-bold text-gray-800">${companionBaseCost.toLocaleString()}</span> 元`);
+        breakdown.base.push(`<p class="pl-4">└─ 公司補助：<span class="font-bold" style="color: var(--accent-teal);">- ${employeeCompanySubsidy.toLocaleString()}</span> 元</p>`);
+
+        if (state.counts.adults > 0) { subTotal += state.counts.adults * companionBaseCost; breakdown.base.push(`• 眷屬 (成人 ${state.counts.adults}位)：<span class="font-bold text-gray-800">${(state.counts.adults * companionBaseCost).toLocaleString()}</span> 元`); }
+        if (state.counts.children > 0) { subTotal += state.counts.children * companionBaseCost; breakdown.base.push(`• 孩童 (${state.counts.children}位)：<span class="font-bold text-gray-800">${(state.counts.children * companionBaseCost).toLocaleString()}</span> 元`); }
+        if (state.counts.infants > 0) { subTotal += state.counts.infants * CONFIG.costs.infant; breakdown.base.push(`• 嬰兒 (${state.counts.infants}位)：<span class="font-bold text-gray-800">${(state.counts.infants * CONFIG.costs.infant).toLocaleString()}</span> 元`); }
+
+        let standardChildDiscount = 0;
+        let specialChildDiscount = 0;
+        if (state.counts.children > 0) {
+            state.childrenAges.forEach(age => {
+                if (age < 9) {
+                    standardChildDiscount += CONFIG.costs.childNoBedDiscount;
+                    if (state.employeeName === '廖彤婕' && age < 4) {
+                        specialChildDiscount += rule.specialChildDiscount;
+                    }
+                }
+            });
+        }
+
+        if (standardChildDiscount > 0) {
+            subTotal -= standardChildDiscount;
+            breakdown.discounts.push(`<p class="pl-4">└─ 孩童不佔床折扣 (9歲以下)：<span class="font-bold" style="color: var(--accent-teal);">- ${standardChildDiscount.toLocaleString()}</span> 元</p>`);
+        }
+        if (specialChildDiscount > 0) {
+            subTotal -= specialChildDiscount;
+            breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 專屬-孩童特別折扣 (4歲以下)：<span class="font-bold">- ${specialChildDiscount.toLocaleString()}</span> 元</p>`);
+        }
+
+        if ((state.counts.adults > 0 || state.counts.children > 0) && state.hasBonus) {
+            if (rule.bonusRedirect) {
+                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 已將達標補助給 ${rule.bonusRedirectTo} 使用</p>`);
+            } else if (!state.isOutsourced || rule.isOutsourcedSpecial) {
+                subTotal -= CONFIG.subsidies.performanceBonus;
+                breakdown.discounts.push(`<p class="pl-4">└─ 業績達標補助：<span class="font-bold" style="color: var(--accent-teal);">- ${CONFIG.subsidies.performanceBonus.toLocaleString()}</span> 元</p>`);
+                if (rule.bonusText) {
+                    breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">  (${rule.bonusText})</p>`);
+                }
+            }
+        }
+
+        if (rule.specialBonus && state.hasBonus) {
+            subTotal -= rule.specialBonus;
+            breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 業績達標-特別補助：<span class="font-bold">- ${rule.specialBonus.toLocaleString()}</span> 元</p>`);
+        }
+
+        breakdown.grandTotal = subTotal;
+
+        if (state.needsSingleRoom) { breakdown.grandTotal += CONFIG.costs.singleRoomSupplement; breakdown.extras.push(`<p class="pl-4">└─ 單人房價差：<span class="font-bold text-gray-800">+ ${CONFIG.costs.singleRoomSupplement.toLocaleString()}</span> 元</p>`); }
+        const passportTotalCost = (state.passportRenewals.adult * CONFIG.costs.passportAdult) + (state.passportRenewals.child * CONFIG.costs.passportChild);
+        if (passportTotalCost > 0) { breakdown.grandTotal += passportTotalCost; breakdown.extras.push(`<p class="pl-4">└─ 護照辦理費：<span class="font-bold" style="color: var(--accent-sunny-yellow);">+ ${passportTotalCost.toLocaleString()}</span> 元</p>`); }
+
+        return breakdown;
+    }
+
     function generateBreakdownHtml(breakdown) {
         let html = '<div class="text-left text-sm space-y-1 mt-3">';
         html += breakdown.base.join('');
@@ -236,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showSuccessModal();
                 dom.regForm.reset();
                 generateCompanionFields();
-                handleSpecialConditions();
+                handleSpecialConditions(); // This will re-render cost
                 await fetchHeadcount();
             } else {
                 throw new Error(data.error || 'Unknown server error');
@@ -322,10 +406,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // ⭐ [重構] 事件監聽現在只觸發 renderCost，不再需要分別處理
-        dom.regForm.addEventListener('input', (event) => {
-            // 避免在輸入文字時頻繁觸發，可以加上 debounce，但此處為求簡單暫不加入
-            if (event.target.id === 'regName' || event.target.type === 'number' || event.target.type === 'checkbox' || event.target.type === 'date') {
+        dom.inputs.regName.addEventListener('input', handleSpecialConditions);
+        dom.inputs.isOutsourced.addEventListener('change', handleSpecialConditions);
+
+        [dom.numAdults, dom.numChildren, dom.numInfants].forEach(input => {
+            input.addEventListener('input', () => {
+                generateCompanionFields();
+                renderCost();
+            });
+        });
+        dom.regForm.addEventListener('change', (event) => {
+            if (!['regName', 'isOutsourced', 'numAdults', 'numChildren', 'numInfants'].includes(event.target.id)) {
                 renderCost();
             }
         });
@@ -346,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function init() {
         generateCompanionFields();
-        fetchHeadcount(); // fetchHeadcount 會在完成後調用 renderCost
+        fetchHeadcount();
         updateCountdown();
         countdownInterval = setInterval(updateCountdown, 1000);
         setupEventListeners();
