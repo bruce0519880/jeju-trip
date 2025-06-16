@@ -1,8 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     let CONFIG = null;
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec'; 
     const SECRET_KEY = 'JEJU_TOUR_SECRET_k1s9wz7x_1jo2xlp8qpc';
+    
+    // [優化一 新增] 用於儲存使用者最後所在的區塊
+    let lastActiveSectionId = 'summary';
 
     const dom = {
         regForm: document.getElementById('registrationForm'),
@@ -77,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showSection(targetId) {
         dom.mainSections.forEach(section => {
-            // [修正] 使用 classList 來控制顯示/隱藏，避免覆蓋其他樣式
             if (section.dataset.section === targetId) {
                 section.classList.remove('hidden');
             } else {
@@ -114,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.companionSection.innerHTML = html;
         attachFormValidationListeners();
     }
-
+    
     async function updateStateFromServer() {
         if (!CONFIG) return;
         dom.costResult.innerHTML = `<p class="text-gray-500">正在即時計算費用...</p>`;
@@ -277,9 +279,13 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => dom.modal.container.classList.add('hidden'), 300);
     }
 
-    async function handleFindRecord() {
-        const id = dom.modifyModal.idInput.value.trim();
-        if (!id) { dom.modifyModal.status.textContent = '請輸入報名ID。'; return; }
+    // [優化二 修改] 讓此函式可以接收 ID 參數，實現自動帶入
+    async function handleFindRecord(idToFind = null) {
+        const id = idToFind || dom.modifyModal.idInput.value.trim();
+        if (!id) {
+            dom.modifyModal.status.textContent = '請輸入報名ID。';
+            return;
+        }
         dom.modifyModal.status.textContent = '';
         setFindButtonState(true);
         try {
@@ -287,11 +293,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(url);
             const data = await response.json();
             if (data.status === 'success') {
+                hideModifyModal(); // 先關閉可能還開著的視窗
+                hideRecoverModal(); // 確保找回ID視窗也關閉
                 populateForm(data.rowData);
                 formMode = 'update';
                 updateRowNumber = data.rowNumber;
                 switchToUpdateModeUI();
-                hideModifyModal();
                 showSection('registration');
             } else {
                 throw new Error(data.message);
@@ -387,6 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.recoverModal.recoverSpinner.classList.toggle('hidden', !isRecovering);
     }
 
+    // [優化二 修改] 找回 ID 成功後，自動執行尋找資料的流程
     async function handleRecoverId() {
         const name = dom.recoverModal.nameInput.value.trim();
         const dob = dom.recoverModal.dobInput.value;
@@ -402,7 +410,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
             const data = await response.json();
             if (data.result === 'success') {
-                dom.recoverModal.status.innerHTML = `您的報名ID是：<br><strong class="text-lg font-mono">${data.friendlyId}</strong>`;
+                dom.recoverModal.status.innerHTML = `ID 已找回！<br>正在為您載入資料...`;
+                // 成功後，不等使用者操作，直接用找回的 ID 去執行 handleFindRecord
+                setTimeout(() => {
+                    handleFindRecord(data.friendlyId);
+                }, 1000); // 延遲 1 秒，讓使用者看到提示
             } else {
                 throw new Error(data.error);
             }
@@ -426,6 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const s = Math.floor((distance % (1000 * 60)) / 1000);
         dom.countdownTimer.innerHTML = `<div class="countdown-segment"><span>${d.toString().padStart(2, '0')}</span><span class="countdown-label">天</span></div><div class="countdown-segment"><span>${h.toString().padStart(2, '0')}</span><span class="countdown-label">時</span></div><div class="countdown-segment"><span>${m.toString().padStart(2, '0')}</span><span class="countdown-label">分</span></div><div class="countdown-segment"><span>${s.toString().padStart(2, '0')}</span><span class="countdown-label">秒</span></div>`;
     }
+    
+    let countdownInterval = null;
 
     function setFormEnabled(enabled) {
         dom.formFieldsets.forEach(fieldset => { fieldset.disabled = !enabled; });
@@ -457,10 +471,31 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.modal.closeBtn.addEventListener('click', hideSuccessModal);
         dom.modal.container.addEventListener('click', (e) => { if (e.target === dom.modal.container) hideSuccessModal(); });
         if(dom.floatingBtn) dom.floatingBtn.addEventListener('click', (e) => { e.preventDefault(); showSection('registration'); });
-        document.querySelectorAll('.js-show-modify-modal').forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); dom.mobileMenu.menu.classList.add('hidden'); showModifyModal(); }));
-        dom.modifyModal.closeBtn.addEventListener('click', hideModifyModal);
-        dom.modifyModal.container.addEventListener('click', (e) => { if (e.target === dom.modifyModal.container) hideModifyModal(); });
-        dom.modifyModal.findBtn.addEventListener('click', handleFindRecord);
+        
+        // [優化一 修改] 點擊修改按鈕時，記錄當前區塊
+        document.querySelectorAll('.js-show-modify-modal').forEach(btn => btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const activeSection = document.querySelector('.main-section:not(.hidden)');
+            if (activeSection) {
+                lastActiveSectionId = activeSection.dataset.section;
+            }
+            dom.mobileMenu.menu.classList.add('hidden'); 
+            showModifyModal(); 
+        }));
+        
+        // [優化一 修改] 點擊取消或背景時，返回最後紀錄的區塊
+        dom.modifyModal.closeBtn.addEventListener('click', () => {
+            hideModifyModal();
+            showSection(lastActiveSectionId);
+        });
+        dom.modifyModal.container.addEventListener('click', (e) => { 
+            if (e.target === dom.modifyModal.container) {
+                hideModifyModal();
+                showSection(lastActiveSectionId);
+            }
+        });
+        dom.modifyModal.findBtn.addEventListener('click', () => handleFindRecord()); // 修改為不傳參數的呼叫
+
         dom.recoverModal.showBtn.addEventListener('click', showRecoverModal);
         dom.recoverModal.closeBtn.addEventListener('click', hideRecoverModal);
         dom.recoverModal.container.addEventListener('click', (e) => { if (e.target === dom.recoverModal.container) hideRecoverModal(); });
@@ -488,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.progress.title.innerText = "頁面載入失敗";
             dom.progress.text.innerText = "無法從伺服器取得必要資訊，請稍後再試。";
         }
-        const animationObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
+        const animationObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
         document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
     }
 
