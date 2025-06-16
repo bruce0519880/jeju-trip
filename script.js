@@ -279,6 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => dom.modal.container.classList.add('hidden'), 300);
     }
 
+    // 【已修正】新的資料載入函式 (handleFindRecord)
     async function handleFindRecord(idToFind = null) {
         const id = idToFind || dom.modifyModal.idInput.value.trim();
         if (!id) {
@@ -294,11 +295,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'success') {
                 hideModifyModal();
                 hideRecoverModal();
+                
+                // 步驟 1: 僅填入資料到表單，不做其他事
                 populateForm(data.rowData);
+                
                 formMode = 'update';
                 updateRowNumber = data.rowNumber;
                 switchToUpdateModeUI();
                 showSection('registration');
+                
+                // 步驟 2: 延遲 100 毫秒後，再呼叫費用計算函式
+                setTimeout(() => {
+                    updateStateFromServer();
+                }, 100);
+
             } else { throw new Error(data.message); }
         } catch (error) {
             dom.modifyModal.status.textContent = error.message;
@@ -307,45 +317,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 請用此版本取代舊的 populateForm 函數
-function populateForm(data) {
-    originalCompanionCounts = {
-        adults: parseInt(data['同行眷屬(成人)']) || 0,
-        children: parseInt(data['同行孩童']) || 0,
-        infants: parseInt(data['同行嬰兒']) || 0
-    };
-    dom.numAdults.value = originalCompanionCounts.adults;
-    dom.numChildren.value = originalCompanionCounts.children;
-    dom.numInfants.value = originalCompanionCounts.infants;
-    
-    generateCompanionFields();
+    // 【已修正】新的資料填入函式 (populateForm)
+    function populateForm(data) {
+        originalCompanionCounts = {
+            adults: parseInt(data['同行眷屬(成人)']) || 0,
+            children: parseInt(data['同行孩童']) || 0,
+            infants: parseInt(data['同行嬰兒']) || 0
+        };
+        dom.numAdults.value = originalCompanionCounts.adults;
+        dom.numChildren.value = originalCompanionCounts.children;
+        dom.numInfants.value = originalCompanionCounts.infants;
+        
+        generateCompanionFields();
 
-    dom.inputs.regName.value = data['員工姓名'] || '';
-    dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
-    dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
+        dom.inputs.regName.value = data['員工姓名'] || '';
+        dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
+        dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
 
-    for (let i = 1; i <= originalCompanionCounts.adults; i++) {
-        if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
-        if (dom.regForm.querySelector(`[name="adult_${i}_dob"]`)) dom.regForm.querySelector(`[name="adult_${i}_dob"]`).value = data[`成人${i}-出生日期`] || '';
-        if (dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`).checked = (data[`成人${i}-需換護照`] === 'Y');
-    }
-    for (let i = 1; i <= originalCompanionCounts.children; i++) {
-        if (dom.regForm.querySelector(`[name="child_${i}_name"]`)) dom.regForm.querySelector(`[name="child_${i}_name"]`).value = data[`孩童${i}-姓名`] || '';
-        if (dom.regForm.querySelector(`[name="child_${i}_dob"]`)) dom.regForm.querySelector(`[name="child_${i}_dob"]`).value = data[`孩童${i}-出生日期`] || '';
-        if (dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`).checked = (data[`孩童${i}-需換護照`] === 'Y');
-    }
-    for (let i = 1; i <= originalCompanionCounts.infants; i++) {
-        if (dom.regForm.querySelector(`[name="infant_${i}_name"]`)) dom.regForm.querySelector(`[name="infant_${i}_name"]`).value = data[`嬰兒${i}-姓名`] || '';
-        if (dom.regForm.querySelector(`[name="infant_${i}_dob"]`)) dom.regForm.querySelector(`[name="infant_${i}_dob"]`).value = data[`嬰兒${i}-出生日期`] || '';
-        if (dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`).checked = (data[`嬰兒${i}-需換護照`] === 'Y');
-    }
+        for (let i = 1; i <= originalCompanionCounts.adults; i++) {
+            if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
+            if (dom.regForm.querySelector(`[name="adult_${i}_dob"]`)) dom.regForm.querySelector(`[name="adult_${i}_dob"]`).value = data[`成人${i}-出生日期`] || '';
+            if (dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`).checked = (data[`成人${i}-需換護照`] === 'Y');
+        }
+        for (let i = 1; i <= originalCompanionCounts.children; i++) {
+            if (dom.regForm.querySelector(`[name="child_${i}_name"]`)) dom.regForm.querySelector(`[name="child_${i}_name"]`).value = data[`孩童${i}-姓名`] || '';
+            if (dom.regForm.querySelector(`[name="child_${i}_dob"]`)) dom.regForm.querySelector(`[name="child_${i}_dob"]`).value = data[`孩童${i}-出生日期`] || '';
+            if (dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`).checked = (data[`孩童${i}-需換護照`] === 'Y');
+        }
+        for (let i = 1; i <= originalCompanionCounts.infants; i++) {
+            if (dom.regForm.querySelector(`[name="infant_${i}_name"]`)) dom.regForm.querySelector(`[name="infant_${i}_name"]`).value = data[`嬰兒${i}-姓名`] || '';
+            if (dom.regForm.querySelector(`[name="infant_${i}_dob"]`)) dom.regForm.querySelector(`[name="infant_${i}_dob"]`).value = data[`嬰兒${i}-出生日期`] || '';
+            if (dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`).checked = (data[`嬰兒${i}-需換護照`] === 'Y');
+        }
 
-    dom.inputs.isOutsourced.checked = (data['是否外包'] === 'Y');
-    dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
-    dom.inputs.singleRoom.checked = (data['需要單人房'] === 'Y');
-    
-    // 注意：舊版本結尾的 updateStateFromServer(); 已被移除
-}
+        dom.inputs.isOutsourced.checked = (data['是否外包'] === 'Y');
+        dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
+        dom.inputs.singleRoom.checked = (data['需要單人房'] === 'Y');
+    }
 
     function switchToUpdateModeUI() { dom.submitBtn.text.textContent = '確認修改'; }
 
@@ -396,44 +404,36 @@ function populateForm(data) {
         dom.recoverModal.recoverSpinner.classList.toggle('hidden', !isRecovering);
     }
 
-    // 請用此版本取代舊的 handleFindRecord 函數
-async function handleFindRecord(idToFind = null) {
-    const id = idToFind || dom.modifyModal.idInput.value.trim();
-    if (!id) {
-        dom.modifyModal.status.textContent = '請輸入報名ID。';
-        return;
+    async function handleRecoverId() {
+        const name = dom.recoverModal.nameInput.value.trim();
+        const dob = dom.recoverModal.dobInput.value;
+        if (!name || !dob) { dom.recoverModal.status.textContent = '請輸入您的姓名與生日。'; return; }
+        dom.recoverModal.status.textContent = '';
+        dom.recoverModal.loadBtn.classList.add('hidden');
+        dom.recoverModal.recoverBtn.classList.remove('hidden');
+        setRecoverButtonState(true);
+        try {
+            const formData = new FormData();
+            formData.append('action', 'recoverid');
+            formData.append('secret_key', SECRET_KEY);
+            formData.append('employee_name', name);
+            formData.append('employee_dob', dob);
+            const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+            const data = await response.json();
+            if (data.result === 'success') {
+                dom.recoverModal.status.innerHTML = `您的報名ID是：<br><strong class="text-lg font-mono">${data.friendlyId}</strong>`;
+                dom.recoverModal.loadBtn.dataset.recoveredId = data.friendlyId;
+                dom.recoverModal.loadBtn.classList.remove('hidden');
+                dom.recoverModal.recoverBtn.classList.add('hidden');
+            } else {
+                throw new Error(data.error);
+            }
+        } catch (error) {
+            dom.recoverModal.status.textContent = error.message;
+        } finally {
+            setRecoverButtonState(false);
+        }
     }
-    dom.modifyModal.status.textContent = '';
-    setFindButtonState(true);
-    try {
-        const url = `${SCRIPT_URL}?action=getdatabyid&secret_key=${SECRET_KEY}&id=${id}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data.status === 'success') {
-            hideModifyModal();
-            hideRecoverModal();
-            
-            // 步驟 1: 僅填入資料到表單，不做其他事
-            populateForm(data.rowData);
-            
-            formMode = 'update';
-            updateRowNumber = data.rowNumber;
-            switchToUpdateModeUI();
-            showSection('registration');
-            
-            // 步驟 2: 延遲 100 毫秒後，再呼叫費用計算函式
-            // 這確保了瀏覽器有時間先將資料顯示在畫面上
-            setTimeout(() => {
-                updateStateFromServer();
-            }, 100);
-
-        } else { throw new Error(data.message); }
-    } catch (error) {
-        dom.modifyModal.status.textContent = error.message;
-    } finally {
-        setFindButtonState(false);
-    }
-}
 
     function updateCountdown() {
         const distance = new Date('2025-11-10T14:25:00').getTime() - new Date().getTime();
@@ -507,7 +507,6 @@ async function handleFindRecord(idToFind = null) {
         dom.recoverModal.container.addEventListener('click', (e) => { if (e.target === dom.recoverModal.container) hideRecoverModal(); });
         dom.recoverModal.recoverBtn.addEventListener('click', handleRecoverId);
         
-        // [修正] 增加對按鈕是否存在的判斷，讓程式更穩健
         if (dom.recoverModal.loadBtn) {
             dom.recoverModal.loadBtn.addEventListener('click', (e) => {
                 const recoveredId = e.currentTarget.dataset.recoveredId;
@@ -544,29 +543,28 @@ async function handleFindRecord(idToFind = null) {
     }
 
     init();
-// ===== 隱藏的後台入口按鈕功能 (國旗觸發版) =====
-const secretTrigger = document.getElementById('admin-flag-trigger'); // 已更新為國旗的ID
-if (secretTrigger) {
-    let clickCount = 0;
-    let clickTimer = null;
-    const requiredClicks = 7; // 同樣設定需要連續點擊 7 次
-    const resetTime = 2000;   // 2秒內未繼續點擊則重置計數
 
-    secretTrigger.addEventListener('click', (e) => {
-        // 阻止事件冒泡，避免點擊國旗觸發其他效果
-        e.stopPropagation(); 
-        
-        clickCount++;
-        clearTimeout(clickTimer);
-        clickTimer = setTimeout(() => {
-            clickCount = 0;
-        }, resetTime);
+    // ===== 隱藏的後台入口按鈕功能 (國旗觸發版) =====
+    const secretTrigger = document.getElementById('admin-flag-trigger');
+    if (secretTrigger) {
+        let clickCount = 0;
+        let clickTimer = null;
+        const requiredClicks = 7; // 設定需要連續點擊幾次
+        const resetTime = 2000;   // 2秒內未繼續點擊則重置計數
 
-        if (clickCount >= requiredClicks) {
-            alert('即將進入管理後台...');
-            window.location.href = 'admin.html'; // 跳轉到後台頁面
-        }
-    });
-}
-    
-}); 
+        secretTrigger.addEventListener('click', (e) => {
+            e.stopPropagation(); // 阻止事件冒泡，避免點擊國旗觸發其他效果
+            
+            clickCount++;
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+            }, resetTime);
+
+            if (clickCount >= requiredClicks) {
+                alert('即將進入管理後台...');
+                window.location.href = 'admin.html'; // 跳轉到後台頁面
+            }
+        });
+    }
+});
