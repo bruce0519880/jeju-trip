@@ -1,31 +1,26 @@
-// sw.js (v3 版本)
+// sw.js (v4 最終生產版本)
 
-const CACHE_NAME = 'jeju-tour-cache-v3'; // <--- 版本號升級到 v3
+const CACHE_NAME = 'jeju-tour-cache-v4'; // <--- 版本號升級到 v4
 const urlsToCache = [
-    // '/' 路徑已移除，只保留明確的 index.html
-    '/index.html',
-    '/style.css',
-    '/script.js',
-    '/manifest.json',
-    '/images/icon-192.png',
-    '/images/icon-512.png'
+    // 所有路徑都使用相對於根域名的絕對路徑，確保路徑正確
+    '/jeju-trip/index.html',
+    '/jeju-trip/style.css',
+    '/jeju-trip/script.js',
+    '/jeju-trip/manifest.json',
+    '/jeju-trip/images/icon-192.png',
+    '/jeju-trip/images/icon-512.png'
 ];
 
-// install 事件：在安裝時寫入快取
 self.addEventListener('install', event => {
-    // 為了讓新的 Service Worker 能立即取代舊的，並在安裝後立即啟用
     self.skipWaiting();
-
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => {
-                console.log('Opened cache and caching files for v3');
-                return cache.addAll(urlsToCache);
-            })
+        caches.open(CACHE_NAME).then(cache => {
+            console.log('Opened cache and caching files for v4');
+            return cache.addAll(urlsToCache);
+        })
     );
 });
 
-// activate 事件：在啟用時清除舊快取
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(cacheNames => {
@@ -37,36 +32,26 @@ self.addEventListener('activate', event => {
                     }
                 })
             );
-        }).then(() => {
-            // 讓 Service Worker 立即控制頁面，而不用等到下次載入
-            return self.clients.claim();
-        })
+        }).then(() => self.clients.claim())
     );
 });
 
-// fetch 事件：攔截網路請求
 self.addEventListener('fetch', event => {
-    // 我們只處理 GET 請求
     if (event.request.method !== 'GET') {
         return;
     }
 
-    // 對於導航請求 (例如打開 App 或點擊連結)，我們總是回傳 index.html
+    // 對於導航請求，總是回傳 index.html
+    // 檢查請求的 URL 是否不包含副檔名 (常見的頁面導航)
     if (event.request.mode === 'navigate') {
-        event.respondWith(caches.match('/index.html'));
+        event.respondWith(caches.match('/jeju-trip/index.html'));
         return;
     }
 
-    // 對於其他資源 (CSS, JS, 圖片等)
+    // 對於其他資源
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // 如果快取中有，就直接回傳
-                if (response) {
-                    return response;
-                }
-                // 如果快取中沒有，就透過網路去抓
-                return fetch(event.request);
-            })
+        caches.match(event.request).then(response => {
+            return response || fetch(event.request);
+        })
     );
 });
