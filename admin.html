@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>濟州島之旅 - 管理後台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f7fafc;
+        }
+
+        .table-container {
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background-color: #2d3748;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+
+    <div class="container mx-auto max-w-7xl">
+        <h1 class="text-3xl font-bold text-center mb-6">濟州島之旅 - 管理後台</h1>
+
+        <div id="login-view" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">請輸入管理密碼</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">密碼</label>
+                    <input type="password" id="password"
+                        class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div id="login-status" class="text-red-600 h-5 text-sm"></div>
+                <button id="login-btn"
+                    class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition">登入</button>
+            </div>
+        </div>
+
+        <div id="data-view" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <p id="total-count" class="text-lg font-semibold"></p>
+                <button id="logout-btn"
+                    class="bg-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600 transition">登出</button>
+            </div>
+            <div class="table-container bg-white rounded-lg shadow-md">
+                <table id="data-table" class="w-full text-sm text-left text-gray-500">
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec';
+
+        const dom = {
+            loginView: document.getElementById('login-view'),
+            dataView: document.getElementById('data-view'),
+            passwordInput: document.getElementById('password'),
+            loginBtn: document.getElementById('login-btn'),
+            loginStatus: document.getElementById('login-status'),
+            logoutBtn: document.getElementById('logout-btn'),
+            dataTable: document.getElementById('data-table'),
+            totalCount: document.getElementById('total-count')
+        };
+
+        async function handleLogin() {
+            const password = dom.passwordInput.value;
+            if (!password) {
+                dom.loginStatus.textContent = '請輸入密碼。';
+                return;
+            }
+            dom.loginStatus.textContent = '';
+            dom.loginBtn.disabled = true;
+            dom.loginBtn.textContent = '登入中...';
+
+            try {
+                const formData = new FormData();
+                formData.append('action', 'getalldata');
+                formData.append('password', password);
+
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+                const result = await response.json();
+
+                if (result.result === 'success') {
+                    sessionStorage.setItem('admin_auth', 'true');
+                    renderDataView(result.data);
+                } else {
+                    throw new Error(result.error);
+                }
+
+            } catch (error) {
+                dom.loginStatus.textContent = error.message;
+            } finally {
+                dom.loginBtn.disabled = false;
+                dom.loginBtn.textContent = '登入';
+            }
+        }
+
+        function renderDataView(data) {
+            dom.loginView.classList.add('hidden');
+            dom.dataView.classList.remove('hidden');
+
+            const headers = data.shift(); // 取出並移除第一行作為標頭
+
+            // 計算總人數
+            const adultIndex = headers.indexOf('同行眷屬(成人)');
+            const childIndex = headers.indexOf('同行孩童');
+            let totalPeople = 0;
+            data.forEach(row => {
+                totalPeople += 1; // 員工本人
+                if (adultIndex > -1) totalPeople += (parseInt(row[adultIndex]) || 0);
+                if (childIndex > -1) totalPeople += (parseInt(row[childIndex]) || 0);
+            });
+            dom.totalCount.textContent = `目前總報名人數 (含眷屬/嬰兒)：${totalPeople} 人`;
+
+            // 渲染表格
+            const thead = document.createElement('thead');
+            thead.innerHTML = `<tr class="bg-gray-800 text-white">${headers.map(h => `<th scope="col" class="px-4 py-3">${h}</th>`).join('')}</tr>`;
+
+            const tbody = document.createElement('tbody');
+            tbody.innerHTML = data.map(row =>
+                `<tr class="bg-white border-b hover:bg-gray-50">${row.map(cell => `<td class="px-4 py-3">${cell}</td>`).join('')}</tr>`
+            ).join('');
+
+            dom.dataTable.innerHTML = '';
+            dom.dataTable.append(thead, tbody);
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('admin_auth');
+            dom.dataView.classList.add('hidden');
+            dom.loginView.classList.remove('hidden');
+            dom.passwordInput.value = '';
+        }
+
+        // 事件監聽
+        dom.loginBtn.addEventListener('click', handleLogin);
+        dom.passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+        dom.logoutBtn.addEventListener('click', handleLogout);
+
+        // 檢查 session 是否已登入
+        if (sessionStorage.getItem('admin_auth') === 'true') {
+            dom.loginView.classList.add('hidden');
+            dom.dataView.classList.remove('hidden');
+            // 在此可以選擇自動重新載入資料或顯示一個「重新整理」按鈕
+            dom.totalCount.textContent = '頁面已重新整理，請點擊登出後重新登入以載入最新資料。';
+        }
+    </script>
+</body>
+
+</html>
