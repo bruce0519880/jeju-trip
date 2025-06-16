@@ -11,12 +11,10 @@
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #f7fafc;
         }
-
         .table-container {
-            max-height: 75vh; /* [修改] 調整高度以容納儀表板 */
+            max-height: 70vh;
             overflow-y: auto;
         }
-
         th {
             position: sticky;
             top: 0;
@@ -24,7 +22,6 @@
             color: white;
             z-index: 10;
         }
-        
         th.sortable {
             cursor: pointer;
             transition: background-color 0.2s;
@@ -37,7 +34,6 @@
             margin-left: 8px;
             width: 10px;
         }
-
         #data-table {
             min-width: 2400px; 
             table-layout: fixed;
@@ -45,8 +41,8 @@
         #data-table th, #data-table td {
             word-wrap: break-word;
             vertical-align: middle;
+            white-space: nowrap; 
         }
-        
         #data-table th:nth-child(2), #data-table td:nth-child(2) { width: 150px; } /* 友善ID */
         #data-table th:nth-child(3), #data-table td:nth-child(3) { width: 160px; } /* 報名時間 */
         #data-table th:nth-child(4), #data-table td:nth-child(4) { width: 100px; } /* 員工姓名 */
@@ -96,14 +92,30 @@
                     class="bg-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600 transition">登出</button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white p-4 rounded-lg shadow-md text-center">
                     <h3 class="text-sm font-medium text-gray-500">總報名人數 (不含嬰兒)</h3>
                     <p id="stat-total-people" class="text-2xl font-bold mt-1">0</p>
                 </div>
+                 <div class="bg-white p-4 rounded-lg shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">眷屬總計 (成人/孩童)</h3>
+                    <p id="stat-companions" class="text-2xl font-bold mt-1">0 / 0</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">首筆/末筆報名時間</h3>
+                    <p id="stat-reg-timeline" class="text-2xl font-bold mt-1">-</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">總報名組數</h3>
+                    <p id="stat-groups" class="text-2xl font-bold mt-1">0</p>
+                </div>
                 <div class="bg-white p-4 rounded-lg shadow-md text-center">
                     <h3 class="text-sm font-medium text-gray-500">總需代辦護照數</h3>
                     <p id="stat-passports" class="text-2xl font-bold mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">單人房需求數</h3>
+                    <p id="stat-single-room" class="text-2xl font-bold mt-1">0</p>
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-md text-center">
                     <h3 class="text-sm font-medium text-gray-500">費用方案 A (>20人) 總計</h3>
@@ -117,7 +129,7 @@
             
             <div class="flex justify-between items-center mb-4">
                 <input type="text" id="searchInput" class="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="請輸入姓名或ID等關鍵字進行即時篩選...">
-                 <button id="export-csv-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition ml-4">
+                <button id="export-csv-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition ml-4">
                     匯出 CSV
                 </button>
             </div>
@@ -131,7 +143,7 @@
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec';
-        let originalData = []; // [新增] 用於儲存原始數據以供匯出
+        let originalData = []; 
 
         const dom = {
             loginView: document.getElementById('login-view'),
@@ -141,16 +153,21 @@
             loginStatus: document.getElementById('login-status'),
             logoutBtn: document.getElementById('logout-btn'),
             dataTable: document.getElementById('data-table'),
-            exportBtn: document.getElementById('export-csv-btn'), // [新增]
-            // [新增] 儀表板 DOM 元素
+            exportBtn: document.getElementById('export-csv-btn'),
             stats: {
                 totalPeople: document.getElementById('stat-total-people'),
                 passports: document.getElementById('stat-passports'),
                 costA: document.getElementById('stat-cost-a'),
                 costB: document.getElementById('stat-cost-b'),
+                groups: document.getElementById('stat-groups'),
+                singleRoom: document.getElementById('stat-single-room'),
+                companions: document.getElementById('stat-companions'),
+                // [替換] 將 bonus 替換為 regTimeline
+                regTimeline: document.getElementById('stat-reg-timeline'),
             }
         };
         
+        // [修改] 增加 'short' 格式選項，用於顯示 MM/DD
         function formatDate(dateString, formatType = 'date') {
             if (!dateString) return '';
             const date = new Date(dateString);
@@ -167,6 +184,9 @@
                 const ss = pad(date.getSeconds());
                 return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`;
             }
+            if (formatType === 'short') {
+                return `${MM}/${dd}`;
+            }
             return `${yyyy}-${MM}-${dd}`;
         }
 
@@ -174,25 +194,20 @@
             const dirModifier = asc ? 1 : -1;
             const tBody = table.tBodies[0];
             const rows = Array.from(tBody.querySelectorAll("tr"));
-
             const sortedRows = rows.sort((a, b) => {
                 const aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
                 const bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
                 const aNum = parseFloat(aColText.replace(/[,-]/g, ''));
                 const bNum = parseFloat(bColText.replace(/[,-]/g, ''));
-                
                 if (!isNaN(aNum) && !isNaN(bNum)) {
                      return (aNum - bNum) * dirModifier;
                 }
-                
                 return aColText.localeCompare(bColText, 'zh-Hant') * dirModifier;
             });
-
             while (tBody.firstChild) {
                 tBody.removeChild(tBody.firstChild);
             }
             tBody.append(...sortedRows);
-
             table.querySelectorAll("th").forEach(th => th.classList.remove("th-sort-asc", "th-sort-desc"));
             const headerCell = table.querySelector(`th:nth-child(${column + 1})`);
             if (headerCell) {
@@ -201,24 +216,19 @@
             }
         }
         
-        // [新增] 匯出 CSV 的函式
         function exportToCsv() {
             if (originalData.length === 0) {
                 alert('沒有資料可供匯出。');
                 return;
             }
-
             const dataToExport = [originalData[0], ...Array.from(document.querySelectorAll('#data-table tbody tr'))
                 .filter(tr => tr.style.display !== 'none')
                 .map(tr => Array.from(tr.querySelectorAll('td')).map(td => td.textContent))
             ];
-            
-            let csvContent = "\uFEFF"; // BOM for UTF-8 Excel compatibility
-
+            let csvContent = "\uFEFF"; 
             dataToExport.forEach(rowArray => {
                 let row = rowArray.map(cell => {
                     let cellData = cell === null || cell === undefined ? '' : cell.toString();
-                    // Handle commas, quotes, and newlines
                     if (cellData.includes('"') || cellData.includes(',') || cellData.includes('\n')) {
                         cellData = '"' + cellData.replace(/"/g, '""') + '"';
                     }
@@ -226,7 +236,6 @@
                 }).join(',');
                 csvContent += row + "\r\n";
             });
-
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             if (link.download !== undefined) {
@@ -241,33 +250,25 @@
             }
         }
 
-
         async function handleLogin() {
             const password = dom.passwordInput.value;
-            if (!password) {
-                dom.loginStatus.textContent = '請輸入密碼。';
-                return;
-            }
+            if (!password) { dom.loginStatus.textContent = '請輸入密碼。'; return; }
             dom.loginStatus.textContent = '';
             dom.loginBtn.disabled = true;
             dom.loginBtn.textContent = '登入中...';
-
             try {
                 const formData = new FormData();
                 formData.append('action', 'getalldata');
                 formData.append('password', password);
-
                 const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                 const result = await response.json();
-
                 if (result.result === 'success') {
                     sessionStorage.setItem('admin_auth', 'true');
-                    originalData = result.data; // [新增] 儲存原始數據
-                    renderDataView(JSON.parse(JSON.stringify(result.data))); // 使用深拷貝傳遞數據
+                    originalData = result.data;
+                    renderDataView(JSON.parse(JSON.stringify(result.data)));
                 } else {
                     throw new Error(result.error);
                 }
-
             } catch (error) {
                 dom.loginStatus.textContent = error.message;
             } finally {
@@ -279,18 +280,15 @@
         function renderDataView(data) {
             dom.loginView.classList.add('hidden');
             dom.dataView.classList.remove('hidden');
-
             const headers = data.shift();
-            
             const timeColumnIndex = headers.indexOf('報名時間');
             const dobColumnIndices = headers.reduce((acc, header, index) => {
-                if (header && header.includes('出生日')) {
+                if (header && (header.includes('出生日') || header === '出生年月日')) {
                     acc.push(index);
                 }
                 return acc;
             }, []);
-
-            // [修改] 新增儀表板數據計算
+            
             const adultIndex = headers.indexOf('同行眷屬(成人)');
             const childIndex = headers.indexOf('同行孩童');
             const costAIndex = headers.findIndex(h => h.startsWith('費用方案A'));
@@ -299,37 +297,50 @@
                 if(header && header.includes('需換護照')) acc.push(index);
                 return acc;
             }, []);
+            const singleRoomIndex = headers.indexOf('需要單人房');
 
-            let totalPeople = 0;
-            let totalPassports = 0;
-            let totalCostA = 0;
-            let totalCostB = 0;
+            let totalPeople = 0, totalPassports = 0, totalCostA = 0, totalCostB = 0;
+            let singleRoomCount = 0, totalCompanionsAdult = 0, totalCompanionsChild = 0;
+            // [替換] 新增時間區間計算相關變數
+            let firstRegDate = null, lastRegDate = null; 
+
+            if (data.length > 0 && timeColumnIndex > -1) {
+                firstRegDate = new Date(data[0][timeColumnIndex]);
+                lastRegDate = new Date(data[0][timeColumnIndex]);
+            }
 
             data.forEach(row => {
-                // 計算總人數
-                totalPeople += 1;
-                if (adultIndex > -1) totalPeople += (parseInt(row[adultIndex]) || 0);
-                if (childIndex > -1) totalPeople += (parseInt(row[childIndex]) || 0);
-
-                // 計算護照數
-                passportIndices.forEach(idx => {
-                    if(row[idx] === 'Y') totalPassports++;
-                });
-
-                // 計算總費用
+                totalPeople += 1 + (parseInt(row[adultIndex]) || 0) + (parseInt(row[childIndex]) || 0);
+                totalCompanionsAdult += (parseInt(row[adultIndex]) || 0);
+                totalCompanionsChild += (parseInt(row[childIndex]) || 0);
+                passportIndices.forEach(idx => { if(row[idx] === 'Y') totalPassports++; });
                 if(costAIndex > -1) totalCostA += (parseFloat(row[costAIndex]) || 0);
                 if(costBIndex > -1) totalCostB += (parseFloat(row[costBIndex]) || 0);
+                if(singleRoomIndex > -1 && row[singleRoomIndex] === 'Y') singleRoomCount++;
+                
+                // [替換] 比較並找出最早和最晚的報名時間
+                if (timeColumnIndex > -1) {
+                    const currentRegDate = new Date(row[timeColumnIndex]);
+                    if (currentRegDate < firstRegDate) firstRegDate = currentRegDate;
+                    if (currentRegDate > lastRegDate) lastRegDate = currentRegDate;
+                }
             });
             
+            const totalGroups = data.length;
             dom.stats.totalPeople.textContent = totalPeople.toLocaleString();
             dom.stats.passports.textContent = totalPassports.toLocaleString();
-            dom.stats.costA.textContent = `₩ ${totalCostA.toLocaleString()}`;
-            dom.stats.costB.textContent = `₩ ${totalCostB.toLocaleString()}`;
-
+            dom.stats.costA.textContent = `NT$ ${totalCostA.toLocaleString()}`;
+            dom.stats.costB.textContent = `NT$ ${totalCostB.toLocaleString()}`;
+            dom.stats.groups.textContent = totalGroups.toLocaleString();
+            dom.stats.singleRoom.textContent = singleRoomCount.toLocaleString();
+            dom.stats.companions.textContent = `${totalCompanionsAdult} / ${totalCompanionsChild}`;
+            // [替換] 更新報名時間區間的 DOM
+            if (firstRegDate && lastRegDate) {
+                dom.stats.regTimeline.textContent = `${formatDate(firstRegDate, 'short')} - ${formatDate(lastRegDate, 'short')}`;
+            }
 
             const thead = document.createElement('thead');
             thead.innerHTML = `<tr class="bg-gray-800 text-white">${headers.map(h => `<th scope="col" class="px-4 py-3 sortable">${h}<span class="sort-indicator"></span></th>`).join('')}</tr>`;
-
             const tbody = document.createElement('tbody');
             tbody.innerHTML = data.map(row =>
                 `<tr class="bg-white border-b hover:bg-gray-50">${row.map((cell, index) => {
@@ -342,7 +353,6 @@
                     return `<td class="px-4 py-3">${cellContent}</td>`;
                 }).join('')}</tr>`
             ).join('');
-
             dom.dataTable.innerHTML = '';
             dom.dataTable.append(thead, tbody);
             
@@ -351,15 +361,12 @@
                     const tableElement = headerCell.closest('table');
                     const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
                     const currentIsAsc = headerCell.classList.contains("th-sort-asc");
-
                     sortTableByColumn(tableElement, headerIndex, !currentIsAsc);
-
                     document.querySelectorAll('.sort-indicator').forEach(ind => ind.textContent = '');
                     const indicator = headerCell.querySelector('.sort-indicator');
                     if(indicator) indicator.textContent = !currentIsAsc ? '▲' : '▼';
                 });
             });
-
             const searchInput = document.getElementById('searchInput');
             searchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase();
@@ -380,20 +387,13 @@
             dom.dataView.classList.add('hidden');
             dom.loginView.classList.remove('hidden');
             dom.passwordInput.value = '';
-            originalData = []; // [新增] 登出時清空數據
+            originalData = [];
         }
 
         dom.loginBtn.addEventListener('click', handleLogin);
-        dom.passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleLogin();
-        });
+        dom.passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
         dom.logoutBtn.addEventListener('click', handleLogout);
-        dom.exportBtn.addEventListener('click', exportToCsv); // [新增]
-
-        if (sessionStorage.getItem('admin_auth') === 'true') {
-            // [修改] 移除舊提示，因為現在可以重新登入來載入最新資料
-        }
+        dom.exportBtn.addEventListener('click', exportToCsv);
     </script>
 </body>
-
 </html>
