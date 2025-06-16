@@ -308,10 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateForm(data) {
-        dom.inputs.regName.value = data['員工姓名'] || '';
-        dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
-        dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
-        
+        // 1. 先設定人數，以便產生對應的 DOM 結構
         originalCompanionCounts = {
             adults: parseInt(data['同行眷屬(成人)']) || 0,
             children: parseInt(data['同行孩童']) || 0,
@@ -322,6 +319,11 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.numInfants.value = originalCompanionCounts.infants;
         
         generateCompanionFields();
+
+        // 2. 在所有 DOM 欄位都建立好之後，才開始填入所有資料
+        dom.inputs.regName.value = data['員工姓名'] || '';
+        dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
+        dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
 
         for (let i = 1; i <= originalCompanionCounts.adults; i++) {
             if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
@@ -343,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
         dom.inputs.singleRoom.checked = (data['需要單人房'] === 'Y');
         
+        // 3. 最後，在所有資料都正確填入後，才向後端請求更新
         updateStateFromServer();
     }
 
@@ -530,5 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
     }
 
+    init();
+});
     init();
 });
