@@ -1,10 +1,10 @@
-// sw.js (v5) - 更新 manifest 的最終版本
-const CACHE_NAME = 'jeju-tour-cache-v5'; // <-- 版本號升級到 v5
+// sw.js (v6) - 更新 manifest 的最終版本，並修正後台導覽問題
+const CACHE_NAME = 'jeju-tour-cache-v6'; // <-- 版本號已升級
 const urlsToCache = [
     '/jeju-trip/index.html',
     '/jeju-trip/style.css',
     '/jeju-trip/script.js',
-    '/jeju-trip/manifest.json', // <-- 確保更新後的 manifest 被快取
+    '/jeju-trip/manifest.json',
     '/jeju-trip/images/icon-192.png',
     '/jeju-trip/images/icon-512.png'
 ];
@@ -14,7 +14,7 @@ self.addEventListener('install', event => {
     self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
-            console.log('Opened cache and caching files for v5');
+            console.log('Opened cache and caching files for v6');
             return cache.addAll(urlsToCache);
         })
     );
@@ -36,20 +36,28 @@ self.addEventListener('activate', event => {
     );
 });
 
-// fetch 事件：攔截網路請求
+// fetch 事件：攔截網路請求 (已修正)
 self.addEventListener('fetch', event => {
     // 我們只處理 GET 請求
     if (event.request.method !== 'GET') {
         return;
     }
 
-    // 對於導航請求 (例如打開 App 或點擊連結)，我們總是回傳 index.html
+    // 對於導航請求，檢查 URL
     if (event.request.mode === 'navigate') {
+        const url = new URL(event.request.url);
+        
+        // 【關鍵修改】如果請求的頁面是 admin.html，就直接放行，不使用快取
+        if (url.pathname.endsWith('/admin.html')) {
+            return; // 讓瀏覽器正常處理，不攔截
+        }
+
+        // 對於所有其他的導航請求，才回傳主應用程式頁面
         event.respondWith(caches.match('/jeju-trip/index.html'));
         return;
     }
 
-    // 對於其他資源 (CSS, JS, 圖片等)
+    // 對於其他資源 (CSS, JS, 圖片等)，使用快取優先策略
     event.respondWith(
         caches.match(event.request)
             .then(response => {
