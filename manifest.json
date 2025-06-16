@@ -1,0 +1,21 @@
+{
+    "name": "2025 濟州島之旅",
+    "short_name": "濟州島之旅",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#f8f9fa",
+    "theme_color": "#FF7A59",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "images/icon-192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "images/icon-512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ]
+}

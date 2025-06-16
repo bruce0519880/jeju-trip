@@ -439,6 +439,22 @@ document.addEventListener('DOMContentLoaded', () => {
         setupEventListeners();
         attachFormValidationListeners();
         showSection('summary');
+
+        // 新增：進場動畫觀察器
+        const animationObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // 動畫執行一次後就停止觀察
+                }
+            });
+        }, {
+            threshold: 0.1 // 元素進入畫面 10% 時觸發
+        });
+
+        document.querySelectorAll('.fade-in-up').forEach(section => {
+            animationObserver.observe(section);
+        });
     }
 
     init();

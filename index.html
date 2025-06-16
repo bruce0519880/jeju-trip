@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF7A59">
 </head>
 
 <body class="p-4 sm:p-6 lg:p-8">
@@ -69,8 +71,8 @@
             <p class="text-2xl md:text-4xl font-bold text-gray-800 mt-2">韓國濟州島之旅 🇰🇷</p>
         </header>
 
-        <main class="space-y-8">
-            <section id="summary" data-section="summary" class="main-section card p-6 md:p-8">
+        <main class="space-y-12">
+            <section id="summary" data-section="summary" class="main-section card p-6 md:p-8 fade-in-up">
                 <h2 class="card-header">📅 旅行摘要</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div class="text-center md:text-left">
@@ -111,77 +113,130 @@
                 </div>
             </section>
 
-            <section id="itinerary" data-section="itinerary" class="main-section card p-6 md:p-8">
+            <section id="itinerary" data-section="itinerary" class="main-section card p-6 md:p-8 fade-in-up">
                 <h2 class="card-header">✈️ 詳細行程</h2>
-                <div class="space-y-6">
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">第一天：桃園國際機場/濟州國際機場→<a
-                                href="https://www.google.com/maps/search/?api=1&query=濟州島龍頭岩" target="_blank"
-                                class="itinerary-link">龍頭岩</a>+<a
-                                href="https://www.google.com/maps/search/?api=1&query=濟州島龍淵峽谷" target="_blank"
-                                class="itinerary-link">龍淵峽谷</a></h3>
-                        <p class="text-gray-600">桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷(巨大火山岩/海蝕地形)→享用晚餐→入住飯店 CHECKIN→享用飯店設施</p>
-                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:X | 午餐:花花小點心 |
-                            晚餐:三姓穴海鮮鍋料理 (W22,500韓幣/人)</p>
-                        <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+
+                <div class="space-y-6 mt-8">
+
+                    <div class="itinerary-day-box">
+                        <div class="itinerary-header">
+                            <h3 class="text-xl font-bold">
+                                🛬 第一天：桃園國際機場/濟州國際機場→<a href="https://www.google.com/maps/search/?api=1&query=濟州島龍頭岩"
+                                    target="_blank" class="itinerary-link text-white underline">龍頭岩</a>+<a
+                                    href="https://www.google.com/maps/search/?api=1&query=濟州島龍淵峽谷" target="_blank"
+                                    class="itinerary-link text-white underline">龍淵峽谷</a>
+                            </h3>
+                        </div>
+                        <div class="itinerary-content">
+                            <p class="text-gray-600 mb-4">桃園國際機場/濟州國際機場→龍頭岩+龍淵峽谷(巨大火山岩/海蝕地形)→享用晚餐→入住飯店 CHECKIN→享用飯店設施
+                            </p>
+                            <div class="space-y-2 text-sm">
+                                <p class="flex items-center" style="color: var(--accent-tangerine);"><span
+                                        class="text-lg mr-2">🍽️</span><strong class="mr-2 text-gray-700">餐食:</strong>
+                                    早餐:X | 午餐:花花小點心 | 晚餐:三姓穴海鮮鍋料理 (W22,500韓幣/人)</p>
+                                <p class="flex items-center text-gray-500"><span class="text-lg mr-2">🏨</span><strong
+                                        class="mr-2 text-gray-700">住宿:</strong> 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">第二天：<a
-                                href="https://www.google.com/maps/search/?api=1&query=城山日出峰" target="_blank"
-                                class="itinerary-link">城山日出峰</a>→<a
-                                href="https://www.google.com/maps/search/?api=1&query=萬丈窟" target="_blank"
-                                class="itinerary-link">萬丈窟</a>→<a
-                                href="https://www.google.com/maps/search/?api=1&query=濟州城邑民俗村" target="_blank"
-                                class="itinerary-link">濟州城邑民俗村</a>→<a
-                                href="https://www.google.com/maps/search/?api=1&query=濟州東門市場" target="_blank"
-                                class="itinerary-link">東門市場</a></h3>
-                        <p class="text-gray-600">
-                            飯店→城山日出峰(火山丘/世界自然遺產)→萬丈窟(世界上最長的熔岩洞)→濟州城邑民俗村(贈每人一杯蜂蜜茶或五味子茶)→東門市場+中央地下街+黑豬肉一條街→返回飯店休憩</p>
-                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:石鍋拌飯+涮涮鍋
-                            (W10,000韓幣/人) | 晚餐:明倫進士碳烤黑毛豬肉吃到飽+季節小菜 (W18,900韓幣/人)</p>
-                        <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+
+                    <div class="itinerary-day-box">
+                        <div class="itinerary-header">
+                            <h3 class="text-xl font-bold">
+                                🏞️ 第二天：<a href="https://www.google.com/maps/search/?api=1&query=城山日出峰" target="_blank"
+                                    class="itinerary-link text-white underline">城山日出峰</a>→<a
+                                    href="https://www.google.com/maps/search/?api=1&query=萬丈窟" target="_blank"
+                                    class="itinerary-link text-white underline">萬丈窟</a>→<a
+                                    href="https://www.google.com/maps/search/?api=1&query=濟州城邑民俗村" target="_blank"
+                                    class="itinerary-link text-white underline">濟州城邑民俗村</a>→<a
+                                    href="https://www.google.com/maps/search/?api=1&query=濟州東門市場" target="_blank"
+                                    class="itinerary-link text-white underline">東門市場</a>
+                            </h3>
+                        </div>
+                        <div class="itinerary-content">
+                            <p class="text-gray-600 mb-4">
+                                飯店→城山日出峰(火山丘/世界自然遺產)→萬丈窟(世界上最長的熔岩洞)→濟州城邑民俗村(贈每人一杯蜂蜜茶或五味子茶)→東門市場+中央地下街+黑豬肉一條街→返回飯店休憩</p>
+                            <div class="space-y-2 text-sm">
+                                <p class="flex items-center" style="color: var(--accent-tangerine);"><span
+                                        class="text-lg mr-2">🍽️</span><strong class="mr-2 text-gray-700">餐食:</strong>
+                                    早餐:飯店內用 | 午餐:石鍋拌飯+涮涮鍋 (W10,000韓幣/人) | 晚餐:明倫進士碳烤黑毛豬肉吃到飽+季節小菜 (W18,900韓幣/人)</p>
+                                <p class="flex items-center text-gray-500"><span class="text-lg mr-2">🏨</span><strong
+                                        class="mr-2 text-gray-700">住宿:</strong> 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">第三天：<a
-                                href="https://www.google.com/maps/search/?api=1&query=ECOLAND森林小火車" target="_blank"
-                                class="itinerary-link">ECOLAND森林小火車</a>→<a
-                                href="https://www.google.com/maps/search/?api=1&query=漢拏樹木園" target="_blank"
-                                class="itinerary-link">漢拏樹木園</a>→<a
-                                href="https://www.google.com/maps/search/?api=1&query=天地淵瀑布" target="_blank"
-                                class="itinerary-link">天地淵瀑布</a></h3>
-                        <p class="text-gray-600">飯店→ECOLAND
-                            森林小火車(森林趣/風車/海盜船/彩虹躺椅/哈比人樹洞)→漢拏樹木園(十一個主題園區)→天地淵瀑布(大長今場景/上帝的池塘)→濟州有林橘子(贈每人5顆橘子)→返回飯店休憩</p>
-                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:青花魚定食
-                            (₩11,000韓幣/人) | 晚餐:活鮑魚+碳烤黑毛豬+蝦+蛋+大醬 (₩24,000韓幣/人)</p>
-                        <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+
+                    <div class="itinerary-day-box">
+                        <div class="itinerary-header">
+                            <h3 class="text-xl font-bold">
+                                🌳 第三天：<a href="https://www.google.com/maps/search/?api=1&query=ECOLAND森林小火車"
+                                    target="_blank" class="itinerary-link text-white underline">ECOLAND森林小火車</a>→<a
+                                    href="https://www.google.com/maps/search/?api=1&query=漢拏樹木園" target="_blank"
+                                    class="itinerary-link text-white underline">漢拏樹木園</a>→<a
+                                    href="https://www.google.com/maps/search/?api=1&query=天地淵瀑布" target="_blank"
+                                    class="itinerary-link text-white underline">天地淵瀑布</a>
+                            </h3>
+                        </div>
+                        <div class="itinerary-content">
+                            <p class="text-gray-600 mb-4">飯店→ECOLAND
+                                森林小火車(森林趣/風車/海盜船/彩虹躺椅/哈比人樹洞)→漢拏樹木園(十一個主題園區)→天地淵瀑布(大長今場景/上帝的池塘)→濟州有林橘子(贈每人5顆橘子)→返回飯店休憩
+                            </p>
+                            <div class="space-y-2 text-sm">
+                                <p class="flex items-center" style="color: var(--accent-tangerine);"><span
+                                        class="text-lg mr-2">🍽️</span><strong class="mr-2 text-gray-700">餐食:</strong>
+                                    早餐:飯店內用 | 午餐:青花魚定食 (₩11,000韓幣/人) | 晚餐:活鮑魚+碳烤黑毛豬+蝦+蛋+大醬 (₩24,000韓幣/人)</p>
+                                <p class="flex items-center text-gray-500"><span class="text-lg mr-2">🏨</span><strong
+                                        class="mr-2 text-gray-700">住宿:</strong> 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">第四天：全日自由活動</h3>
-                        <p class="text-gray-600">飯店→全日自由活動→返回飯店休憩</p>
-                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午、晚餐:方便遊玩,敬請自理
-                        </p>
-                        <p class="text-sm text-gray-500 mt-2">住宿: 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+
+                    <div class="itinerary-day-box">
+                        <div class="itinerary-header">
+                            <h3 class="text-xl font-bold">🚶 第四天：全日自由活動</h3>
+                        </div>
+                        <div class="itinerary-content">
+                            <p class="text-gray-600 mb-4">飯店→全日自由活動→返回飯店休憩</p>
+                            <div class="space-y-2 text-sm">
+                                <p class="flex items-center" style="color: var(--accent-tangerine);"><span
+                                        class="text-lg mr-2">🍽️</span><strong class="mr-2 text-gray-700">餐食:</strong>
+                                    早餐:飯店內用 | 午、晚餐:方便遊玩,敬請自理</p>
+                                <p class="flex items-center text-gray-500"><span class="text-lg mr-2">🏨</span><strong
+                                        class="mr-2 text-gray-700">住宿:</strong> 市區四星 韋斯立飯店 WHISTLE LARK 或同等級</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-4 border-l-4 rounded-r-lg sub-section-bg" style="border-color: var(--accent-teal);">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">第五天：返回溫暖的家</h3>
-                        <p class="text-gray-600">飯店出發→濟州國際機場/桃園國際機場→歡樂賦歸</p>
-                        <p class="text-sm italic mt-2" style="color: var(--accent-tangerine);">早餐:飯店內用 | 午餐:X | 晚餐:X</p>
-                        <p class="text-sm text-gray-500 mt-2">住宿: 溫暖的家</p>
+
+                    <div class="itinerary-day-box">
+                        <div class="itinerary-header">
+                            <h3 class="text-xl font-bold">🛫 第五天：返回溫暖的家</h3>
+                        </div>
+                        <div class="itinerary-content">
+                            <p class="text-gray-600 mb-4">飯店出發→濟州國際機場/桃園國際機場→歡樂賦歸</p>
+                            <div class="space-y-2 text-sm">
+                                <p class="flex items-center" style="color: var(--accent-tangerine);"><span
+                                        class="text-lg mr-2">🍽️</span><strong class="mr-2 text-gray-700">餐食:</strong>
+                                    早餐:飯店內用 | 午餐:X | 晚餐:X</p>
+                                <p class="flex items-center text-gray-500"><span class="text-lg mr-2">🏠</span><strong
+                                        class="mr-2 text-gray-700">住宿:</strong> 溫暖的家</p>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </section>
 
-            <section id="map" data-section="map" class="main-section card p-6 md:p-8">
+            <section id="map" data-section="map" class="main-section card p-6 md:p-8 fade-in-up">
                 <h2 class="card-header">🗺️ 互動式旅遊地圖</h2>
                 <p class="text-center text-gray-600 mb-6">您可以在地圖上自由縮放、拖曳，點擊地標可以查看更多資訊。特別推薦在「全日自由活動」時參考！</p>
                 <div class="map-container">
                     <iframe
                         src="https://www.google.com/maps/d/u/3/embed?mid=1g2SJi8dLOyFMvDvPwpCr5NA3Q-XsP-c&ehbc=2E312F&noprof=1"
-                        width="640" height="480"></iframe>
+                        width="640" height="480" loading="lazy"></iframe>
                 </div>
             </section>
 
-            <section id="checklist" data-section="checklist" class="main-section card p-6 md:p-8">
+            <section id="checklist" data-section="checklist" class="main-section card p-6 md:p-8 fade-in-up">
                 <h2 class="card-header">🧳 行前準備清單</h2>
                 <p class="text-center text-gray-600 mb-8">這是一份建議清單，您可以根據個人需求調整。勾選起來，讓準備過程更輕鬆！</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-3xl mx-auto">
@@ -220,7 +275,7 @@
                 </div>
             </section>
 
-            <section id="faq" data-section="faq" class="main-section card p-6 md:p-8">
+            <section id="faq" data-section="faq" class="main-section card p-6 md:p-8 fade-in-up">
                 <h2 class="card-header">❓ 常見問題 & 實用資訊</h2>
                 <div class="space-y-4">
                     <details class="faq-item">
@@ -293,7 +348,7 @@
                 </div>
             </section>
 
-            <section id="registration" data-section="registration" class="main-section card p-6 md:p-8">
+            <section id="registration" data-section="registration" class="main-section card p-6 md:p-8 fade-in-up">
                 <h2 class="card-header">💳 費用與報名</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     <div class="space-y-8">
@@ -435,7 +490,7 @@
                 </div>
             </section>
 
-            <section id="passport-info" data-section="passport-info" class="main-section card p-6 md:p-8">
+            <section id="passport-info" data-section="passport-info" class="main-section card p-6 md:p-8 fade-in-up">
                 <h2 class="card-header">📄 護照資訊 & 費用細項</h2>
                 <div class="text-center mb-6 p-3 rounded-lg"
                     style="background-color: rgba(241, 196, 15, 0.15); color: #856404;">
@@ -515,9 +570,11 @@
     </footer>
 
     <button id="floating-signup-btn" class="floating-signup-btn nav-link" data-target="registration">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-2">
-            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+            class="mr-2">
+            <path
+                d="M17.293 2.293a1 1 0 0 1 1.414 0l3 3a1 1 0 0 1 0 1.414l-13 13A1 1 0 0 1 8 20H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 .293-.707l10-10 4-4zM16 5.414l-9 9V18h3.586l9-9L16 5.414z">
+            </path>
         </svg>
         <span>立即報名</span>
     </button>
@@ -541,6 +598,20 @@
     <script src="script.js"></script>
     <script>
         !function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = 'https://weatherwidget.io/js/widget.min.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'weatherwidget-io-js');
+    </script>
+    <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
     </script>
 </body>
 

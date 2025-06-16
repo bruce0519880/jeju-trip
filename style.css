@@ -24,6 +24,10 @@ body {
     line-height: 1.7;
 }
 
+p {
+    line-height: 1.8;
+}
+
 /* Nav Link Styling */
 .nav-link {
     position: relative;
@@ -274,7 +278,7 @@ input[type="checkbox"]:checked+span {
     background-color: var(--accent-tangerine);
     color: white;
     font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 15px rgba(255, 122, 89, 0.4);
     display: flex;
     align-items: center;
@@ -286,6 +290,11 @@ input[type="checkbox"]:checked+span {
     color: var(--text-dark);
     transform: scale(1.02) translateY(-2px);
     box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+}
+
+#submitBtn:active {
+    transform: scale(0.98) translateY(0);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 #submitBtn:disabled {
@@ -368,6 +377,19 @@ input[type="checkbox"]:checked+span {
     transition: opacity 0.4s ease-in-out;
 }
 
+/* 進場動畫效果 */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
 /* 行程表連結優化 (Itinerary Link) */
 .itinerary-link {
     text-decoration: underline;
@@ -432,6 +454,7 @@ details[open]>summary.faq-question::after {
 
 .faq-answer p {
     margin-bottom: 0.75rem;
+    line-height: 1.85;
 }
 
 .faq-answer p:last-child {
@@ -508,13 +531,19 @@ details[open]>summary.faq-question::after {
     align-items: center;
     font-weight: 700;
     z-index: 50;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
 }
 
 .floating-signup-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 12px 30px rgba(255, 122, 89, 0.5);
 }
+
+.floating-signup-btn:active {
+    transform: scale(1);
+    background-color: #ff6347;
+}
+
 
 /* Footer Styles */
 .main-footer {
@@ -524,4 +553,66 @@ details[open]>summary.faq-question::after {
     border-top: 1px solid #dee2e6;
     color: #6c757d;
     font-size: 0.9rem;
+}
+
+/* style.css (請取代上一版的行程樣式) */
+
+/* 每日行程的特殊邊框容器 */
+.itinerary-day-box {
+    position: relative;
+    border: 1px solid #e0f2f1;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    /* 加入動態效果 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 滑鼠懸浮時的浮起效果 */
+.itinerary-day-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* 使用 ::before 和 ::after 偽元素來製作 L 型邊角 */
+.itinerary-day-box::before,
+.itinerary-day-box::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--accent-teal);
+    border-style: solid;
+}
+
+/* 左上角的 L 型 */
+.itinerary-day-box::before {
+    top: 0;
+    left: 0;
+    border-width: 3px 0 0 3px;
+    border-top-left-radius: 0.5rem;
+}
+
+/* 右下角的 L 型 */
+.itinerary-day-box::after {
+    bottom: 0;
+    right: 0;
+    border-width: 0 3px 3px 0;
+    border-bottom-right-radius: 0.5rem;
+}
+
+/* 行程標題的樣式 (漸層綠底白字) */
+.itinerary-header {
+    background-image: linear-gradient(45deg, var(--accent-teal), #24c6a8);
+    /* 改為漸層色 */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    /* 加上文字陰影 */
+}
+
+/* 行程內容的留白 */
+.itinerary-content {
+    padding: 1.5rem;
 }
