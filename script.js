@@ -310,17 +310,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
             const data = await response.json();
 
-            if (data.result === 'success') {
-                if (data.mode === 'create') {
-                    showSuccessModal(data.registrationId, 'create');
-                } else {
-                    showSuccessModal(null, 'update');
-                }
-                resetFormToCreateMode();
-                await fetchHeadcount().then(updateProgressBar);
-            } else {
-                throw new Error(data.error || 'Unknown server error');
-            }
+        if (data.result === 'success') {
+            // [優化] 不只顯示ID，還加上「直接使用」的按鈕
+            dom.recoverModal.status.style.color = 'green';
+            dom.recoverModal.status.innerHTML = `您的報名ID是：<br><strong class="text-lg font-mono">${data.friendlyId}</strong>
+            <button id="useRecoveredIdBtn" class="mt-2 w-full font-bold py-2 px-4 rounded-lg text-sm bg-green-500 text-white">使用此ID修改資料</button>`;
+            
+            // 為這個新按鈕加上事件監聽
+            document.getElementById('useRecoveredIdBtn').addEventListener('click', () => {
+                hideRecoverModal();
+                dom.modifyModal.idInput.value = data.friendlyId; // 自動填入ID
+                handleFindRecord(); // 直接觸發查詢
+            });
+        } else {
+            throw new Error(data.error);
+        }
         } catch (error) {
             dom.formStatus.textContent = `操作失敗：${error.message}`;
             dom.formStatus.style.color = 'var(--accent-tangerine)';
