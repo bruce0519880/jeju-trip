@@ -104,6 +104,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="mt-8">
+                    <a class="weatherwidget-io" href="https://forecast7.com/zh-tw/33d49126d50/jeju-do/"
+                        data-label_1="JEJU-DO" data-label_2="天氣" data-font="微軟正黑體 (Microsoft JhengHei)"
+                        data-theme="pure">JEJU-DO WEATHER</a>
+                </div>
             </section>
 
             <section id="itinerary" data-section="itinerary" class="main-section card p-6 md:p-8">
@@ -216,7 +221,7 @@
             </section>
 
             <section id="faq" data-section="faq" class="main-section card p-6 md:p-8">
-                <h2 class="card-header">❓ 常見問題 Q&A</h2>
+                <h2 class="card-header">❓ 常見問題 & 實用資訊</h2>
                 <div class="space-y-4">
                     <details class="faq-item">
                         <summary class="faq-question">11月的濟州島天氣如何？該怎麼穿搭？</summary>
@@ -255,6 +260,36 @@
                             </p>
                         </div>
                     </details>
+                </div>
+
+                <hr class="my-8 border-gray-300">
+                <div class="text-center">
+                    <h3 class="text-2xl font-bold mb-6 text-[var(--accent-teal)]">💡 韓國旅遊實用資訊</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="sub-section-bg p-4 rounded-lg">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4">🗣️ 實用基礎韓語</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><strong>你好:</strong> 안녕하세요 (An-nyeong-ha-se-yo)</li>
+                            <li><strong>謝謝:</strong> 감사합니다 (Gam-sa-ham-ni-da)</li>
+                            <li><strong>多少錢:</strong> 얼마예요? (Eol-ma-ye-yo?)</li>
+                            <li><strong>洗手間:</strong> 화장실 어디예요? (Hwa-jang-sil eo-di-ye-yo?)</li>
+                        </ul>
+                    </div>
+                    <div class="sub-section-bg p-4 rounded-lg">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4">🚕 交通方式</h4>
+                        <p class="text-gray-700">自由活動時，推薦使用 <strong>Kakao T</strong> App 叫計程車。或使用 T-Money 卡（類似悠遊卡）搭乘公車。
+                        </p>
+                    </div>
+                    <div class="sub-section-bg p-4 rounded-lg">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4">🛍️ 購物退稅</h4>
+                        <p class="text-gray-700">在標有 "Tax Free" 的商店消費滿額，結帳時出示護照即可辦理退稅，請務必保管好您的退稅單！</p>
+                    </div>
+                    <div class="sub-section-bg p-4 rounded-lg">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4">📱 實用 App 推薦</h4>
+                        <p class="text-gray-700">地圖建議使用 <strong>Naver Map</strong>，翻譯則推薦 <strong>Papago</strong>，兩者在韓國都比
+                            Google 準確好用。</p>
+                    </div>
                 </div>
             </section>
 
@@ -504,6 +539,9 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        !function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = 'https://weatherwidget.io/js/widget.min.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'weatherwidget-io-js');
+    </script>
 </body>
 
 </html>
