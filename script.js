@@ -544,29 +544,29 @@ async function handleFindRecord(idToFind = null) {
     }
 
     init();
-// ===== 隱藏的後台入口按鈕功能 (修正版) =====
-    const secretTrigger = document.getElementById('secret-admin-trigger');
-    if (secretTrigger) {
-        let clickCount = 0;
-        let clickTimer = null;
-        const requiredClicks = 7; // 設定需要連續點擊幾次
-        const resetTime = 2000;   // 2秒內未繼續點擊則重置計數
+// ===== 隱藏的後台入口按鈕功能 (國旗觸發版) =====
+const secretTrigger = document.getElementById('admin-flag-trigger'); // 已更新為國旗的ID
+if (secretTrigger) {
+    let clickCount = 0;
+    let clickTimer = null;
+    const requiredClicks = 7; // 同樣設定需要連續點擊 7 次
+    const resetTime = 2000;   // 2秒內未繼續點擊則重置計數
 
-        secretTrigger.addEventListener('click', () => {
-            clickCount++;
-            // 清除之前的計時器
-            clearTimeout(clickTimer);
-            // 設定新的計時器，如果時間內沒再點擊，次數就會歸零
-            clickTimer = setTimeout(() => {
-                clickCount = 0;
-            }, resetTime);
+    secretTrigger.addEventListener('click', (e) => {
+        // 阻止事件冒泡，避免點擊國旗觸發其他效果
+        e.stopPropagation(); 
+        
+        clickCount++;
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+        }, resetTime);
 
-            if (clickCount >= requiredClicks) {
-                alert('即將進入管理後台...');
-                window.location.href = 'admin.html'; // 跳轉到後台頁面
-            }
-        });
-    }
-    // ===================================
-
+        if (clickCount >= requiredClicks) {
+            alert('即將進入管理後台...');
+            window.location.href = 'admin.html'; // 跳轉到後台頁面
+        }
+    });
+}
+    
 }); 
