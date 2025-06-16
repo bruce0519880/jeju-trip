@@ -308,43 +308,53 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateForm(data) {
-        originalCompanionCounts = {
-            adults: parseInt(data['同行眷屬(成人)']) || 0,
-            children: parseInt(data['同行孩童']) || 0,
-            infants: parseInt(data['同行嬰兒']) || 0
-        };
-        dom.numAdults.value = originalCompanionCounts.adults;
-        dom.numChildren.value = originalCompanionCounts.children;
-        dom.numInfants.value = originalCompanionCounts.infants;
-        
-        generateCompanionFields();
+    // --- Part 1: 首先設定靜態的欄位值 ---
+    // 員工本人資料
+    dom.inputs.regName.value = data['員工姓名'] || '';
+    dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
+    dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
 
-        dom.inputs.regName.value = data['員工姓名'] || '';
-        dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
-        dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
+    // 整體選項
+    dom.inputs.isOutsourced.checked = (data['是否外包'] === 'Y');
+    dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
+    dom.inputs.singleRoom.checked = (data['需要單人房'] === 'Y');
+    
+    // --- Part 2: 處理動態的眷屬欄位 ---
+    // 先設定好正確的人數
+    const adults = parseInt(data['同行眷屬(成人)']) || 0;
+    const children = parseInt(data['同行孩童']) || 0;
+    const infants = parseInt(data['同行嬰兒']) || 0;
+    dom.numAdults.value = adults;
+    dom.numChildren.value = children;
+    dom.numInfants.value = infants;
+    
+    // 呼叫函式來產生對應數量的空白欄位
+    generateCompanionFields();
 
-        for (let i = 1; i <= originalCompanionCounts.adults; i++) {
+    // 再次確保 DOM 更新後，才填入眷屬資料
+    // 為了確保瀏覽器有足夠時間渲染，我們用一個極短的延遲來處理
+    setTimeout(() => {
+        for (let i = 1; i <= adults; i++) {
             if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
             if (dom.regForm.querySelector(`[name="adult_${i}_dob"]`)) dom.regForm.querySelector(`[name="adult_${i}_dob"]`).value = data[`成人${i}-出生日期`] || '';
             if (dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`).checked = (data[`成人${i}-需換護照`] === 'Y');
         }
-        for (let i = 1; i <= originalCompanionCounts.children; i++) {
+        for (let i = 1; i <= children; i++) {
             if (dom.regForm.querySelector(`[name="child_${i}_name"]`)) dom.regForm.querySelector(`[name="child_${i}_name"]`).value = data[`孩童${i}-姓名`] || '';
             if (dom.regForm.querySelector(`[name="child_${i}_dob"]`)) dom.regForm.querySelector(`[name="child_${i}_dob"]`).value = data[`孩童${i}-出生日期`] || '';
             if (dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`).checked = (data[`孩童${i}-需換護照`] === 'Y');
         }
-        for (let i = 1; i <= originalCompanionCounts.infants; i++) {
+        for (let i = 1; i <= infants; i++) {
             if (dom.regForm.querySelector(`[name="infant_${i}_name"]`)) dom.regForm.querySelector(`[name="infant_${i}_name"]`).value = data[`嬰兒${i}-姓名`] || '';
             if (dom.regForm.querySelector(`[name="infant_${i}_dob"]`)) dom.regForm.querySelector(`[name="infant_${i}_dob"]`).value = data[`嬰兒${i}-出生日期`] || '';
             if (dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`).checked = (data[`嬰兒${i}-需換護照`] === 'Y');
         }
+    }, 0);
 
-        dom.inputs.isOutsourced.checked = (data['是否外包'] === 'Y');
-        dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
-        dom.inputs.singleRoom.checked = (data['需要單人房'] === 'Y');
-        
-        updateStateFromServer();
-    }
+    // --- Part 3: 最後，更新費用計算 ---
+    // 這個函式現在會使用已填入的資料進行計算
+    updateStateFromServer();
+}
 
     function switchToUpdateModeUI() { dom.submitBtn.text.textContent = '確認修改'; }
 
