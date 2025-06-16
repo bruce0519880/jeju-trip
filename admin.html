@@ -42,10 +42,10 @@
             word-wrap: break-word;
             vertical-align: middle;
             white-space: nowrap; 
-            /* 保留此設定，讓過長文字顯示 ... */
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        /* 以下是各欄位的寬度設定，您可以自行調整 */
         #data-table th:nth-child(2), #data-table td:nth-child(2) { width: 150px; } /* 友善ID */
         #data-table th:nth-child(3), #data-table td:nth-child(3) { width: 160px; } /* 報名時間 */
         #data-table th:nth-child(4), #data-table td:nth-child(4) { width: 100px; } /* 員工姓名 */
@@ -75,7 +75,18 @@
         <h1 class="text-3xl font-bold text-center mb-6">濟州島之旅 - 管理後台</h1>
 
         <div id="login-view" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">請輸入管理密碼</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">密碼</label>
+                    <input type="password" id="password"
+                        class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div id="login-status" class="text-red-600 h-5 text-sm"></div>
+                <button id="login-btn"
+                    class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition">登入</button>
             </div>
+        </div>
 
         <div id="data-view" class="hidden">
             <div class="flex justify-between items-center mb-4">
@@ -181,17 +192,98 @@
             return `${yyyy}-${MM}-${dd}`;
         }
 
-        // --- 以下所有函式 (sortTableByColumn, exportToCsv, handleLogin, handleLogout) 維持不變 ---
-        function sortTableByColumn(table, column, asc = true) { /* ... */ }
-        function exportToCsv() { /* ... */ }
-        async function handleLogin() { /* ... */ }
+        function sortTableByColumn(table, column, asc = true) {
+            const dirModifier = asc ? 1 : -1;
+            const tBody = table.tBodies[0];
+            const rows = Array.from(tBody.querySelectorAll("tr"));
+            const sortedRows = rows.sort((a, b) => {
+                const aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+                const bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+                const aNum = parseFloat(aColText.replace(/[,-]/g, ''));
+                const bNum = parseFloat(bColText.replace(/[,-]/g, ''));
+                if (!isNaN(aNum) && !isNaN(bNum)) {
+                     return (aNum - bNum) * dirModifier;
+                }
+                return aColText.localeCompare(bColText, 'zh-Hant') * dirModifier;
+            });
+            while (tBody.firstChild) {
+                tBody.removeChild(tBody.firstChild);
+            }
+            tBody.append(...sortedRows);
+            table.querySelectorAll("th").forEach(th => th.classList.remove("th-sort-asc", "th-sort-desc"));
+            const headerCell = table.querySelector(`th:nth-child(${column + 1})`);
+            if (headerCell) {
+                headerCell.classList.toggle("th-sort-asc", asc);
+                headerCell.classList.toggle("th-sort-desc", !asc);
+            }
+        }
+        
+        function exportToCsv() {
+            if (originalData.length === 0) {
+                alert('沒有資料可供匯出。');
+                return;
+            }
+            const dataToExport = [originalData[0], ...Array.from(document.querySelectorAll('#data-table tbody tr'))
+                .filter(tr => tr.style.display !== 'none')
+                .map(tr => Array.from(tr.querySelectorAll('td')).map(td => td.textContent))
+            ];
+            let csvContent = "\uFEFF"; 
+            dataToExport.forEach(rowArray => {
+                let row = rowArray.map(cell => {
+                    let cellData = cell === null || cell === undefined ? '' : cell.toString();
+                    if (cellData.includes('"') || cellData.includes(',') || cellData.includes('\n')) {
+                        cellData = '"' + cellData.replace(/"/g, '""') + '"';
+                    }
+                    return cellData;
+                }).join(',');
+                csvContent += row + "\r\n";
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                const today = new Date().toISOString().slice(0, 10);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `濟州島之旅報名資料_${today}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        async function handleLogin() {
+            const password = dom.passwordInput.value;
+            if (!password) { dom.loginStatus.textContent = '請輸入密碼。'; return; }
+            dom.loginStatus.textContent = '';
+            dom.loginBtn.disabled = true;
+            dom.loginBtn.textContent = '登入中...';
+            try {
+                const formData = new FormData();
+                formData.append('action', 'getalldata');
+                formData.append('password', password);
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+                const result = await response.json();
+                if (result.result === 'success') {
+                    sessionStorage.setItem('admin_auth', 'true');
+                    originalData = result.data;
+                    renderDataView(JSON.parse(JSON.stringify(result.data)));
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                dom.loginStatus.textContent = error.message;
+            } finally {
+                dom.loginBtn.disabled = false;
+                dom.loginBtn.textContent = '登入';
+            }
+        }
 
         function renderDataView(data) {
             dom.loginView.classList.add('hidden');
             dom.dataView.classList.remove('hidden');
             const headers = data.shift();
             
-            // --- 欄位索引查找 (維持不變) ---
             const timeColumnIndex = headers.indexOf('報名時間');
             const dobColumnIndices = headers.reduce((acc, header, index) => {
                 if (header && (header.includes('出生日') || header === '出生年月日')) { acc.push(index); }
@@ -208,7 +300,6 @@
             const singleRoomIndex = headers.indexOf('需要單人房');
             const outsourcedIndex = headers.indexOf('是否外包');
 
-            // --- 數據計算 (維持不變) ---
             let totalPeople = 0, totalPassports = 0, totalCostA = 0, totalCostB = 0;
             let singleRoomCount = 0, totalCompanionsAdult = 0, totalCompanionsChild = 0;
             let firstRegDate = null, lastRegDate = null;
@@ -229,7 +320,11 @@
                 if(costAIndex > -1) totalCostA += (parseFloat(row[costAIndex]) || 0);
                 if(costBIndex > -1) totalCostB += (parseFloat(row[costBIndex]) || 0);
                 if(singleRoomIndex > -1 && row[singleRoomIndex] === 'Y') singleRoomCount++;
-                if(outsourcedIndex > -1 && row[outsourcedIndex] === 'Y') { totalSubsidy += OUTSOURCED_SUBSIDY; } else { totalSubsidy += EMPLOYEE_SUBSIDY; }
+                if(outsourcedIndex > -1 && row[outsourcedIndex] === 'Y') {
+                    totalSubsidy += OUTSOURCED_SUBSIDY;
+                } else {
+                    totalSubsidy += EMPLOYEE_SUBSIDY;
+                }
                 if (timeColumnIndex > -1) {
                     const currentRegDate = new Date(row[timeColumnIndex]);
                     if (currentRegDate < firstRegDate) firstRegDate = currentRegDate;
@@ -237,7 +332,6 @@
                 }
             });
             
-            // --- 更新儀表板 DOM (維持不變) ---
             const totalGroups = data.length;
             dom.stats.totalPeople.textContent = totalPeople.toLocaleString();
             dom.stats.passports.textContent = totalPassports.toLocaleString();
@@ -252,12 +346,9 @@
             dom.stats.grossCostA.textContent = `(含補助總額: NT$ ${grossCostA.toLocaleString()})`;
             dom.stats.grossCostB.textContent = `(含補助總額: NT$ ${grossCostB.toLocaleString()})`;
 
-            // --- 渲染表格 ---
             const thead = document.createElement('thead');
             thead.innerHTML = `<tr class="bg-gray-800 text-white">${headers.map(h => `<th scope="col" class="px-4 py-3 sortable">${h}<span class="sort-indicator"></span></th>`).join('')}</tr>`;
             const tbody = document.createElement('tbody');
-
-            // [混合方案] 修改此處，為 <td> 加上 title 屬性
             tbody.innerHTML = data.map(row =>
                 `<tr class="bg-white border-b hover:bg-gray-50">${row.map((cell, index) => {
                     let cellContent = cell;
@@ -266,29 +357,64 @@
                     } else if (dobColumnIndices.includes(index)) {
                         cellContent = formatDate(cell, 'date'); 
                     }
-                    
                     const cellTextForTitle = (cellContent || '').toString().replace(/"/g, '&quot;');
-                    
                     return `<td class="px-4 py-3" title="${cellTextForTitle}">${cellContent}</td>`;
                 }).join('')}</tr>`
             ).join('');
-
             dom.dataTable.innerHTML = '';
             dom.dataTable.append(thead, tbody);
             
-            // --- 綁定事件 (維持不變) ---
-            document.querySelectorAll('#data-table th.sortable').forEach(headerCell => { /* ... */ });
+            document.querySelectorAll('#data-table th.sortable').forEach(headerCell => {
+                headerCell.addEventListener('click', () => {
+                    const tableElement = headerCell.closest('table');
+                    const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
+                    const currentIsAsc = headerCell.classList.contains("th-sort-asc");
+                    sortTableByColumn(tableElement, headerIndex, !currentIsAsc);
+                    document.querySelectorAll('.sort-indicator').forEach(ind => ind.textContent = '');
+                    const indicator = headerCell.querySelector('.sort-indicator');
+                    if(indicator) indicator.textContent = !currentIsAsc ? '▲' : '▼';
+                });
+            });
             const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', (e) => { /* ... */ });
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const tableRows = document.querySelectorAll('#data-table tbody tr');
+                tableRows.forEach(row => {
+                    const rowText = row.textContent.toLowerCase();
+                    if (rowText.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
         }
 
-        function handleLogout() { /* ... */ }
+        function handleLogout() {
+            sessionStorage.removeItem('admin_auth');
+            dom.dataView.classList.add('hidden');
+            dom.loginView.classList.remove('hidden');
+            dom.passwordInput.value = '';
+            originalData = [];
+        }
+        
+        // [新增] 頁面初始化函式，確保初始狀態正確
+        function initializePage() {
+            // 檢查 sessionStorage。如果使用者先前登入過，直接顯示登出按鈕和一個提示訊息
+            // 但為了安全和獲取最新資料，我們仍然要求重新登入來載入數據
+            // 因此，最穩定的做法是永遠預設顯示登入畫面
+            dom.loginView.classList.remove('hidden');
+            dom.dataView.classList.add('hidden');
+        }
 
-        // --- 頁面初始化事件綁定 (維持不變) ---
+        // --- 頁面初始化事件綁定 ---
         dom.loginBtn.addEventListener('click', handleLogin);
         dom.passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
         dom.logoutBtn.addEventListener('click', handleLogout);
         dom.exportBtn.addEventListener('click', exportToCsv);
+
+        // 執行初始化
+        initializePage();
     </script>
 </body>
 </html>
