@@ -54,8 +54,13 @@
             <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="checklist">準備清單</a>
             <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="faq">常見問題</a>
             <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="passport-info">護照資訊</a>
-            <a href="#" class="block py-3 px-6 text-sm text-gray-700 bg-[var(--accent-tangerine)] text-white font-bold text-center" data-target="registration">立即報名</a>
-        </div>
+            <div class="p-2">
+        <a href="#" class="js-show-modify-modal block w-full text-center py-3 px-6 text-sm font-semibold text-white bg-[var(--accent-teal)] rounded-md">修改報名資料</a>
+    </div>
+    <div class="p-2 pt-0">
+        <a href="#" class="block py-3 px-6 text-sm text-white bg-[var(--accent-tangerine)] font-bold text-center rounded-md" data-target="registration">立即報名</a>
+    </div>
+</div>
     </nav>
 
     <div class="container mx-auto max-w-7xl">
@@ -572,7 +577,7 @@
         <span>立即報名</span>
     </button>
     
-    <div id="modifyModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
+      <div id="modifyModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full transform transition-all scale-95 opacity-0" id="modify-modal-content">
             <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">修改報名資料</h3>
             <p class="text-gray-600 mb-4 text-sm">請輸入您報名成功時取得的「友善ID」(格式如 250617-ABCDE)。</p>
@@ -596,7 +601,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="recoverModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full transform transition-all scale-95 opacity-0" id="recover-modal-content">
             <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">找回報名ID</h3>
