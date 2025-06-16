@@ -51,6 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
             findSpinner: document.getElementById('findSpinner'),
             status: document.getElementById('modifyStatus'),
         },
+        recoverModal: {
+            container: document.getElementById('recoverModal'),
+            content: document.getElementById('recover-modal-content'),
+            showBtn: document.getElementById('showRecoverModalBtn'),
+            closeBtn: document.getElementById('closeRecoverModalBtn'),
+            nameInput: document.getElementById('recoverNameInput'),
+            dobInput: document.getElementById('recoverDobInput'),
+            recoverBtn: document.getElementById('recoverIdBtn'),
+            recoverBtnText: document.getElementById('recoverBtnText'),
+            recoverSpinner: document.getElementById('recoverSpinner'),
+            status: document.getElementById('recoverStatus'),
+        },
         countdownTimer: document.getElementById('countdownTimer'),
         countdownNotice: document.getElementById('countdown-notice'),
         navLinks: document.querySelectorAll('.nav-link, #mobile-menu a'),
@@ -244,6 +256,63 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.modifyModal.findSpinner.classList.toggle('hidden', !isFinding);
     }
 
+    function showRecoverModal() {
+        hideModifyModal();
+        dom.recoverModal.container.classList.remove('hidden');
+        setTimeout(() => dom.recoverModal.content.classList.add('active'), 10);
+    }
+
+    function hideRecoverModal() {
+        dom.recoverModal.nameInput.value = '';
+        dom.recoverModal.dobInput.value = '';
+        dom.recoverModal.status.textContent = '';
+        dom.recoverModal.content.classList.remove('active');
+        setTimeout(() => dom.recoverModal.container.classList.add('hidden'), 300);
+    }
+
+    function setRecoverButtonState(isRecovering) {
+        dom.recoverModal.recoverBtn.disabled = isRecovering;
+        dom.recoverModal.recoverBtnText.textContent = isRecovering ? '查詢中...' : '找回ID';
+        dom.recoverModal.recoverSpinner.classList.toggle('hidden', !isRecovering);
+    }
+
+    async function handleRecoverId() {
+        const name = dom.recoverModal.nameInput.value.trim();
+        const dob = dom.recoverModal.dobInput.value;
+
+        if (!name || !dob) {
+            dom.recoverModal.status.style.color = 'red';
+            dom.recoverModal.status.textContent = '請輸入您的姓名與生日。';
+            return;
+        }
+        dom.recoverModal.status.textContent = '';
+        setRecoverButtonState(true);
+
+        try {
+            const formData = new FormData();
+            formData.append('action', 'recoverid');
+            formData.append('secret_key', SECRET_KEY);
+            formData.append('employee_name', name);
+            formData.append('employee_dob', dob);
+
+            const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+            const data = await response.json();
+
+            if (data.result === 'success') {
+                dom.recoverModal.status.style.color = 'green';
+                dom.recoverModal.status.innerHTML = `您的報名ID是：<br><strong class="text-lg font-mono">${data.friendlyId}</strong>`;
+            } else {
+                throw new Error(data.error);
+            }
+
+        } catch (error) {
+            dom.recoverModal.status.style.color = 'red';
+            dom.recoverModal.status.textContent = error.message;
+        } finally {
+            setRecoverButtonState(false);
+        }
+    }
+
     function updateCountdown() { const deadlineDate = new Date('2025-06-16T23:59:59'); const now = new Date().getTime(); const distance = deadlineDate.getTime() - now; const hoursLeft = distance / (1000 * 60 * 60); if (hoursLeft > 0 && hoursLeft < 24) { dom.countdownTimer.classList.add('urgent-countdown'); } else { dom.countdownTimer.classList.remove('urgent-countdown'); } if (distance < 0) { if (countdownInterval) clearInterval(countdownInterval); dom.countdownTimer.innerHTML = '<span class="text-xl font-bold text-gray-800">報名已截止！</span>'; if (dom.countdownNotice) dom.countdownNotice.classList.add('hidden'); return; } const d = Math.floor(distance / (1000 * 60 * 60 * 24)); const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)); const s = Math.floor((distance % (1000 * 60)) / 1000); dom.countdownTimer.innerHTML = `<div class="countdown-segment"><span>${d.toString().padStart(2, '0')}</span><span class="countdown-label">天</span></div><div class="countdown-segment"><span>${h.toString().padStart(2, '0')}</span><span class="countdown-label">時</span></div><div class="countdown-segment"><span>${m.toString().padStart(2, '0')}</span><span class="countdown-label">分</span></div><div class="countdown-segment"><span>${s.toString().padStart(2, '0')}</span><span class="countdown-label">秒</span></div>`; }
     let countdownInterval = null;
 
@@ -284,6 +353,11 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.modifyModal.closeBtn.addEventListener('click', hideModifyModal);
         dom.modifyModal.container.addEventListener('click', (e) => { if (e.target === dom.modifyModal.container) hideModifyModal(); });
         dom.modifyModal.findBtn.addEventListener('click', handleFindRecord);
+
+        dom.recoverModal.showBtn.addEventListener('click', showRecoverModal);
+        dom.recoverModal.closeBtn.addEventListener('click', hideRecoverModal);
+        dom.recoverModal.container.addEventListener('click', (e) => { if (e.target === dom.recoverModal.container) hideRecoverModal(); });
+        dom.recoverModal.recoverBtn.addEventListener('click', handleRecoverId);
     }
 
     async function init() {
