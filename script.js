@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // 修改：CONFIG 物件已移除，改為 null。將完全依賴後端提供。
     let CONFIG = null;
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec'; 
     const SECRET_KEY = 'JEJU_TOUR_SECRET_k1s9wz7x_1jo2xlp8qpc';
@@ -141,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateProgressBar() {
         if (!CONFIG) return;
         const target = CONFIG.headcountThreshold;
+        // 修改：人數計算不包含嬰兒
         const percentage = Math.min((serverHeadcount / target) * 100, 100);
         dom.progress.loader.classList.add('hidden');
         dom.progress.content.classList.remove('hidden');
@@ -204,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             needsSingleRoom: dom.inputs.singleRoom.checked,
             counts: { adults, children, infants },
             passportRenewals: passportRenewals,
+            // 修改：人數計算不包含嬰兒
             totalHeadcount: serverHeadcount + 1 + adults + children,
             childrenAges: childrenAges,
         };
@@ -262,8 +265,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         if (rule.specialBonus && state.hasBonus) {
+            // 修改：增加 bonusSourceText 的顯示
+            const bonusText = rule.bonusSourceText ? ` ${rule.bonusSourceText}` : '';
             subTotal -= rule.specialBonus;
-            breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 業績達標-特別補助：<span class="font-bold">- ${rule.specialBonus.toLocaleString()}</span> 元</p>`);
+            breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 業績達標-特別補助${bonusText}：<span class="font-bold">- ${rule.specialBonus.toLocaleString()}</span> 元</p>`);
         }
         breakdown.grandTotal = subTotal;
         if (state.needsSingleRoom) {
@@ -310,21 +315,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
             const data = await response.json();
 
-        if (data.result === 'success') {
-            // [優化] 不只顯示ID，還加上「直接使用」的按鈕
-            dom.recoverModal.status.style.color = 'green';
-            dom.recoverModal.status.innerHTML = `您的報名ID是：<br><strong class="text-lg font-mono">${data.friendlyId}</strong>
-            <button id="useRecoveredIdBtn" class="mt-2 w-full font-bold py-2 px-4 rounded-lg text-sm bg-green-500 text-white">使用此ID修改資料</button>`;
-            
-            // 為這個新按鈕加上事件監聽
-            document.getElementById('useRecoveredIdBtn').addEventListener('click', () => {
-                hideRecoverModal();
-                dom.modifyModal.idInput.value = data.friendlyId; // 自動填入ID
-                handleFindRecord(); // 直接觸發查詢
-            });
-        } else {
-            throw new Error(data.error);
-        }
+            if (data.result === 'success') {
+                if (data.mode === 'create') {
+                    showSuccessModal(data.registrationId, 'create');
+                } else {
+                    showSuccessModal(null, 'update');
+                }
+                resetFormToCreateMode();
+                await fetchHeadcount().then(updateProgressBar);
+            } else {
+                throw new Error(data.error || 'Unknown server error');
+            }
         } catch (error) {
             dom.formStatus.textContent = `操作失敗：${error.message}`;
             dom.formStatus.style.color = 'var(--accent-tangerine)';
@@ -466,7 +467,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showModifyModal() {
         dom.modifyModal.container.classList.remove('hidden');
-        setTimeout(() => dom.modifyModal.content.classList.add('active'), 10);
+        setTimeout(() => {
+            dom.modifyModal.content.classList.add('active');
+            dom.modifyModal.idInput.focus();
+        }, 10);
     }
 
     function hideModifyModal() {
@@ -485,7 +489,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function showRecoverModal() {
         hideModifyModal();
         dom.recoverModal.container.classList.remove('hidden');
-        setTimeout(() => dom.recoverModal.content.classList.add('active'), 10);
+        setTimeout(() => {
+            dom.recoverModal.content.classList.add('active');
+            dom.recoverModal.nameInput.focus();
+        }, 10);
     }
 
     function hideRecoverModal() {
@@ -540,18 +547,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCountdown() {
-        const deadlineDate = new Date('2025-06-16T23:59:59');
+        // 修改：目標日期改為出發日
+        const deadlineDate = new Date('2025-11-10T14:25:00');
         const now = new Date().getTime();
         const distance = deadlineDate.getTime() - now;
-        const hoursLeft = distance / (1000 * 60 * 60);
-        if (hoursLeft > 0 && hoursLeft < 24) {
-            dom.countdownTimer.classList.add('urgent-countdown');
-        } else {
-            dom.countdownTimer.classList.remove('urgent-countdown');
-        }
+        
         if (distance < 0) {
             if (countdownInterval) clearInterval(countdownInterval);
-            dom.countdownTimer.innerHTML = '<span class="text-xl font-bold text-gray-800">報名已截止！</span>';
+            dom.countdownTimer.innerHTML = '<span class="text-xl font-bold text-gray-800">旅途愉快！</span>';
             if (dom.countdownNotice) dom.countdownNotice.classList.add('hidden');
             return;
         }
@@ -676,6 +679,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCountdown();
         countdownInterval = setInterval(updateCountdown, 1000);
         
+        // 修改：移除截止日期後禁用表單的邏輯
+
         setFormEnabled(false); 
         dom.progress.title.innerText = "正在同步最新資訊...";
         dom.progress.loader.classList.remove('hidden');
