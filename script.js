@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 修改：CONFIG 物件已移除，改為 null。將完全依賴後端提供。
     let CONFIG = null;
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec'; 
     const SECRET_KEY = 'JEJU_TOUR_SECRET_k1s9wz7x_1jo2xlp8qpc';
@@ -142,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateProgressBar() {
         if (!CONFIG) return;
         const target = CONFIG.headcountThreshold;
-        // 修改：人數計算不包含嬰兒
         const percentage = Math.min((serverHeadcount / target) * 100, 100);
         dom.progress.loader.classList.add('hidden');
         dom.progress.content.classList.remove('hidden');
@@ -206,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
             needsSingleRoom: dom.inputs.singleRoom.checked,
             counts: { adults, children, infants },
             passportRenewals: passportRenewals,
-            // 修改：人數計算不包含嬰兒
             totalHeadcount: serverHeadcount + 1 + adults + children,
             childrenAges: childrenAges,
         };
@@ -259,16 +256,22 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (!state.isOutsourced || rule.isOutsourcedSpecial) {
                 subTotal -= CONFIG.subsidies.performanceBonus;
                 breakdown.discounts.push(`<p class="pl-4">└─ 業績達標補助：<span class="font-bold" style="color: var(--accent-teal);">- ${CONFIG.subsidies.performanceBonus.toLocaleString()}</span> 元</p>`);
-                if (rule.bonusText) {
-                    breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">  (${rule.bonusText})</p>`);
-                }
             }
         }
-        if (rule.specialBonus && state.hasBonus) {
-            // 修改：增加 bonusSourceText 的顯示
-            const bonusText = rule.bonusSourceText ? ` ${rule.bonusSourceText}` : '';
-            subTotal -= rule.specialBonus;
-            breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 業績達標-特別補助${bonusText}：<span class="font-bold">- ${rule.specialBonus.toLocaleString()}</span> 元</p>`);
+        // [修改] 改為讀取 specialBonusSources 物件並逐條顯示
+        if (rule.specialBonusSources && state.hasBonus) {
+            if (rule.specialBonusSources.self) {
+                subTotal -= rule.specialBonusSources.self;
+                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 業績達標-個人特別補助：<span class="font-bold">- ${rule.specialBonusSources.self.toLocaleString()}</span> 元</p>`);
+            }
+            if (rule.specialBonusSources.fromChang) {
+                subTotal -= rule.specialBonusSources.fromChang;
+                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 來自 張逸凱 的業績獎金轉讓：<span class="font-bold">- ${rule.specialBonusSources.fromChang.toLocaleString()}</span> 元</p>`);
+            }
+            if (rule.specialBonusSources.fromZou) {
+                subTotal -= rule.specialBonusSources.fromZou;
+                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 來自 鄒易衡 的業績獎金轉讓：<span class="font-bold">- ${rule.specialBonusSources.fromZou.toLocaleString()}</span> 元</p>`);
+            }
         }
         breakdown.grandTotal = subTotal;
         if (state.needsSingleRoom) {
@@ -547,7 +550,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCountdown() {
-        // 修改：目標日期改為出發日
         const deadlineDate = new Date('2025-11-10T14:25:00');
         const now = new Date().getTime();
         const distance = deadlineDate.getTime() - now;
@@ -626,15 +628,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const companionInputs = [dom.numAdults, dom.numChildren, dom.numInfants];
         companionInputs.forEach(input => {
+            // [移除] 刪除人數上限的檢查邏輯
             input.addEventListener('input', () => {
-                if (CONFIG && CONFIG.companionLimits) {
-                    const type = input.id.replace('num', '').toLowerCase();
-                    const limit = CONFIG.companionLimits[type];
-                    if (parseInt(input.value) > limit) {
-                        alert(`抱歉，同行${{ adults: '成人', children: '孩童', infants: '嬰兒' }[type]}人數上限為 ${limit} 位。`);
-                        input.value = limit;
-                    }
-                }
                 generateCompanionFields();
                 renderCost();
             });
@@ -679,8 +674,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCountdown();
         countdownInterval = setInterval(updateCountdown, 1000);
         
-        // 修改：移除截止日期後禁用表單的邏輯
-
         setFormEnabled(false); 
         dom.progress.title.innerText = "正在同步最新資訊...";
         dom.progress.loader.classList.remove('hidden');
