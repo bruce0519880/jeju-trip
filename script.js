@@ -72,8 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let serverHeadcount = 0;
     let formMode = 'create';
     let updateRowNumber = null;
-    // [新增] 用於儲存修改模式下的原始同行人數
     let originalCompanionCounts = null;
+    let debounceTimer; // [新增] 用於 Debounce 的計時器
 
     function showSection(targetId) {
         dom.mainSections.forEach(section => {
@@ -111,33 +111,68 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.companionSection.innerHTML = html;
         attachFormValidationListeners();
     }
+    
+    // [新增] 新的核心函式，負責向後端請求更新
+    async function updateStateFromServer() {
+        if (!CONFIG) return; // 如果 CONFIG 還沒載入，則不執行
 
-    function getAge(dateString) {
-        if (!dateString) return 99;
-        const today = new Date();
-        const birthDate = new Date(dateString);
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
+        dom.costResult.innerHTML = `<p class="text-gray-500">正在即時計算費用...</p>`;
+
+        try {
+            const formData = new FormData(dom.regForm);
+            formData.append('secret_key', SECRET_KEY);
+            formData.append('action', 'calculate');
+
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data.result === 'success' && data.state) {
+                renderUiState(data.state.uiState);
+                renderCostDisplay(data.state.costs);
+            } else {
+                throw new Error(data.error || '無法從伺服器計算費用');
+            }
+
+        } catch (error) {
+            dom.costResult.innerHTML = `<p class="text-red-500">費用計算失敗：${error.message}</p>`;
         }
-        return age;
     }
 
-    function handleSpecialConditions() {
-        if (!CONFIG) return;
-        const employeeName = dom.inputs.regName.value.trim();
-        const isOutsourced = dom.inputs.isOutsourced.checked;
-        const rule = CONFIG.userRules[employeeName] || {};
-        dom.inputs.performanceBonus.disabled = false;
-        if (rule.forceBonus) {
-            dom.inputs.performanceBonus.checked = true;
-            dom.inputs.performanceBonus.disabled = true;
-        } else if (isOutsourced && !rule.isOutsourcedSpecial) {
-            dom.inputs.performanceBonus.checked = false;
-            dom.inputs.performanceBonus.disabled = true;
+    // [新增] 專門用來渲染 UI 狀態的函式
+    function renderUiState(uiState) {
+        if (!uiState) return;
+
+        const bonusCheckbox = dom.inputs.performanceBonus;
+        if (bonusCheckbox) {
+            bonusCheckbox.checked = uiState.performanceBonus.checked;
+            bonusCheckbox.disabled = uiState.performanceBonus.disabled;
         }
-        renderCost();
+        // 未來若有更多 UI 規則，可在此處擴充
+    }
+
+    // [新增] 專門用來顯示後端計算好的費用
+    function renderCostDisplay(costs) {
+        if (!costs) {
+            dom.costResult.innerHTML = `<p class="text-gray-500">請填寫人數與姓名，下方將顯示費用預估</p>`;
+            return;
+        }
+
+        const totalHeadcount = serverHeadcount + 1 + (parseInt(dom.numAdults.value) || 0) + (parseInt(dom.numChildren.value) || 0);
+        
+        const planBHtml = `<div class="plan-card flex-1 p-4 rounded-lg sub-section-bg ${totalHeadcount < CONFIG.headcountThreshold ? 'active-plan' : ''}" style="background-color: rgba(241, 196, 15, 0.1);">
+            <p class="font-bold" style="color: #b5930d;">若總人數16-20位費用明細：</p>
+            <p class="font-bold text-gray-800 text-right">總計：<span class="text-2xl font-black">${costs.planB.toLocaleString()}</span> 元</p>
+        </div>`;
+
+        const planAHtml = `<div class="plan-card flex-1 p-4 rounded-lg sub-section-bg ${totalHeadcount >= CONFIG.headcountThreshold ? 'active-plan' : ''}" style="background-color: rgba(26, 188, 156, 0.1);">
+            <p class="font-bold" style="color: var(--accent-teal);">若總人數>20位費用明細：</p>
+            <p class="font-bold text-gray-800 text-right">總計：<span class="text-2xl font-black">${costs.planA.toLocaleString()}</span> 元</p>
+        </div>`;
+        
+        dom.costResult.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${planBHtml}${planAHtml}</div><p class="text-xs text-gray-500 mt-2 text-center">注意：此為即時試算結果，已包含所有折扣與補助，但不含護照代辦費。最終費用以送出報名時為準。</p>`;
     }
 
     function updateProgressBar() {
@@ -156,149 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.progress.text.innerText = `還差 ${target - serverHeadcount} 人即可解鎖全體優惠價！`;
             dom.progress.text.style.color = 'var(--accent-tangerine)';
         }
-    }
-
-    function renderCost() {
-        if (!CONFIG) {
-            dom.costResult.innerHTML = `<p class="text-gray-500">正在載入最新費用方案...</p>`;
-            return;
-        }
-        const formState = getFormState();
-        if ((formState.counts.adults + formState.counts.children + formState.counts.infants) === 0 && !formState.employeeName) {
-            dom.costResult.innerHTML = `<p class="text-gray-500">請填寫人數與姓名，下方將顯示費用預估</p>`;
-            return;
-        }
-        let finalHtml = '';
-        ['planB', 'planA'].forEach(planKey => {
-            const scenario = { ...CONFIG.costs[planKey], label: planKey === 'planA' ? "若總人數>20位" : "若總人數16-20位" };
-            const breakdown = calculateBreakdownForScenario(formState, scenario);
-            const breakdownHtml = generateBreakdownHtml(breakdown);
-            const isActive = (formState.totalHeadcount >= CONFIG.headcountThreshold && planKey === 'planA') || (formState.totalHeadcount < CONFIG.headcountThreshold && planKey === 'planB');
-            finalHtml += `<div class="plan-card flex-1 p-4 rounded-lg sub-section-bg ${isActive ? 'active-plan' : ''}" style="background-color: ${planKey === 'planA' ? 'rgba(26, 188, 156, 0.1)' : 'rgba(241, 196, 15, 0.1)'};"><p class="font-bold" style="color: ${planKey === 'planA' ? 'var(--accent-teal)' : '#b5930d'};">${scenario.label}費用明細：</p>${breakdownHtml}<hr class="border-gray-300/50 my-3"><p class="font-bold text-gray-800 text-right">總計：<span class="text-2xl font-black">${breakdown.grandTotal.toLocaleString()}</span> 元</p></div>`;
-        });
-        dom.costResult.innerHTML = `<div class="flex flex-col md:flex-row gap-4">${finalHtml}</div>`;
-    }
-
-    function getFormState() {
-        const adults = parseInt(dom.numAdults.value) || 0;
-        const children = parseInt(dom.numChildren.value) || 0;
-        const infants = parseInt(dom.numInfants.value) || 0;
-        let passportRenewals = { adult: 0, child: 0 };
-        if (dom.regForm.elements['employee_renew_passport']?.checked) {
-            getAge(dom.regForm.elements['employee_dob'].value) < 14 ? passportRenewals.child++ : passportRenewals.adult++;
-        }
-        let childrenAges = [];
-        for (let i = 1; i <= children; i++) {
-            if (dom.regForm.elements[`child_${i}_renew_passport`]?.checked) passportRenewals.child++;
-            const dob = dom.regForm.elements[`child_${i}_dob`]?.value;
-            childrenAges.push(getAge(dob));
-        }
-        for (let i = 1; i <= adults; i++) {
-            if (dom.regForm.elements[`adult_${i}_renew_passport`]?.checked) passportRenewals.adult++;
-        }
-        for (let i = 1; i <= infants; i++) {
-            if (dom.regForm.elements[`infant_${i}_renew_passport`]?.checked) passportRenewals.child++;
-        }
-        return {
-            employeeName: dom.inputs.regName.value.trim(),
-            isOutsourced: dom.inputs.isOutsourced.checked,
-            hasBonus: dom.inputs.performanceBonus.checked,
-            needsSingleRoom: dom.inputs.singleRoom.checked,
-            counts: { adults, children, infants },
-            passportRenewals: passportRenewals,
-            totalHeadcount: serverHeadcount + 1 + adults + children,
-            childrenAges: childrenAges,
-        };
-    }
-
-    function calculateBreakdownForScenario(state, scenario) {
-        const rule = CONFIG.userRules[state.employeeName] || {};
-        const companionBaseCost = scenario.base + CONFIG.subsidies.company;
-        let subTotal = 0;
-        let breakdown = { base: [], discounts: [], extras: [], grandTotal: 0 };
-        const employeeCompanySubsidy = (state.isOutsourced && !rule.isOutsourcedSpecial) ? CONFIG.subsidies.outsourced : CONFIG.subsidies.company;
-        subTotal += (companionBaseCost - employeeCompanySubsidy);
-        breakdown.base.push(`• 員工本人團費：<span class="font-bold text-gray-800">${companionBaseCost.toLocaleString()}</span> 元`);
-        breakdown.base.push(`<p class="pl-4">└─ 公司補助：<span class="font-bold" style="color: var(--accent-teal);">- ${employeeCompanySubsidy.toLocaleString()}</span> 元</p>`);
-        if (state.counts.adults > 0) {
-            subTotal += state.counts.adults * companionBaseCost;
-            breakdown.base.push(`• 眷屬 (成人 ${state.counts.adults}位)：<span class="font-bold text-gray-800">${(state.counts.adults * companionBaseCost).toLocaleString()}</span> 元`);
-        }
-        if (state.counts.children > 0) {
-            subTotal += state.counts.children * companionBaseCost;
-            breakdown.base.push(`• 孩童 (${state.counts.children}位)：<span class="font-bold text-gray-800">${(state.counts.children * companionBaseCost).toLocaleString()}</span> 元`);
-        }
-        if (state.counts.infants > 0) {
-            subTotal += state.counts.infants * CONFIG.costs.infant;
-            breakdown.base.push(`• 嬰兒 (${state.counts.infants}位)：<span class="font-bold text-gray-800">${(state.counts.infants * CONFIG.costs.infant).toLocaleString()}</span> 元`);
-        }
-        let standardChildDiscount = 0;
-        let specialChildDiscount = 0;
-        if (state.counts.children > 0) {
-            state.childrenAges.forEach(age => {
-                if (age < 9) {
-                    standardChildDiscount += CONFIG.costs.childNoBedDiscount;
-                    if (state.employeeName === '廖彤婕' && age < 4) {
-                        specialChildDiscount += rule.specialChildDiscount;
-                    }
-                }
-            });
-        }
-        if (standardChildDiscount > 0) {
-            subTotal -= standardChildDiscount;
-            breakdown.discounts.push(`<p class="pl-4">└─ 孩童不佔床折扣 (9歲以下)：<span class="font-bold" style="color: var(--accent-teal);">- ${standardChildDiscount.toLocaleString()}</span> 元</p>`);
-        }
-        if (specialChildDiscount > 0) {
-            subTotal -= specialChildDiscount;
-            breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 專屬-孩童特別折扣 (4歲以下)：<span class="font-bold">- ${specialChildDiscount.toLocaleString()}</span> 元</p>`);
-        }
-        if ((state.counts.adults > 0 || state.counts.children > 0) && state.hasBonus) {
-            if (rule.bonusRedirect) {
-                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 已將達標補助給 ${rule.bonusRedirectTo} 使用</p>`);
-            } else if (!state.isOutsourced || rule.isOutsourcedSpecial) {
-                subTotal -= CONFIG.subsidies.performanceBonus;
-                breakdown.discounts.push(`<p class="pl-4">└─ 業績達標補助：<span class="font-bold" style="color: var(--accent-teal);">- ${CONFIG.subsidies.performanceBonus.toLocaleString()}</span> 元</p>`);
-            }
-        }
-        
-        if (rule.specialBonusSources && state.hasBonus) {
-            if (rule.specialBonusSources.self) {
-                subTotal -= rule.specialBonusSources.self;
-                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 業績達標-個人特別補助：<span class="font-bold">- ${rule.specialBonusSources.self.toLocaleString()}</span> 元</p>`);
-            }
-            if (rule.specialBonusSources.fromChang) {
-                subTotal -= rule.specialBonusSources.fromChang;
-                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 來自 張逸凱 的業績獎金轉讓：<span class="font-bold">- ${rule.specialBonusSources.fromChang.toLocaleString()}</span> 元</p>`);
-            }
-            if (rule.specialBonusSources.fromZou) {
-                subTotal -= rule.specialBonusSources.fromZou;
-                breakdown.discounts.push(`<p class="pl-4" style="color: var(--accent-tangerine);">└─ ⭐ 來自 鄒易衡 的業績獎金轉讓：<span class="font-bold">- ${rule.specialBonusSources.fromZou.toLocaleString()}</span> 元</p>`);
-            }
-        }
-        breakdown.grandTotal = subTotal;
-        if (state.needsSingleRoom) {
-            breakdown.grandTotal += CONFIG.costs.singleRoomSupplement;
-            breakdown.extras.push(`<p class="pl-4">└─ 單人房價差：<span class="font-bold text-gray-800">+ ${CONFIG.costs.singleRoomSupplement.toLocaleString()}</span> 元</p>`);
-        }
-        const passportTotalCost = (state.passportRenewals.adult * CONFIG.costs.passportAdult) + (state.passportRenewals.child * CONFIG.costs.passportChild);
-        if (passportTotalCost > 0) {
-            breakdown.grandTotal += passportTotalCost;
-            breakdown.extras.push(`<p class="pl-4">└─ 護照辦理費：<span class="font-bold" style="color: var(--accent-sunny-yellow);">+ ${passportTotalCost.toLocaleString()}</span> 元</p>`);
-        }
-        return breakdown;
-    }
-
-    function generateBreakdownHtml(breakdown) {
-        let html = '<div class="text-left text-sm space-y-1 mt-3">';
-        html += breakdown.base.join('');
-        if (breakdown.discounts.length > 0) {
-            html += `<hr class="border-gray-300 my-2"><p class="text-gray-500">折扣與補助：</p>${breakdown.discounts.join('')}`;
-        }
-        if (breakdown.extras.length > 0) {
-            html += `<hr class="border-gray-300 my-2"><p class="text-gray-500">其他費用：</p>${breakdown.extras.join('')}`;
-        }
-        html += '</div>';
-        return html;
     }
     
     async function handleFormSubmit(e) {
@@ -425,18 +317,16 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.inputs.regName.value = data['員工姓名'] || '';
         dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
         dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
-
-        // [修改] 儲存原始人數，並設定人數輸入框的最小值
+        
         originalCompanionCounts = {
             adults: parseInt(data['同行眷屬(成人)']) || 0,
             children: parseInt(data['同行孩童']) || 0,
             infants: parseInt(data['同行嬰兒']) || 0
         };
-        dom.numAdults.min = originalCompanionCounts.adults;
-        dom.numChildren.min = originalCompanionCounts.children;
-        dom.numInfants.min = originalCompanionCounts.infants;
+        dom.numAdults.min = 0; // [修改] 移除人數限制
+        dom.numChildren.min = 0;
+        dom.numInfants.min = 0;
 
-        // 填入原始人數
         dom.numAdults.value = originalCompanionCounts.adults;
         dom.numChildren.value = originalCompanionCounts.children;
         dom.numInfants.value = originalCompanionCounts.infants;
@@ -465,8 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
         dom.inputs.singleRoom.checked = (data['需要單人房'] === 'Y');
         
-        handleSpecialConditions();
-        renderCost();
+        updateStateFromServer(); // [修改] 載入資料後，向後端請求最新狀態
     }
     
     function switchToUpdateModeUI() {
@@ -476,19 +365,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetFormToCreateMode() {
         formMode = 'create';
         updateRowNumber = null;
-        // [修改] 清除儲存的原始人數
         originalCompanionCounts = null;
-
         dom.regForm.reset();
-
-        // [修改] 將人數輸入框的最小值恢復為 0
         dom.numAdults.min = 0;
         dom.numChildren.min = 0;
         dom.numInfants.min = 0;
-
         generateCompanionFields();
-        handleSpecialConditions();
-        dom.submitBtn.text.textContent = '送出報名';
+        updateStateFromServer(); // [修改] 重設表單後也更新一次狀態
     }
 
     function showModifyModal() {
@@ -505,7 +388,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.modifyModal.content.classList.remove('active');
         setTimeout(() => {
             dom.modifyModal.container.classList.add('hidden');
-            // 當關閉修改視窗時，也重設表單，以防限制殘留
             if (formMode === 'update') {
                 resetFormToCreateMode();
             }
@@ -652,22 +534,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
-        dom.inputs.regName.addEventListener('input', handleSpecialConditions);
-        dom.inputs.isOutsourced.addEventListener('change', handleSpecialConditions);
+
+        // [修改] 所有表單變動都觸發同一個核心函式
+        dom.regForm.addEventListener('change', updateStateFromServer);
+        
+        // [修改] 對姓名輸入使用 debounce 避免頻繁發送請求
+        dom.inputs.regName.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(updateStateFromServer, 300);
+        });
 
         const companionInputs = [dom.numAdults, dom.numChildren, dom.numInfants];
         companionInputs.forEach(input => {
             input.addEventListener('input', () => {
                 generateCompanionFields();
-                renderCost();
+                updateStateFromServer();
             });
         });
 
-        dom.regForm.addEventListener('change', (event) => {
-            if (!['regName', 'isOutsourced', 'numAdults', 'numChildren', 'numInfants'].includes(event.target.id)) {
-                renderCost();
-            }
-        });
         dom.regForm.addEventListener('submit', handleFormSubmit);
         dom.mobileMenu.button.addEventListener('click', () => dom.mobileMenu.menu.classList.toggle('hidden'));
         dom.modal.closeBtn.addEventListener('click', hideSuccessModal);
@@ -713,9 +597,9 @@ document.addEventListener('DOMContentLoaded', () => {
             setFormEnabled(true);
             updateProgressBar();
             generateCompanionFields();
-            handleSpecialConditions();
             setupEventListeners();
             attachFormValidationListeners();
+            updateStateFromServer(); // [新增] 頁面載入完成後，立即執行一次，以顯示初始狀態
 
         } catch (error) {
             console.error("初始化失敗:", error);
