@@ -34,7 +34,7 @@
                     <a class="nav-link" data-target="checklist">準備清單</a>
                     <a class="nav-link" data-target="faq">常見問題</a>
                     <a class="nav-link" data-target="passport-info">護照資訊</a>
-                    <button id="showModifyModalBtn" class="js-show-modify-modal ml-4 px-4 py-2 text-sm font-semibold text-white bg-[var(--accent-teal)] rounded-full hover:bg-teal-600 transition-colors">修改報名資料</button>
+                    <button class="js-show-modify-modal ml-4 px-4 py-2 text-sm font-semibold text-white bg-[var(--accent-teal)] rounded-full hover:bg-teal-600 transition-colors">修改報名資料</button>
                 </div>
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-button" class="text-gray-800 focus:outline-none" aria-label="開啟主選單">
@@ -54,13 +54,11 @@
             <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="checklist">準備清單</a>
             <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="faq">常見問題</a>
             <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="passport-info">護照資訊</a>
-            <div class="p-2">
-        <a href="#" class="js-show-modify-modal block w-full text-center py-3 px-6 text-sm font-semibold text-white bg-[var(--accent-teal)] rounded-md">修改報名資料</a>
-    </div>
-    <div class="p-2 pt-0">
-        <a href="#" class="block py-3 px-6 text-sm text-white bg-[var(--accent-tangerine)] font-bold text-center rounded-md" data-target="registration">立即報名</a>
-    </div>
-</div>
+            <a href="#" class="js-show-modify-modal block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white">修改報名資料</a>
+            <div class="p-2 pt-0">
+                <a href="#" class="block py-3 px-6 text-sm text-white bg-[var(--accent-tangerine)] font-bold text-center rounded-md" data-target="registration">立即報名</a>
+            </div>
+        </div>
     </nav>
 
     <div class="container mx-auto max-w-7xl">
@@ -81,13 +79,13 @@
                             <p class="text-gray-600">五天四夜，享受海島風光</p>
                         </div>
                         <div class="p-4 rounded-lg sub-section-bg">
-                            <h3 class="text-lg font-bold text-gray-800">報名倒數中 <span
-                                    style="color: var(--accent-tangerine);">(延長至 6/16 截止)</span></h3>
+                            <h3 class="text-lg font-bold text-gray-800">✈️ 距離出發日倒數</h3>
                             <div id="countdownTimer"
                                 class="flex justify-center md:justify-start items-start mt-2 space-x-2 md:space-x-3">
                             </div>
-                            <p id="countdown-notice" class="text-xs text-red-600 mt-2 font-semibold">
-                                因尚有多人未填寫報名資訊，故特別延長一天，請盡速報名以免廠商報價過期！</p>
+                            <p id="countdown-notice" class="text-xs text-blue-600 mt-2 font-semibold">
+                                <span class="font-bold">【注意事項】</span> 一般報名時間已截止。目前仍可加報，但費用需依旅行社最新報價為準，請洽主辦人。
+                            </p>
                         </div>
                     </div>
                     <div class="space-y-4 p-4 rounded-lg sub-section-bg">
@@ -482,7 +480,7 @@
                                     id="submitBtnText">送出報名</span>
                                 <div id="submitSpinner" class="spinner hidden ml-3"></div>
                             </button>
-                            <div id="formStatus" class="text-center mt-4 h-6"></div>
+                            <div id="formStatus" class="text-center mt-4 h-6" aria-live="polite"></div>
                         </form>
                     </div>
                 </div>
@@ -577,7 +575,7 @@
         <span>立即報名</span>
     </button>
     
-      <div id="modifyModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
+    <div id="modifyModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full transform transition-all scale-95 opacity-0" id="modify-modal-content">
             <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">修改報名資料</h3>
             <p class="text-gray-600 mb-4 text-sm">請輸入您報名成功時取得的「友善ID」(格式如 250617-ABCDE)。</p>
@@ -587,7 +585,7 @@
                 <input type="text" id="modifyIdInput" class="form-input mt-1" placeholder="250617-ABCDE">
             </div>
 
-            <div id="modifyStatus" class="text-center text-red-600 h-5 my-3 text-sm"></div>
+            <div id="modifyStatus" class="text-center text-red-600 h-5 my-3 text-sm" aria-live="polite"></div>
 
             <div class="flex flex-col space-y-3">
                  <button id="findRecordBtn" class="w-full font-bold py-2 px-8 rounded-lg text-lg bg-[var(--accent-tangerine)] text-white flex justify-center items-center">
@@ -618,7 +616,7 @@
                 </div>
             </div>
 
-            <div id="recoverStatus" class="text-center h-10 my-3 text-sm font-semibold"></div>
+            <div id="recoverStatus" class="text-center h-10 my-3 text-sm font-semibold" aria-live="polite"></div>
 
             <div class="flex flex-col space-y-3">
                  <button id="recoverIdBtn" class="w-full font-bold py-2 px-8 rounded-lg text-lg bg-[var(--accent-teal)] text-white flex justify-center items-center">
