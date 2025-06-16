@@ -545,3 +545,28 @@ async function handleFindRecord(idToFind = null) {
 
     init();
 });
+// ===== 隱藏的後台入口按鈕功能 =====
+document.addEventListener('DOMContentLoaded', () => {
+    const secretTrigger = document.getElementById('secret-admin-trigger');
+    if (secretTrigger) {
+        let clickCount = 0;
+        let clickTimer = null;
+        const requiredClicks = 7; // 設定需要連續點擊幾次
+        const resetTime = 2000; // 2秒內未繼續點擊則重置計數
+
+        secretTrigger.addEventListener('click', () => {
+            clickCount++;
+            // 清除之前的計時器
+            clearTimeout(clickTimer);
+            // 設定新的計時器，如果時間內沒再點擊，次數就會歸零
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+            }, resetTime);
+
+            if (clickCount >= requiredClicks) {
+                alert('即將進入管理後台...');
+                window.location.href = 'admin.html'; // 跳轉到後台頁面
+            }
+        });
+    }
+});
