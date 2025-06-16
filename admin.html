@@ -13,7 +13,7 @@
         }
 
         .table-container {
-            max-height: 75vh;
+            max-height: 80vh; 
             overflow-y: auto;
         }
 
@@ -24,7 +24,20 @@
             color: white;
             z-index: 10;
         }
-        /* 修改：新增表格排版樣式 */
+        
+        th.sortable {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        th.sortable:hover {
+            background-color: #4a5568;
+        }
+        th .sort-indicator {
+            display: inline-block;
+            margin-left: 8px;
+            width: 10px; 
+        }
+
         #data-table {
             table-layout: fixed;
             width: 100%;
@@ -37,7 +50,7 @@
 
 <body class="p-4 md:p-8">
 
-    <div class="container mx-auto max-w-7xl">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold text-center mb-6">濟州島之旅 - 管理後台</h1>
 
         <div id="login-view" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
@@ -86,6 +99,68 @@
             totalCount: document.getElementById('total-count')
         };
 
+        // 格式化時間戳 (YYYY-MM-DD HH:mm:ss)
+        function formatDateString(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            if (isNaN(date)) return dateString; 
+
+            const pad = (num) => num.toString().padStart(2, '0');
+
+            const yyyy = date.getFullYear();
+            const MM = pad(date.getMonth() + 1);
+            const dd = pad(date.getDate());
+            const HH = pad(date.getHours());
+            const mm = pad(date.getMinutes());
+            const ss = pad(date.getSeconds());
+
+            return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`;
+        }
+
+        // [新增] 格式化生日 (YYYY-MM-DD)
+        function formatDobString(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            if (isNaN(date)) return dateString;
+
+            const pad = (num) => num.toString().padStart(2, '0');
+
+            const yyyy = date.getFullYear();
+            const MM = pad(date.getMonth() + 1);
+            const dd = pad(date.getDate());
+
+            return `${yyyy}-${MM}-${dd}`;
+        }
+
+        function sortTableByColumn(table, column, asc = true) {
+            const dirModifier = asc ? 1 : -1;
+            const tBody = table.tBodies[0];
+            const rows = Array.from(tBody.querySelectorAll("tr"));
+
+            const sortedRows = rows.sort((a, b) => {
+                const aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+                const bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+
+                const aNum = parseFloat(aColText.replace(/[,-]/g, ''));
+                const bNum = parseFloat(bColText.replace(/[,-]/g, ''));
+                
+                if (!isNaN(aNum) && !isNaN(bNum)) {
+                     return (aNum - bNum) * dirModifier;
+                }
+                
+                return aColText.localeCompare(bColText, 'zh-Hant') * dirModifier;
+            });
+
+            while (tBody.firstChild) {
+                tBody.removeChild(tBody.firstChild);
+            }
+            tBody.append(...sortedRows);
+
+            table.querySelectorAll("th").forEach(th => th.classList.remove("th-sort-asc", "th-sort-desc"));
+            table.querySelector(`th:nth-child(${column + 1})`).classList.toggle("th-sort-asc", asc);
+            table.querySelector(`th:nth-child(${column + 1})`).classList.toggle("th-sort-desc", !asc);
+        }
+
         async function handleLogin() {
             const password = dom.passwordInput.value;
             if (!password) {
@@ -123,32 +198,61 @@
             dom.loginView.classList.add('hidden');
             dom.dataView.classList.remove('hidden');
 
-            const headers = data.shift(); // 取出並移除第一行作為標頭
+            const headers = data.shift();
+            
+            // [修改] 智慧化尋找所有需要格式化的日期欄位索引
+            const timeColumnIndex = headers.indexOf('報名時間');
+            const dobColumnIndices = headers.reduce((acc, header, index) => {
+                if (header.includes('出生日')) { // 只要欄位名稱包含 "出生日" 就加入
+                    acc.push(index);
+                }
+                return acc;
+            }, []);
 
-            // 計算總人數 (不含嬰兒)
+
             const adultIndex = headers.indexOf('同行眷屬(成人)');
             const childIndex = headers.indexOf('同行孩童');
             let totalPeople = 0;
             data.forEach(row => {
-                totalPeople += 1; // 員工本人
+                totalPeople += 1;
                 if (adultIndex > -1) totalPeople += (parseInt(row[adultIndex]) || 0);
                 if (childIndex > -1) totalPeople += (parseInt(row[childIndex]) || 0);
             });
             dom.totalCount.textContent = `目前總報名人數 (不含嬰兒)：${totalPeople} 人`;
 
-            // 渲染表格
             const thead = document.createElement('thead');
-            thead.innerHTML = `<tr class="bg-gray-800 text-white">${headers.map(h => `<th scope="col" class="px-4 py-3">${h}</th>`).join('')}</tr>`;
+            thead.innerHTML = `<tr class="bg-gray-800 text-white">${headers.map(h => `<th scope="col" class="px-4 py-3 sortable">${h}<span class="sort-indicator"></span></th>`).join('')}</tr>`;
 
             const tbody = document.createElement('tbody');
+            // [修改] 渲染時，根據欄位索引使用不同的格式化函式
             tbody.innerHTML = data.map(row =>
-                `<tr class="bg-white border-b hover:bg-gray-50">${row.map(cell => `<td class="px-4 py-3">${cell}</td>`).join('')}</tr>`
+                `<tr class="bg-white border-b hover:bg-gray-50">${row.map((cell, index) => {
+                    let cellContent = cell;
+                    if (index === timeColumnIndex) {
+                        cellContent = formatDateString(cell);
+                    } else if (dobColumnIndices.includes(index)) {
+                        cellContent = formatDobString(cell);
+                    }
+                    return `<td class="px-4 py-3">${cellContent}</td>`;
+                }).join('')}</tr>`
             ).join('');
 
             dom.dataTable.innerHTML = '';
             dom.dataTable.append(thead, tbody);
             
-            // 綁定搜尋事件
+            document.querySelectorAll('#data-table th.sortable').forEach(headerCell => {
+                headerCell.addEventListener('click', () => {
+                    const tableElement = headerCell.closest('table');
+                    const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
+                    const currentIsAsc = headerCell.classList.contains("th-sort-asc");
+
+                    sortTableByColumn(tableElement, headerIndex, !currentIsAsc);
+
+                    document.querySelectorAll('.sort-indicator').forEach(ind => ind.textContent = '');
+                    headerCell.querySelector('.sort-indicator').textContent = !currentIsAsc ? '▲' : '▼';
+                });
+            });
+
             const searchInput = document.getElementById('searchInput');
             searchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase();
@@ -171,16 +275,13 @@
             dom.passwordInput.value = '';
         }
 
-        // 事件監聽
         dom.loginBtn.addEventListener('click', handleLogin);
         dom.passwordInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleLogin();
         });
         dom.logoutBtn.addEventListener('click', handleLogout);
 
-        // 檢查 session 是否已登入
         if (sessionStorage.getItem('admin_auth') === 'true') {
-            // 直接顯示一個提示，讓使用者重新登入以獲取最新資料
             dom.totalCount.textContent = '如需載入最新資料，請先登出後再重新登入。';
         }
     </script>
