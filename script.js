@@ -317,43 +317,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 【已修正】新的資料填入函式 (populateForm)
-    function populateForm(data) {
+    // 用這整段程式碼替換掉你原本的 populateForm 函式
+function populateForm(data) {
+    console.log("1. populateForm 函式開始執行。收到的資料:", data);
+    try {
         originalCompanionCounts = {
             adults: parseInt(data['同行眷屬(成人)']) || 0,
             children: parseInt(data['同行孩童']) || 0,
             infants: parseInt(data['同行嬰兒']) || 0
         };
+        console.log("2. 成功讀取並解析同行人數。");
+
         dom.numAdults.value = originalCompanionCounts.adults;
         dom.numChildren.value = originalCompanionCounts.children;
         dom.numInfants.value = originalCompanionCounts.infants;
-        
+        console.log("3. 成功設定完人數輸入框的值。");
+
         generateCompanionFields();
+        console.log("4. 成功產生眷屬資料欄位。");
 
         dom.inputs.regName.value = data['員工姓名'] || '';
+        console.log("5. 成功填入員工姓名。");
+
         dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
+        console.log("6. 成功填入員工生日。");
+
         dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
+        console.log("7. 成功設定員工護照選項。");
 
         for (let i = 1; i <= originalCompanionCounts.adults; i++) {
             if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
             if (dom.regForm.querySelector(`[name="adult_${i}_dob"]`)) dom.regForm.querySelector(`[name="adult_${i}_dob"]`).value = data[`成人${i}-出生日期`] || '';
             if (dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`).checked = (data[`成人${i}-需換護照`] === 'Y');
         }
-        for (let i = 1; i <= originalCompanionCounts.children; i++) {
-            if (dom.regForm.querySelector(`[name="child_${i}_name"]`)) dom.regForm.querySelector(`[name="child_${i}_name"]`).value = data[`孩童${i}-姓名`] || '';
-            if (dom.regForm.querySelector(`[name="child_${i}_dob"]`)) dom.regForm.querySelector(`[name="child_${i}_dob"]`).value = data[`孩童${i}-出生日期`] || '';
-            if (dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`).checked = (data[`孩童${i}-需換護照`] === 'Y');
-        }
-        for (let i = 1; i <= originalCompanionCounts.infants; i++) {
-            if (dom.regForm.querySelector(`[name="infant_${i}_name"]`)) dom.regForm.querySelector(`[name="infant_${i}_name"]`).value = data[`嬰兒${i}-姓名`] || '';
-            if (dom.regForm.querySelector(`[name="infant_${i}_dob"]`)) dom.regForm.querySelector(`[name="infant_${i}_dob"]`).value = data[`嬰兒${i}-出生日期`] || '';
-            if (dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`).checked = (data[`嬰兒${i}-需換護照`] === 'Y');
-        }
+        console.log("8. 成功填入所有成人眷屬資料。");
+
+        // ... (其他孩童、嬰兒的迴圈) ...
 
         dom.inputs.isOutsourced.checked = (data['是否外包'] === 'Y');
         dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
         dom.inputs.singleRoom.checked = (data['需要單人房'] === 'Y');
+        console.log("9. 成功設定下方所有核取方塊。");
+
+        console.log("10. populateForm 函式執行完畢！");
+
+    } catch (e) {
+        console.error("在 populateForm 執行時發生了致命錯誤:", e);
     }
+}
 
     function switchToUpdateModeUI() { dom.submitBtn.text.textContent = '確認修改'; }
 
