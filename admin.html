@@ -39,30 +39,25 @@
         }
 
         #data-table {
-            /* [修改] 讓表格寬度可以超過螢幕寬度，配合水平捲動 */
             min-width: 2400px; 
             table-layout: fixed;
         }
         #data-table th, #data-table td {
             word-wrap: break-word;
-            /* [新增] 增加垂直置中對齊 */
             vertical-align: middle;
         }
-
-        /* * [新增] 精細調整各欄寬度以解決直排問題 
-         * :nth-child(n) 代表第 n 個欄位
-        */
+        
         #data-table th:nth-child(2), #data-table td:nth-child(2) { width: 150px; } /* 友善ID */
         #data-table th:nth-child(3), #data-table td:nth-child(3) { width: 160px; } /* 報名時間 */
         #data-table th:nth-child(4), #data-table td:nth-child(4) { width: 100px; } /* 員工姓名 */
         #data-table th:nth-child(5), #data-table td:nth-child(5) { width: 110px; } /* 出生年月日 */
         #data-table th:nth-child(6), #data-table td:nth-child(6) { width: 60px; }  /* 需換護照 */
         #data-table th:nth-child(7), #data-table td:nth-child(7) { width: 60px; }  /* 是否外包 */
-        #data-table th:nth-child(13), /* 成人1姓名 */
-        #data-table th:nth-child(16), /* 成人2姓名 */
-        #data-table th:nth-child(19), /* 成人3姓名 */
-        #data-table th:nth-child(22), /* 孩童1姓名 */
-        #data-table th:nth-child(25), /* 孩童2姓名 */
+        #data-table th:nth-child(13),
+        #data-table th:nth-child(16),
+        #data-table th:nth-child(19),
+        #data-table th:nth-child(22),
+        #data-table th:nth-child(25),
         #data-table th:nth-child(28)  { width: 100px; } /* 所有姓名欄 */
         #data-table td:nth-child(13),
         #data-table td:nth-child(16),
@@ -72,7 +67,6 @@
         #data-table td:nth-child(28)  { width: 100px; }
         #data-table th:nth-child(31), #data-table td:nth-child(31) { width: 120px; } /* 費用方案A */
         #data-table th:nth-child(32), #data-table td:nth-child(32) { width: 120px; } /* 費用方案B */
-
     </style>
 </head>
 
@@ -126,33 +120,25 @@
             dataTable: document.getElementById('data-table'),
             totalCount: document.getElementById('total-count')
         };
-
-        // [新增] 格式化時間戳 (YYYY-MM-DD HH:mm:ss)
-        function formatDateString(dateString) {
+        
+        // [修改] 合併為一個更穩健的日期格式化函式
+        function formatDate(dateString, formatType = 'date') {
             if (!dateString) return '';
             const date = new Date(dateString);
-            if (isNaN(date.getTime())) return dateString; 
+            if (isNaN(date.getTime())) return dateString; // 如果無法解析，返回原字串
 
             const pad = (num) => num.toString().padStart(2, '0');
             const yyyy = date.getFullYear();
             const MM = pad(date.getMonth() + 1);
             const dd = pad(date.getDate());
-            const HH = pad(date.getHours());
-            const mm = pad(date.getMinutes());
-            const ss = pad(date.getSeconds());
-            return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`;
-        }
 
-        // [新增] 格式化生日 (YYYY-MM-DD)
-        function formatDobString(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) return dateString;
-
-            const pad = (num) => num.toString().padStart(2, '0');
-            const yyyy = date.getFullYear();
-            const MM = pad(date.getMonth() + 1);
-            const dd = pad(date.getDate());
+            if (formatType === 'datetime') {
+                const HH = pad(date.getHours());
+                const mm = pad(date.getMinutes());
+                const ss = pad(date.getSeconds());
+                return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`;
+            }
+            // 預設返回 'date' 格式 (YYYY-MM-DD)
             return `${yyyy}-${MM}-${dd}`;
         }
 
@@ -179,9 +165,7 @@
             }
             tBody.append(...sortedRows);
 
-            table.querySelectorAll("th").forEach(th => {
-                th.classList.remove("th-sort-asc", "th-sort-desc");
-            });
+            table.querySelectorAll("th").forEach(th => th.classList.remove("th-sort-asc", "th-sort-desc"));
             const headerCell = table.querySelector(`th:nth-child(${column + 1})`);
             if (headerCell) {
                 headerCell.classList.toggle("th-sort-asc", asc);
@@ -228,7 +212,7 @@
 
             const headers = data.shift();
             
-            // [修改] 智慧化尋找所有需要格式化的日期欄位索引
+            // [修改] 一次性找出所有日期相關欄位的索引
             const timeColumnIndex = headers.indexOf('報名時間');
             const dobColumnIndices = headers.reduce((acc, header, index) => {
                 if (header && header.includes('出生日')) {
@@ -251,14 +235,14 @@
             thead.innerHTML = `<tr class="bg-gray-800 text-white">${headers.map(h => `<th scope="col" class="px-4 py-3 sortable">${h}<span class="sort-indicator"></span></th>`).join('')}</tr>`;
 
             const tbody = document.createElement('tbody');
-            // [修改] 渲染時，根據欄位索引使用不同的格式化函式
+            // [修改] 渲染時，根據欄位索引呼叫新的 formatDate 函式
             tbody.innerHTML = data.map(row =>
                 `<tr class="bg-white border-b hover:bg-gray-50">${row.map((cell, index) => {
                     let cellContent = cell;
                     if (index === timeColumnIndex) {
-                        cellContent = formatDateString(cell);
+                        cellContent = formatDate(cell, 'datetime'); // 使用 datetime 格式
                     } else if (dobColumnIndices.includes(index)) {
-                        cellContent = formatDobString(cell);
+                        cellContent = formatDate(cell, 'date'); // 使用 date 格式
                     }
                     return `<td class="px-4 py-3">${cellContent}</td>`;
                 }).join('')}</tr>`
