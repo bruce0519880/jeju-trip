@@ -34,6 +34,7 @@
                     <a class="nav-link" data-target="checklist">準備清單</a>
                     <a class="nav-link" data-target="faq">常見問題</a>
                     <a class="nav-link" data-target="passport-info">護照資訊</a>
+                    <button id="showModifyModalBtn" class="ml-4 px-4 py-2 text-sm font-semibold text-white bg-[var(--accent-teal)] rounded-full hover:bg-teal-600 transition-colors">修改報名資料</button>
                 </div>
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-button" class="text-gray-800 focus:outline-none" aria-label="開啟主選單">
@@ -47,27 +48,13 @@
             </div>
         </div>
         <div id="mobile-menu" class="hidden md:hidden bg-white rounded-b-lg shadow-xl">
-            <a href="#"
-                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
-                data-target="summary">旅行摘要</a>
-            <a href="#"
-                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
-                data-target="itinerary">詳細行程</a>
-            <a href="#"
-                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
-                data-target="map">互動地圖</a>
-            <a href="#"
-                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
-                data-target="checklist">準備清單</a>
-            <a href="#"
-                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
-                data-target="faq">常見問題</a>
-            <a href="#"
-                class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white"
-                data-target="passport-info">護照資訊</a>
-            <a href="#"
-                class="block py-3 px-6 text-sm text-gray-700 bg-[var(--accent-tangerine)] text-white font-bold text-center"
-                data-target="registration">立即報名</a>
+            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="summary">旅行摘要</a>
+            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="itinerary">詳細行程</a>
+            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="map">互動地圖</a>
+            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="checklist">準備清單</a>
+            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="faq">常見問題</a>
+            <a href="#" class="block py-3 px-6 text-sm text-gray-700 hover:bg-[var(--accent-tangerine)] hover:text-white" data-target="passport-info">護照資訊</a>
+            <a href="#" class="block py-3 px-6 text-sm text-gray-700 bg-[var(--accent-tangerine)] text-white font-bold text-center" data-target="registration">立即報名</a>
         </div>
     </nav>
 
@@ -584,6 +571,31 @@
         </svg>
         <span>立即報名</span>
     </button>
+    
+    <div id="modifyModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full transform transition-all scale-95 opacity-0" id="modify-modal-content">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">修改報名資料</h3>
+            <p class="text-gray-600 mb-4 text-sm">請輸入您報名成功時取得的「友善ID」(格式如 250617-ABCDE)。</p>
+            
+            <div>
+                <label for="modifyIdInput" class="block text-sm font-medium text-gray-700">報名ID</label>
+                <input type="text" id="modifyIdInput" class="form-input mt-1" placeholder="250617-ABCDE">
+            </div>
+
+            <div id="modifyStatus" class="text-center text-red-600 h-5 my-3 text-sm"></div>
+
+            <div class="flex flex-col space-y-3">
+                 <button id="findRecordBtn" class="w-full font-bold py-2 px-8 rounded-lg text-lg bg-[var(--accent-tangerine)] text-white flex justify-center items-center">
+                    <span id="findBtnText">尋找資料</span>
+                    <div id="findSpinner" class="spinner hidden ml-3"></div>
+                </button>
+                <button id="closeModifyModalBtn" class="w-full py-2 text-gray-600 hover:bg-gray-100 rounded-lg">取消</button>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#" id="showRecoverModalBtn" class="text-sm text-blue-600 hover:underline">忘記報名ID了？</a>
+            </div>
+        </div>
+    </div>
 
     <div id="successModal"
         class="hidden fixed inset-0 bg-gray-900 bg-opacity-60 z-50 flex justify-center items-center p-4">
@@ -597,14 +609,12 @@
             <h3 class="text-2xl font-bold text-gray-800 mb-2">報名成功！</h3>
             <p class="text-gray-600 mb-6">請記得將所有人的護照照片<br><strong class="text-[var(--accent-tangerine)]">LINE
                     給主辦人</strong>，才算完成所有步驟喔！</p>
-            
             <div class="my-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-md">
                 <p class="font-bold text-sm">請務必複製或截圖保管好您的「報名ID」，這是您未來修改資料的唯一憑證：</p>
                 <p id="modalRegistrationId" class="text-lg font-mono break-all mt-1"></p>
             </div>
             <button id="closeModalBtn"
                 class="bg-[var(--accent-teal)] text-white font-bold py-2 px-6 rounded-lg w-full transition-transform hover:scale-105">太棒了！</button>
-
         </div>
     </div>
 
@@ -613,7 +623,6 @@
         !function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = 'https://weatherwidget.io/js/widget.min.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'weatherwidget-io-js');
     </script>
     <script>
-        // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
