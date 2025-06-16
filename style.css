@@ -687,7 +687,17 @@ form :focus-within label {
 #modal-content {
     transition: transform 0.3s ease-out, opacity 0.3s ease-out;
 }
+/* ==========================================================================
+   9. Modal Content Active State - 彈出視窗內容啟用狀態 (新增的修復)
+   ========================================================================== */
+#modify-modal-content, #recover-modal-content {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
 
+#modify-modal-content.active, #recover-modal-content.active {
+    transform: scale(1);
+    opacity: 1;
+}
 #modal-content.active {
     transform: scale(1);
     opacity: 1;
