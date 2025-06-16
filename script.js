@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             recoverBtnText: document.getElementById('recoverBtnText'),
             recoverSpinner: document.getElementById('recoverSpinner'),
             status: document.getElementById('recoverStatus'),
+            loadBtn: document.getElementById('loadRecoveredBtn'),
         },
         countdownTimer: document.getElementById('countdownTimer'),
         countdownNotice: document.getElementById('countdown-notice'),
@@ -298,9 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateRowNumber = data.rowNumber;
                 switchToUpdateModeUI();
                 showSection('registration');
-            } else {
-                throw new Error(data.message);
-            }
+            } else { throw new Error(data.message); }
         } catch (error) {
             dom.modifyModal.status.textContent = error.message;
         } finally {
@@ -308,11 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * [函式已修正] 
-     * 將 updateStateFromServer() 的呼叫移至 setTimeout 內部，
-     * 確保所有眷屬資料都被填入後，才向後端發送請求。
-     */
     function populateForm(data) {
         dom.inputs.regName.value = data['員工姓名'] || '';
         dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
@@ -323,39 +317,33 @@ document.addEventListener('DOMContentLoaded', () => {
             children: parseInt(data['同行孩童']) || 0,
             infants: parseInt(data['同行嬰兒']) || 0
         };
-        dom.numAdults.min = 0;
-        dom.numChildren.min = 0;
-        dom.numInfants.min = 0;
         dom.numAdults.value = originalCompanionCounts.adults;
         dom.numChildren.value = originalCompanionCounts.children;
         dom.numInfants.value = originalCompanionCounts.infants;
         
         generateCompanionFields();
 
+        for (let i = 1; i <= originalCompanionCounts.adults; i++) {
+            if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
+            if (dom.regForm.querySelector(`[name="adult_${i}_dob"]`)) dom.regForm.querySelector(`[name="adult_${i}_dob"]`).value = data[`成人${i}-出生日期`] || '';
+            if (dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`).checked = (data[`成人${i}-需換護照`] === 'Y');
+        }
+        for (let i = 1; i <= originalCompanionCounts.children; i++) {
+            if (dom.regForm.querySelector(`[name="child_${i}_name"]`)) dom.regForm.querySelector(`[name="child_${i}_name"]`).value = data[`孩童${i}-姓名`] || '';
+            if (dom.regForm.querySelector(`[name="child_${i}_dob"]`)) dom.regForm.querySelector(`[name="child_${i}_dob"]`).value = data[`孩童${i}-出生日期`] || '';
+            if (dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`).checked = (data[`孩童${i}-需換護照`] === 'Y');
+        }
+        for (let i = 1; i <= originalCompanionCounts.infants; i++) {
+            if (dom.regForm.querySelector(`[name="infant_${i}_name"]`)) dom.regForm.querySelector(`[name="infant_${i}_name"]`).value = data[`嬰兒${i}-姓名`] || '';
+            if (dom.regForm.querySelector(`[name="infant_${i}_dob"]`)) dom.regForm.querySelector(`[name="infant_${i}_dob"]`).value = data[`嬰兒${i}-出生日期`] || '';
+            if (dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`).checked = (data[`嬰兒${i}-需換護照`] === 'Y');
+        }
+
         dom.inputs.isOutsourced.checked = (data['是否外包'] === 'Y');
         dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
         dom.inputs.singleRoom.checked = (data['需要單人房'] === 'Y');
-
-        setTimeout(() => {
-            for (let i = 1; i <= originalCompanionCounts.adults; i++) {
-                if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
-                if (dom.regForm.querySelector(`[name="adult_${i}_dob"]`)) dom.regForm.querySelector(`[name="adult_${i}_dob"]`).value = data[`成人${i}-出生日期`] || '';
-                if (dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`).checked = (data[`成人${i}-需換護照`] === 'Y');
-            }
-            for (let i = 1; i <= originalCompanionCounts.children; i++) {
-                if (dom.regForm.querySelector(`[name="child_${i}_name"]`)) dom.regForm.querySelector(`[name="child_${i}_name"]`).value = data[`孩童${i}-姓名`] || '';
-                if (dom.regForm.querySelector(`[name="child_${i}_dob"]`)) dom.regForm.querySelector(`[name="child_${i}_dob"]`).value = data[`孩童${i}-出生日期`] || '';
-                if (dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`).checked = (data[`孩童${i}-需換護照`] === 'Y');
-            }
-            for (let i = 1; i <= originalCompanionCounts.infants; i++) {
-                if (dom.regForm.querySelector(`[name="infant_${i}_name"]`)) dom.regForm.querySelector(`[name="infant_${i}_name"]`).value = data[`嬰兒${i}-姓名`] || '';
-                if (dom.regForm.querySelector(`[name="infant_${i}_dob"]`)) dom.regForm.querySelector(`[name="infant_${i}_dob"]`).value = data[`嬰兒${i}-出生日期`] || '';
-                if (dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`).checked = (data[`嬰兒${i}-需換護照`] === 'Y');
-            }
-
-            // [修正] 將此函式呼叫移到 setTimeout 內部
-            updateStateFromServer();
-        }, 100);
+        
+        updateStateFromServer();
     }
 
     function switchToUpdateModeUI() { dom.submitBtn.text.textContent = '確認修改'; }
@@ -395,6 +383,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function hideRecoverModal() {
         dom.recoverModal.nameInput.value = ''; dom.recoverModal.dobInput.value = ''; dom.recoverModal.status.textContent = '';
+        dom.recoverModal.loadBtn.classList.add('hidden');
+        dom.recoverModal.recoverBtn.classList.remove('hidden');
         dom.recoverModal.content.classList.remove('active');
         setTimeout(() => dom.recoverModal.container.classList.add('hidden'), 300);
     }
@@ -410,6 +400,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const dob = dom.recoverModal.dobInput.value;
         if (!name || !dob) { dom.recoverModal.status.textContent = '請輸入您的姓名與生日。'; return; }
         dom.recoverModal.status.textContent = '';
+        dom.recoverModal.loadBtn.classList.add('hidden');
+        dom.recoverModal.recoverBtn.classList.remove('hidden');
         setRecoverButtonState(true);
         try {
             const formData = new FormData();
@@ -420,10 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
             const data = await response.json();
             if (data.result === 'success') {
-                dom.recoverModal.status.innerHTML = `ID 已找回！<br>正在為您載入資料...`;
-                setTimeout(() => {
-                    handleFindRecord(data.friendlyId);
-                }, 1000);
+                dom.recoverModal.status.innerHTML = `您的報名ID是：<br><strong class="text-lg font-mono">${data.friendlyId}</strong>`;
+                dom.recoverModal.loadBtn.dataset.recoveredId = data.friendlyId;
+                dom.recoverModal.loadBtn.classList.remove('hidden');
+                dom.recoverModal.recoverBtn.classList.add('hidden');
             } else {
                 throw new Error(data.error);
             }
@@ -505,6 +497,12 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.recoverModal.closeBtn.addEventListener('click', hideRecoverModal);
         dom.recoverModal.container.addEventListener('click', (e) => { if (e.target === dom.recoverModal.container) hideRecoverModal(); });
         dom.recoverModal.recoverBtn.addEventListener('click', handleRecoverId);
+        dom.recoverModal.loadBtn.addEventListener('click', (e) => {
+            const recoveredId = e.currentTarget.dataset.recoveredId;
+            if (recoveredId) {
+                handleFindRecord(recoveredId);
+            }
+        });
     }
 
     async function init() {
