@@ -9,16 +9,18 @@ const urlsToCache = [
     '/jeju-trip/images/icon-512.png'
 ];
 
+// install 事件：在安裝時寫入快取
 self.addEventListener('install', event => {
     self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
-            console.log('Opened cache and caching files for v4');
+            console.log('Opened cache and caching files for v5');
             return cache.addAll(urlsToCache);
         })
     );
 });
 
+// activate 事件：在啟用時清除舊快取
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(cacheNames => {
@@ -34,22 +36,29 @@ self.addEventListener('activate', event => {
     );
 });
 
+// fetch 事件：攔截網路請求
 self.addEventListener('fetch', event => {
+    // 我們只處理 GET 請求
     if (event.request.method !== 'GET') {
         return;
     }
 
-    // 對於導航請求，總是回傳 index.html
-    // 檢查請求的 URL 是否不包含副檔名 (常見的頁面導航)
+    // 對於導航請求 (例如打開 App 或點擊連結)，我們總是回傳 index.html
     if (event.request.mode === 'navigate') {
         event.respondWith(caches.match('/jeju-trip/index.html'));
         return;
     }
 
-    // 對於其他資源
+    // 對於其他資源 (CSS, JS, 圖片等)
     event.respondWith(
-        caches.match(event.request).then(response => {
-            return response || fetch(event.request);
-        })
+        caches.match(event.request)
+            .then(response => {
+                // 如果快取中有，就直接回傳
+                if (response) {
+                    return response;
+                }
+                // 如果快取中沒有，就透過網路去抓
+                return fetch(event.request);
+            })
     );
 });
