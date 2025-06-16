@@ -1,7 +1,8 @@
+// manifest.json (修正後)
 {
     "name": "2025 濟州島之旅",
     "short_name": "濟州島之旅",
-    "start_url": "index.html",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#f8f9fa",
     "theme_color": "#FF7A59",
