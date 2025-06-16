@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ⭐ [恢復] 將計算邏輯和規則移回前端，以提供即時體驗
     const CONFIG = {
         scriptURL: 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec',
         secretKey: 'JEJU_TOUR_SECRET_k1s9wz7x_1jo2xlp8qpc',
@@ -24,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '王唯菱': { forceBonus: true, bonusText: '⭐ 廣告費不給花特別補助' },
             '方成霖': { forceBonus: true, bonusText: '⭐ 公司有事沒事特別補助' },
             '張仲宇': { isOutsourcedSpecial: true },
-            '廖彤婕': { specialChildDiscount: 2500, specialBonus: 5000, forceBonus: true }, // <-- 恢復並加入新規則
+            '廖彤婕': { specialChildDiscount: 2500, specialBonus: 5000, forceBonus: true },
             '張逸凱': { bonusRedirect: true, bonusRedirectTo: '廖彤婕' }
         }
     };
@@ -124,13 +123,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return age;
     }
 
-    // ⭐ [恢復] 原有的 handleSpecialConditions 函式，提供強制勾選等即時 UX
     function handleSpecialConditions() {
         const employeeName = dom.inputs.regName.value.trim();
         const isOutsourced = dom.inputs.isOutsourced.checked;
         const rule = CONFIG.userRules[employeeName] || {};
 
-        // 重設為可操作狀態
         dom.inputs.performanceBonus.disabled = false;
 
         if (rule.forceBonus) {
@@ -160,7 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ⭐ [恢復] 前端即時計算邏輯
     function renderCost() {
         const formState = getFormState();
         if ((formState.counts.adults + formState.counts.children + formState.counts.infants) === 0 && !formState.employeeName) {
@@ -320,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showSuccessModal();
                 dom.regForm.reset();
                 generateCompanionFields();
-                handleSpecialConditions(); // This will re-render cost
+                handleSpecialConditions();
                 await fetchHeadcount();
             } else {
                 throw new Error(data.error || 'Unknown server error');
