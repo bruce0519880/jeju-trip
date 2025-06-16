@@ -307,53 +307,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function populateForm(data) {
-    // --- Part 1: 首先設定靜態的欄位值 ---
-    // 員工本人資料
+    // 請用此版本取代舊的 populateForm 函數
+function populateForm(data) {
+    originalCompanionCounts = {
+        adults: parseInt(data['同行眷屬(成人)']) || 0,
+        children: parseInt(data['同行孩童']) || 0,
+        infants: parseInt(data['同行嬰兒']) || 0
+    };
+    dom.numAdults.value = originalCompanionCounts.adults;
+    dom.numChildren.value = originalCompanionCounts.children;
+    dom.numInfants.value = originalCompanionCounts.infants;
+    
+    generateCompanionFields();
+
     dom.inputs.regName.value = data['員工姓名'] || '';
     dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
     dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
 
-    // 整體選項
+    for (let i = 1; i <= originalCompanionCounts.adults; i++) {
+        if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
+        if (dom.regForm.querySelector(`[name="adult_${i}_dob"]`)) dom.regForm.querySelector(`[name="adult_${i}_dob"]`).value = data[`成人${i}-出生日期`] || '';
+        if (dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`).checked = (data[`成人${i}-需換護照`] === 'Y');
+    }
+    for (let i = 1; i <= originalCompanionCounts.children; i++) {
+        if (dom.regForm.querySelector(`[name="child_${i}_name"]`)) dom.regForm.querySelector(`[name="child_${i}_name"]`).value = data[`孩童${i}-姓名`] || '';
+        if (dom.regForm.querySelector(`[name="child_${i}_dob"]`)) dom.regForm.querySelector(`[name="child_${i}_dob"]`).value = data[`孩童${i}-出生日期`] || '';
+        if (dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`).checked = (data[`孩童${i}-需換護照`] === 'Y');
+    }
+    for (let i = 1; i <= originalCompanionCounts.infants; i++) {
+        if (dom.regForm.querySelector(`[name="infant_${i}_name"]`)) dom.regForm.querySelector(`[name="infant_${i}_name"]`).value = data[`嬰兒${i}-姓名`] || '';
+        if (dom.regForm.querySelector(`[name="infant_${i}_dob"]`)) dom.regForm.querySelector(`[name="infant_${i}_dob"]`).value = data[`嬰兒${i}-出生日期`] || '';
+        if (dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`).checked = (data[`嬰兒${i}-需換護照`] === 'Y');
+    }
+
     dom.inputs.isOutsourced.checked = (data['是否外包'] === 'Y');
     dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
     dom.inputs.singleRoom.checked = (data['需要單人房'] === 'Y');
     
-    // --- Part 2: 處理動態的眷屬欄位 ---
-    // 先設定好正確的人數
-    const adults = parseInt(data['同行眷屬(成人)']) || 0;
-    const children = parseInt(data['同行孩童']) || 0;
-    const infants = parseInt(data['同行嬰兒']) || 0;
-    dom.numAdults.value = adults;
-    dom.numChildren.value = children;
-    dom.numInfants.value = infants;
-    
-    // 呼叫函式來產生對應數量的空白欄位
-    generateCompanionFields();
-
-    // 再次確保 DOM 更新後，才填入眷屬資料
-    // 為了確保瀏覽器有足夠時間渲染，我們用一個極短的延遲來處理
-    setTimeout(() => {
-        for (let i = 1; i <= adults; i++) {
-            if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
-            if (dom.regForm.querySelector(`[name="adult_${i}_dob"]`)) dom.regForm.querySelector(`[name="adult_${i}_dob"]`).value = data[`成人${i}-出生日期`] || '';
-            if (dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`).checked = (data[`成人${i}-需換護照`] === 'Y');
-        }
-        for (let i = 1; i <= children; i++) {
-            if (dom.regForm.querySelector(`[name="child_${i}_name"]`)) dom.regForm.querySelector(`[name="child_${i}_name"]`).value = data[`孩童${i}-姓名`] || '';
-            if (dom.regForm.querySelector(`[name="child_${i}_dob"]`)) dom.regForm.querySelector(`[name="child_${i}_dob"]`).value = data[`孩童${i}-出生日期`] || '';
-            if (dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`).checked = (data[`孩童${i}-需換護照`] === 'Y');
-        }
-        for (let i = 1; i <= infants; i++) {
-            if (dom.regForm.querySelector(`[name="infant_${i}_name"]`)) dom.regForm.querySelector(`[name="infant_${i}_name"]`).value = data[`嬰兒${i}-姓名`] || '';
-            if (dom.regForm.querySelector(`[name="infant_${i}_dob"]`)) dom.regForm.querySelector(`[name="infant_${i}_dob"]`).value = data[`嬰兒${i}-出生日期`] || '';
-            if (dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`).checked = (data[`嬰兒${i}-需換護照`] === 'Y');
-        }
-    }, 0);
-
-    // --- Part 3: 最後，更新費用計算 ---
-    // 這個函式現在會使用已填入的資料進行計算
-    updateStateFromServer();
+    // 注意：舊版本結尾的 updateStateFromServer(); 已被移除
 }
 
     function switchToUpdateModeUI() { dom.submitBtn.text.textContent = '確認修改'; }
@@ -405,36 +396,44 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.recoverModal.recoverSpinner.classList.toggle('hidden', !isRecovering);
     }
 
-    async function handleRecoverId() {
-        const name = dom.recoverModal.nameInput.value.trim();
-        const dob = dom.recoverModal.dobInput.value;
-        if (!name || !dob) { dom.recoverModal.status.textContent = '請輸入您的姓名與生日。'; return; }
-        dom.recoverModal.status.textContent = '';
-        dom.recoverModal.loadBtn.classList.add('hidden');
-        dom.recoverModal.recoverBtn.classList.remove('hidden');
-        setRecoverButtonState(true);
-        try {
-            const formData = new FormData();
-            formData.append('action', 'recoverid');
-            formData.append('secret_key', SECRET_KEY);
-            formData.append('employee_name', name);
-            formData.append('employee_dob', dob);
-            const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
-            const data = await response.json();
-            if (data.result === 'success') {
-                dom.recoverModal.status.innerHTML = `您的報名ID是：<br><strong class="text-lg font-mono">${data.friendlyId}</strong>`;
-                dom.recoverModal.loadBtn.dataset.recoveredId = data.friendlyId;
-                dom.recoverModal.loadBtn.classList.remove('hidden');
-                dom.recoverModal.recoverBtn.classList.add('hidden');
-            } else {
-                throw new Error(data.error);
-            }
-        } catch (error) {
-            dom.recoverModal.status.textContent = error.message;
-        } finally {
-            setRecoverButtonState(false);
-        }
+    // 請用此版本取代舊的 handleFindRecord 函數
+async function handleFindRecord(idToFind = null) {
+    const id = idToFind || dom.modifyModal.idInput.value.trim();
+    if (!id) {
+        dom.modifyModal.status.textContent = '請輸入報名ID。';
+        return;
     }
+    dom.modifyModal.status.textContent = '';
+    setFindButtonState(true);
+    try {
+        const url = `${SCRIPT_URL}?action=getdatabyid&secret_key=${SECRET_KEY}&id=${id}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.status === 'success') {
+            hideModifyModal();
+            hideRecoverModal();
+            
+            // 步驟 1: 僅填入資料到表單，不做其他事
+            populateForm(data.rowData);
+            
+            formMode = 'update';
+            updateRowNumber = data.rowNumber;
+            switchToUpdateModeUI();
+            showSection('registration');
+            
+            // 步驟 2: 延遲 100 毫秒後，再呼叫費用計算函式
+            // 這確保了瀏覽器有時間先將資料顯示在畫面上
+            setTimeout(() => {
+                updateStateFromServer();
+            }, 100);
+
+        } else { throw new Error(data.message); }
+    } catch (error) {
+        dom.modifyModal.status.textContent = error.message;
+    } finally {
+        setFindButtonState(false);
+    }
+}
 
     function updateCountdown() {
         const distance = new Date('2025-11-10T14:25:00').getTime() - new Date().getTime();
