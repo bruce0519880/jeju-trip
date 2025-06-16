@@ -13,7 +13,7 @@
         }
 
         .table-container {
-            max-height: 80vh;
+            max-height: 75vh; /* [修改] 調整高度以容納儀表板 */
             overflow-y: auto;
         }
 
@@ -91,13 +91,35 @@
 
         <div id="data-view" class="hidden">
             <div class="flex justify-between items-center mb-4">
-                <p id="total-count" class="text-lg font-semibold"></p>
+                <h2 class="text-2xl font-bold">數據總覽</h2>
                 <button id="logout-btn"
                     class="bg-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600 transition">登出</button>
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-lg shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">總報名人數 (不含嬰兒)</h3>
+                    <p id="stat-total-people" class="text-2xl font-bold mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">總需代辦護照數</h3>
+                    <p id="stat-passports" class="text-2xl font-bold mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">費用方案 A (>20人) 總計</h3>
+                    <p id="stat-cost-a" class="text-2xl font-bold mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">費用方案 B (16-20人) 總計</h3>
+                    <p id="stat-cost-b" class="text-2xl font-bold mt-1">0</p>
+                </div>
+            </div>
             
-            <div class="mb-4">
-                <input type="text" id="searchInput" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="請輸入姓名或ID等關鍵字進行即時篩選...">
+            <div class="flex justify-between items-center mb-4">
+                <input type="text" id="searchInput" class="w-full md:w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm" placeholder="請輸入姓名或ID等關鍵字進行即時篩選...">
+                 <button id="export-csv-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition ml-4">
+                    匯出 CSV
+                </button>
             </div>
 
             <div class="table-container bg-white rounded-lg shadow-md">
@@ -109,6 +131,7 @@
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbbw0aqiY4zAQs7dsTeHh2KzaeAk5Mr851fcYAnIld20rt3r0Jv4AfJp7ocnn91g8W/exec';
+        let originalData = []; // [新增] 用於儲存原始數據以供匯出
 
         const dom = {
             loginView: document.getElementById('login-view'),
@@ -118,14 +141,20 @@
             loginStatus: document.getElementById('login-status'),
             logoutBtn: document.getElementById('logout-btn'),
             dataTable: document.getElementById('data-table'),
-            totalCount: document.getElementById('total-count')
+            exportBtn: document.getElementById('export-csv-btn'), // [新增]
+            // [新增] 儀表板 DOM 元素
+            stats: {
+                totalPeople: document.getElementById('stat-total-people'),
+                passports: document.getElementById('stat-passports'),
+                costA: document.getElementById('stat-cost-a'),
+                costB: document.getElementById('stat-cost-b'),
+            }
         };
         
-        // [修改] 合併為一個更穩健的日期格式化函式
         function formatDate(dateString, formatType = 'date') {
             if (!dateString) return '';
             const date = new Date(dateString);
-            if (isNaN(date.getTime())) return dateString; // 如果無法解析，返回原字串
+            if (isNaN(date.getTime())) return dateString; 
 
             const pad = (num) => num.toString().padStart(2, '0');
             const yyyy = date.getFullYear();
@@ -138,7 +167,6 @@
                 const ss = pad(date.getSeconds());
                 return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`;
             }
-            // 預設返回 'date' 格式 (YYYY-MM-DD)
             return `${yyyy}-${MM}-${dd}`;
         }
 
@@ -172,6 +200,47 @@
                 headerCell.classList.toggle("th-sort-desc", !asc);
             }
         }
+        
+        // [新增] 匯出 CSV 的函式
+        function exportToCsv() {
+            if (originalData.length === 0) {
+                alert('沒有資料可供匯出。');
+                return;
+            }
+
+            const dataToExport = [originalData[0], ...Array.from(document.querySelectorAll('#data-table tbody tr'))
+                .filter(tr => tr.style.display !== 'none')
+                .map(tr => Array.from(tr.querySelectorAll('td')).map(td => td.textContent))
+            ];
+            
+            let csvContent = "\uFEFF"; // BOM for UTF-8 Excel compatibility
+
+            dataToExport.forEach(rowArray => {
+                let row = rowArray.map(cell => {
+                    let cellData = cell === null || cell === undefined ? '' : cell.toString();
+                    // Handle commas, quotes, and newlines
+                    if (cellData.includes('"') || cellData.includes(',') || cellData.includes('\n')) {
+                        cellData = '"' + cellData.replace(/"/g, '""') + '"';
+                    }
+                    return cellData;
+                }).join(',');
+                csvContent += row + "\r\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                const today = new Date().toISOString().slice(0, 10);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `濟州島之旅報名資料_${today}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
 
         async function handleLogin() {
             const password = dom.passwordInput.value;
@@ -193,7 +262,8 @@
 
                 if (result.result === 'success') {
                     sessionStorage.setItem('admin_auth', 'true');
-                    renderDataView(result.data);
+                    originalData = result.data; // [新增] 儲存原始數據
+                    renderDataView(JSON.parse(JSON.stringify(result.data))); // 使用深拷貝傳遞數據
                 } else {
                     throw new Error(result.error);
                 }
@@ -212,7 +282,6 @@
 
             const headers = data.shift();
             
-            // [修改] 一次性找出所有日期相關欄位的索引
             const timeColumnIndex = headers.indexOf('報名時間');
             const dobColumnIndices = headers.reduce((acc, header, index) => {
                 if (header && header.includes('出生日')) {
@@ -221,28 +290,54 @@
                 return acc;
             }, []);
 
+            // [修改] 新增儀表板數據計算
             const adultIndex = headers.indexOf('同行眷屬(成人)');
             const childIndex = headers.indexOf('同行孩童');
+            const costAIndex = headers.findIndex(h => h.startsWith('費用方案A'));
+            const costBIndex = headers.findIndex(h => h.startsWith('費用方案B'));
+            const passportIndices = headers.reduce((acc, header, index) => {
+                if(header && header.includes('需換護照')) acc.push(index);
+                return acc;
+            }, []);
+
             let totalPeople = 0;
+            let totalPassports = 0;
+            let totalCostA = 0;
+            let totalCostB = 0;
+
             data.forEach(row => {
+                // 計算總人數
                 totalPeople += 1;
                 if (adultIndex > -1) totalPeople += (parseInt(row[adultIndex]) || 0);
                 if (childIndex > -1) totalPeople += (parseInt(row[childIndex]) || 0);
+
+                // 計算護照數
+                passportIndices.forEach(idx => {
+                    if(row[idx] === 'Y') totalPassports++;
+                });
+
+                // 計算總費用
+                if(costAIndex > -1) totalCostA += (parseFloat(row[costAIndex]) || 0);
+                if(costBIndex > -1) totalCostB += (parseFloat(row[costBIndex]) || 0);
             });
-            dom.totalCount.textContent = `目前總報名人數 (不含嬰兒)：${totalPeople} 人`;
+            
+            dom.stats.totalPeople.textContent = totalPeople.toLocaleString();
+            dom.stats.passports.textContent = totalPassports.toLocaleString();
+            dom.stats.costA.textContent = `₩ ${totalCostA.toLocaleString()}`;
+            dom.stats.costB.textContent = `₩ ${totalCostB.toLocaleString()}`;
+
 
             const thead = document.createElement('thead');
             thead.innerHTML = `<tr class="bg-gray-800 text-white">${headers.map(h => `<th scope="col" class="px-4 py-3 sortable">${h}<span class="sort-indicator"></span></th>`).join('')}</tr>`;
 
             const tbody = document.createElement('tbody');
-            // [修改] 渲染時，根據欄位索引呼叫新的 formatDate 函式
             tbody.innerHTML = data.map(row =>
                 `<tr class="bg-white border-b hover:bg-gray-50">${row.map((cell, index) => {
                     let cellContent = cell;
                     if (index === timeColumnIndex) {
-                        cellContent = formatDate(cell, 'datetime'); // 使用 datetime 格式
+                        cellContent = formatDate(cell, 'datetime'); 
                     } else if (dobColumnIndices.includes(index)) {
-                        cellContent = formatDate(cell, 'date'); // 使用 date 格式
+                        cellContent = formatDate(cell, 'date'); 
                     }
                     return `<td class="px-4 py-3">${cellContent}</td>`;
                 }).join('')}</tr>`
@@ -285,6 +380,7 @@
             dom.dataView.classList.add('hidden');
             dom.loginView.classList.remove('hidden');
             dom.passwordInput.value = '';
+            originalData = []; // [新增] 登出時清空數據
         }
 
         dom.loginBtn.addEventListener('click', handleLogin);
@@ -292,9 +388,10 @@
             if (e.key === 'Enter') handleLogin();
         });
         dom.logoutBtn.addEventListener('click', handleLogout);
+        dom.exportBtn.addEventListener('click', exportToCsv); // [新增]
 
         if (sessionStorage.getItem('admin_auth') === 'true') {
-            dom.totalCount.textContent = '如需載入最新資料，請先登出後再重新登入。';
+            // [修改] 移除舊提示，因為現在可以重新登入來載入最新資料
         }
     </script>
 </body>
