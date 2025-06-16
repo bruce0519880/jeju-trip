@@ -72,6 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let serverHeadcount = 0;
     let formMode = 'create';
     let updateRowNumber = null;
+    // [新增] 用於儲存修改模式下的原始同行人數
+    let originalCompanionCounts = null;
 
     function showSection(targetId) {
         dom.mainSections.forEach(section => {
@@ -258,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 breakdown.discounts.push(`<p class="pl-4">└─ 業績達標補助：<span class="font-bold" style="color: var(--accent-teal);">- ${CONFIG.subsidies.performanceBonus.toLocaleString()}</span> 元</p>`);
             }
         }
-        // [修改] 改為讀取 specialBonusSources 物件並逐條顯示
+        
         if (rule.specialBonusSources && state.hasBonus) {
             if (rule.specialBonusSources.self) {
                 subTotal -= rule.specialBonusSources.self;
@@ -424,9 +426,21 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
         dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
 
-        dom.numAdults.value = data['同行眷屬(成人)'] || 0;
-        dom.numChildren.value = data['同行孩童'] || 0;
-        dom.numInfants.value = data['同行嬰兒'] || 0;
+        // [修改] 儲存原始人數，並設定人數輸入框的最小值
+        originalCompanionCounts = {
+            adults: parseInt(data['同行眷屬(成人)']) || 0,
+            children: parseInt(data['同行孩童']) || 0,
+            infants: parseInt(data['同行嬰兒']) || 0
+        };
+        dom.numAdults.min = originalCompanionCounts.adults;
+        dom.numChildren.min = originalCompanionCounts.children;
+        dom.numInfants.min = originalCompanionCounts.infants;
+
+        // 填入原始人數
+        dom.numAdults.value = originalCompanionCounts.adults;
+        dom.numChildren.value = originalCompanionCounts.children;
+        dom.numInfants.value = originalCompanionCounts.infants;
+
         generateCompanionFields();
 
         setTimeout(() => {
@@ -462,7 +476,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetFormToCreateMode() {
         formMode = 'create';
         updateRowNumber = null;
+        // [修改] 清除儲存的原始人數
+        originalCompanionCounts = null;
+
         dom.regForm.reset();
+
+        // [修改] 將人數輸入框的最小值恢復為 0
+        dom.numAdults.min = 0;
+        dom.numChildren.min = 0;
+        dom.numInfants.min = 0;
+
         generateCompanionFields();
         handleSpecialConditions();
         dom.submitBtn.text.textContent = '送出報名';
@@ -480,7 +503,13 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.modifyModal.idInput.value = '';
         dom.modifyModal.status.textContent = '';
         dom.modifyModal.content.classList.remove('active');
-        setTimeout(() => dom.modifyModal.container.classList.add('hidden'), 300);
+        setTimeout(() => {
+            dom.modifyModal.container.classList.add('hidden');
+            // 當關閉修改視窗時，也重設表單，以防限制殘留
+            if (formMode === 'update') {
+                resetFormToCreateMode();
+            }
+        }, 300);
     }
 
     function setFindButtonState(isFinding) {
@@ -628,7 +657,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const companionInputs = [dom.numAdults, dom.numChildren, dom.numInfants];
         companionInputs.forEach(input => {
-            // [移除] 刪除人數上限的檢查邏輯
             input.addEventListener('input', () => {
                 generateCompanionFields();
                 renderCost();
