@@ -156,6 +156,21 @@
             // 在此可以選擇自動重新載入資料或顯示一個「重新整理」按鈕
             dom.totalCount.textContent = '頁面已重新整理，請點擊登出後重新登入以載入最新資料。';
         }
+// 在 admin.html 的 <script> 中加入
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const tableRows = document.querySelectorAll('#data-table tbody tr');
+
+    tableRows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(searchTerm)) {
+            row.style.display = ''; // 顯示符合條件的資料列
+        } else {
+            row.style.display = 'none'; // 隱藏不符合的
+        }
+    });
+});
     </script>
 </body>
 
