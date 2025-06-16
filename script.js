@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.modifyModal.status.textContent = '';
         setFindButtonState(true);
         try {
-            const url = `${SCRIPT_URL}?action=getdatabyid&secret_key=${SECRET_KEY}&id=${id}`;
+            const url = `${SCRIPT_URL}?action=getdatabyid&secret_key=${SECRET_KEY}&id=${id}&t=${new Date().getTime()}`;
             const response = await fetch(url);
             const data = await response.json();
             if (data.status === 'success') {
