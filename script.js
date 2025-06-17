@@ -601,8 +601,9 @@ if (data.status === 'success') {
             dom.progress.title.innerText = "頁面載入失敗";
             dom.progress.text.innerText = "無法從伺服器取得必要資訊，請稍後再試。";
         }
-        const animationObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
-        document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
+        // 修改後
+const animationObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
+// document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
     }
 
     init();
