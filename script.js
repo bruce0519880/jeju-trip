@@ -292,34 +292,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(url);
             const data = await response.json();
 
-            // 在 script.js -> handleFindRecord 函式中
-// 請用這整段程式碼，替換掉原本的 if (data.status === 'success') { ... } 區塊
+            if (data.status === 'success') {
+                hideModifyModal();
+                hideRecoverModal();
 
-if (data.status === 'success') {
-    hideModifyModal();
-    hideRecoverModal();
+                // 修正後執行順序: 1. 顯示區塊
+                showSection('registration');
+                
+                // 修正後執行順序: 2. 設定模式
+                formMode = 'update';
+                updateRowNumber = data.rowNumber;
+                switchToUpdateModeUI();
 
-    // 步驟 1: 先將空白的報名區塊顯示出來
-    showSection('registration');
-
-    // 步驟 2: 立刻設定好更新模式與UI，讓按鈕文字先變
-    formMode = 'update';
-    updateRowNumber = data.rowNumber;
-    switchToUpdateModeUI();
-
-    // 【最終修正】步驟 3: 使用 setTimeout 將資料填入與費用計算推遲到下一個事件迴圈
-    // 這能給予瀏覽器足夠的時間去處理顯示區塊的CSS動畫，避免渲染衝突
-    setTimeout(() => {
-        // 將資料填入可見的表單
-        populateForm(data.rowData);
-
-        // 在資料填入後，才計算費用
-        updateStateFromServer();
-    }, 0); // 延遲時間設為 0 即可
-
-} else {
-    throw new Error(data.message);
-}
+                // 修正後執行順序: 3. 使用 setTimeout 延遲填入，避免渲染衝突
+                setTimeout(() => {
+                    populateForm(data.rowData);
+                    updateStateFromServer();
+                }, 0); 
+    
+            } else {
+                throw new Error(data.message);
+            }
         } catch (error) {
             dom.modifyModal.status.textContent = `查詢時發生錯誤: ${error.message}`;
         } finally {
@@ -601,9 +594,9 @@ if (data.status === 'success') {
             dom.progress.title.innerText = "頁面載入失敗";
             dom.progress.text.innerText = "無法從伺服器取得必要資訊，請稍後再試。";
         }
-        // 修改後
-const animationObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
-// document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
+        // 【最終修正】關閉與渲染衝突的CSS動畫
+        // const animationObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
+        // document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
     }
 
     init();
