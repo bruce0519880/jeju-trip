@@ -102,9 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const adults = parseInt(dom.numAdults.value) || 0;
         const children = parseInt(dom.numChildren.value) || 0;
         const infants = parseInt(dom.numInfants.value) || 0;
-        document.getElementById('hiddenAdults').value = adults;
-        document.getElementById('hiddenChildren').value = children;
-        document.getElementById('hiddenInfants').value = infants;
+        
+        // [升級] 移除對 hidden input 的操作
+        
         let html = '';
         const createFieldset = (type, index) => {
             const typeText = { adult: '成人', child: '孩童', infant: '嬰兒' }[type];
@@ -297,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideRecoverModal();
                 showSection('registration');
                 
-                // [UPGRADE #3] Add visual feedback for successful data load
                 const registrationCard = document.getElementById('registration');
                 registrationCard.style.transition = 'box-shadow 0.2s ease-in-out';
                 registrationCard.style.boxShadow = '0 0 30px rgba(26, 188, 156, 0.7)';
@@ -322,7 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // [UPGRADE #2] Helper function to reduce code duplication in populateForm
     function populateCompanionGroup(type, count, data) {
         const typeMap = { adult: '成人', child: '孩童', infant: '嬰兒' };
         for (let i = 1; i <= count; i++) {
@@ -342,7 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // [UPGRADE #2] Refactored populateForm function
     function populateForm(data) {
         try {
             originalCompanionCounts = {
