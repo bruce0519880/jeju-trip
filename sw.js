@@ -1,5 +1,5 @@
 // sw.js (v6) - 更新 manifest 的最終版本，並修正後台導覽問題
-const CACHE_NAME = 'jeju-tour-cache-v6'; // <-- 版本號已升級
+const CACHE_NAME = 'jeju-tour-cache-v7'; // <-- 版本號已升級
 const urlsToCache = [
     '/jeju-trip/index.html',
     '/jeju-trip/style.css',
@@ -14,7 +14,7 @@ self.addEventListener('install', event => {
     self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
-            console.log('Opened cache and caching files for v6');
+            console.log('Opened cache and caching files for v7');
             return cache.addAll(urlsToCache);
         })
     );
