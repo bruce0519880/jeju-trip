@@ -295,9 +295,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'success') {
                 hideModifyModal();
                 hideRecoverModal();
-
                 showSection('registration');
                 
+                // [UPGRADE #3] Add visual feedback for successful data load
+                const registrationCard = document.getElementById('registration');
+                registrationCard.style.transition = 'box-shadow 0.2s ease-in-out';
+                registrationCard.style.boxShadow = '0 0 30px rgba(26, 188, 156, 0.7)';
+                setTimeout(() => { registrationCard.style.boxShadow = ''; }, 1500);
+
                 formMode = 'update';
                 updateRowNumber = data.rowNumber;
                 switchToUpdateModeUI();
@@ -317,6 +322,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // [UPGRADE #2] Helper function to reduce code duplication in populateForm
+    function populateCompanionGroup(type, count, data) {
+        const typeMap = { adult: '成人', child: '孩童', infant: '嬰兒' };
+        for (let i = 1; i <= count; i++) {
+            const nameKey = `${typeMap[type]}${i}-姓名`;
+            const dobKey = `${typeMap[type]}${i}-出生日期`;
+            const passportKey = `${typeMap[type]}${i}-需換護照`;
+
+            if (dom.regForm.querySelector(`[name="${type}_${i}_name"]`)) {
+                dom.regForm.querySelector(`[name="${type}_${i}_name"]`).value = data[nameKey] || '';
+            }
+            if (dom.regForm.querySelector(`[name="${type}_${i}_dob"]`)) {
+                dom.regForm.querySelector(`[name="${type}_${i}_dob"]`).value = data[dobKey] || '';
+            }
+            if (dom.regForm.querySelector(`[name="${type}_${i}_renew_passport"]`)) {
+                dom.regForm.querySelector(`[name="${type}_${i}_renew_passport"]`).checked = (data[passportKey] === 'Y');
+            }
+        }
+    }
+
+    // [UPGRADE #2] Refactored populateForm function
     function populateForm(data) {
         try {
             originalCompanionCounts = {
@@ -333,27 +359,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
             dom.inputs.regName.value = data['員工姓名'] || '';
             dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
-            
-            // [BUG A FIX]: Use correct key '需換護照' instead of '需換護照(員工)'
-            dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
+            dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照'] === 'Y');
     
-            for (let i = 1; i <= originalCompanionCounts.adults; i++) {
-                if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
-                if (dom.regForm.querySelector(`[name="adult_${i}_dob"]`)) dom.regForm.querySelector(`[name="adult_${i}_dob"]`).value = data[`成人${i}-出生日期`] || '';
-                if (dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="adult_${i}_renew_passport"]`).checked = (data[`成人${i}-需換護照`] === 'Y');
-            }
-
-            for (let i = 1; i <= originalCompanionCounts.children; i++) {
-                if (dom.regForm.querySelector(`[name="child_${i}_name"]`)) dom.regForm.querySelector(`[name="child_${i}_name"]`).value = data[`孩童${i}-姓名`] || '';
-                if (dom.regForm.querySelector(`[name="child_${i}_dob"]`)) dom.regForm.querySelector(`[name="child_${i}_dob"]`).value = data[`孩童${i}-出生日期`] || '';
-                if (dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="child_${i}_renew_passport"]`).checked = (data[`孩童${i}-需換護照`] === 'Y');
-            }
-
-            for (let i = 1; i <= originalCompanionCounts.infants; i++) {
-                if (dom.regForm.querySelector(`[name="infant_${i}_name"]`)) dom.regForm.querySelector(`[name="infant_${i}_name"]`).value = data[`嬰兒${i}-姓名`] || '';
-                if (dom.regForm.querySelector(`[name="infant_${i}_dob"]`)) dom.regForm.querySelector(`[name="infant_${i}_dob"]`).value = data[`嬰兒${i}-出生日期`] || '';
-                if (dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`)) dom.regForm.querySelector(`[name="infant_${i}_renew_passport"]`).checked = (data[`嬰兒${i}-需換護照`] === 'Y');
-            }
+            populateCompanionGroup('adult', originalCompanionCounts.adults, data);
+            populateCompanionGroup('child', originalCompanionCounts.children, data);
+            populateCompanionGroup('infant', originalCompanionCounts.infants, data);
     
             dom.inputs.isOutsourced.checked = (data['是否外包'] === 'Y');
             dom.inputs.performanceBonus.checked = (data['業績達標'] === 'Y');
@@ -542,7 +552,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showModifyModal(); 
         }));
         
-        // [BUG B FIX - Part 1]: Add reset logic to manual close actions
         dom.modifyModal.closeBtn.addEventListener('click', () => {
             hideModifyModal();
             if (formMode === 'update') {
@@ -598,7 +607,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.progress.text.innerText = "無法從伺服器取得必要資訊，請稍後再試。";
         }
         
-        // [ANIMATION FIX]: Restore animation code as requested
         const animationObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
         document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
     }
