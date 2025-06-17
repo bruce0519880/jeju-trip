@@ -1,0 +1,5 @@
+# 忽略大型開發工具
+tailwindcss.exe
+
+# 忽略 npm 的工具資料夾 (這是一個好習慣)
+/node_modules
