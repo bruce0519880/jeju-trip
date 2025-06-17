@@ -292,34 +292,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const url = `${SCRIPT_URL}?action=getdatabyid&secret_key=${SECRET_KEY}&id=${id}&t=${new Date().getTime()}`;
             const response = await fetch(url);
             const data = await response.json();
+
 if (data.status === 'success') {
     hideModifyModal();
     hideRecoverModal();
 
-    // 步驟 1: 執行填入表單
+    // 【順序調整】步驟 1: 先將空白的報名區塊顯示出來
+    showSection('registration');
+
+    // 【順序調整】步驟 2: 再對「可見的」表單進行資料填入
     populateForm(data.rowData);
 
-    // ===================== 加入這兩行最終驗證碼 =====================
-    console.log("【最終驗證】從畫面上回讀「員工姓名」輸入框的值:", dom.inputs.regName.value);
-    console.log("【最終驗證】從畫面上回讀「生日」輸入框的值:", dom.regForm.querySelector('[name="employee_dob"]').value);
-    // =============================================================
-
+    // 【順序調整】步驟 3: 最後才設定模式與UI
     formMode = 'update';
     updateRowNumber = data.rowNumber;
     switchToUpdateModeUI();
-    showSection('registration');
 
+    // 延遲計算費用
     setTimeout(() => {
         updateStateFromServer();
     }, 100);
 
-            } else { throw new Error(data.message); }
-        } catch (error) {
-            dom.modifyModal.status.textContent = error.message;
-        } finally {
-            setFindButtonState(false);
-        }
-    }
+} else {
+    throw new Error(data.message);
+}
 
  // 用這整段程式碼替換掉你原本的 populateForm 函式
 function populateForm(data) {
