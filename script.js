@@ -333,7 +333,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
             dom.inputs.regName.value = data['員工姓名'] || '';
             dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
-            dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
+            
+            // [BUG A FIX]: Use correct key '需換護照' instead of '需換護照(員工)'
+            dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照'] === 'Y');
     
             for (let i = 1; i <= originalCompanionCounts.adults; i++) {
                 if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
@@ -393,9 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.modifyModal.content.classList.remove('active');
         setTimeout(() => { 
             dom.modifyModal.container.classList.add('hidden'); 
-            if (formMode === 'update') {
-                resetFormToCreateMode();
-            }
         }, 300);
     }
 
@@ -543,13 +542,20 @@ document.addEventListener('DOMContentLoaded', () => {
             showModifyModal(); 
         }));
         
+        // [BUG B FIX - Part 1]: Add reset logic to manual close actions
         dom.modifyModal.closeBtn.addEventListener('click', () => {
             hideModifyModal();
+            if (formMode === 'update') {
+                resetFormToCreateMode();
+            }
             showSection(lastActiveSectionId);
         });
         dom.modifyModal.container.addEventListener('click', (e) => { 
             if (e.target === dom.modifyModal.container) {
                 hideModifyModal();
+                if (formMode === 'update') {
+                    resetFormToCreateMode();
+                }
                 showSection(lastActiveSectionId);
             }
         });
@@ -591,9 +597,10 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.progress.title.innerText = "頁面載入失敗";
             dom.progress.text.innerText = "無法從伺服器取得必要資訊，請稍後再試。";
         }
-        // 【最終修正】註解掉這行動畫程式碼以避免渲染衝突
-        // const animationObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
-        // document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
+        
+        // [ANIMATION FIX]: Restore animation code as requested
+        const animationObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
     }
 
     init();
