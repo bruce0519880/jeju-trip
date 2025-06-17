@@ -21,7 +21,7 @@ if (workbox) {
   const precacheManifest = [
     { url: '/jeju-trip/index.html', revision: null },
     { url: '/jeju-trip/style.css', revision: null },
-    { url: '/jeju-trip/modules/main.js', revision: null }, // 注意：路徑已更新為模組化的版本
+    { url: '/jeju-trip/script.js', revision: null }, // 注意：路徑已更新為模組化的版本
     { url: '/jeju-trip/manifest.json', revision: null },
     { url: '/jeje-trip/images/icon-192.png', revision: null },
     { url: '/jeju-trip/images/icon-512.png', revision: null },
