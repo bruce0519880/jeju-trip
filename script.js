@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 用這整段程式碼替換掉你原本的 populateForm 函式
+ // 用這整段程式碼替換掉你原本的 populateForm 函式
 function populateForm(data) {
     console.log("1. populateForm 函式開始執行。收到的資料:", data);
     try {
@@ -334,7 +334,7 @@ function populateForm(data) {
         console.log("3. 成功設定完人數輸入框的值。");
 
         generateCompanionFields();
-        console.log("4. 成功產生眷屬資料欄位。");
+        console.log("4. 成功產生眷屬欄位。");
 
         dom.inputs.regName.value = data['員工姓名'] || '';
         console.log("5. 成功填入員工姓名。");
