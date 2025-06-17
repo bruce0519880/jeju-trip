@@ -292,29 +292,34 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(url);
             const data = await response.json();
 
-            if (data.status === 'success') {
-                hideModifyModal();
-                hideRecoverModal();
+            // 在 script.js -> handleFindRecord 函式中
+// 請用這整段程式碼，替換掉原本的 if (data.status === 'success') { ... } 區塊
 
-                // 【最終修正】步驟 1: 先將空白的報名區塊顯示出來
-                showSection('registration');
-    
-                // 【最終修正】步驟 2: 再對「可見的」表單進行資料填入
-                populateForm(data.rowData);
-    
-                // 【最終修正】步驟 3: 最後才設定模式與UI
-                formMode = 'update';
-                updateRowNumber = data.rowNumber;
-                switchToUpdateModeUI();
-    
-                // 延遲計算費用
-                setTimeout(() => {
-                    updateStateFromServer();
-                }, 100);
-    
-            } else {
-                throw new Error(data.message);
-            }
+if (data.status === 'success') {
+    hideModifyModal();
+    hideRecoverModal();
+
+    // 步驟 1: 先將空白的報名區塊顯示出來
+    showSection('registration');
+
+    // 步驟 2: 立刻設定好更新模式與UI，讓按鈕文字先變
+    formMode = 'update';
+    updateRowNumber = data.rowNumber;
+    switchToUpdateModeUI();
+
+    // 【最終修正】步驟 3: 使用 setTimeout 將資料填入與費用計算推遲到下一個事件迴圈
+    // 這能給予瀏覽器足夠的時間去處理顯示區塊的CSS動畫，避免渲染衝突
+    setTimeout(() => {
+        // 將資料填入可見的表單
+        populateForm(data.rowData);
+
+        // 在資料填入後，才計算費用
+        updateStateFromServer();
+    }, 0); // 延遲時間設為 0 即可
+
+} else {
+    throw new Error(data.message);
+}
         } catch (error) {
             dom.modifyModal.status.textContent = `查詢時發生錯誤: ${error.message}`;
         } finally {
