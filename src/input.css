@@ -1,3 +1,712 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ==========================================================================
+   1. :root Variables - 變數定義
+   ========================================================================== */
+:root {
+    --bg-light: #f8f9fa;
+    --text-dark: #343a40;
+    --accent-tangerine: #FF7A59;
+    --accent-teal: #1ABC9C;
+    --accent-sunny-yellow: #F1C40F;
+    --bg-card-yellow: #fffbeb;
+    --bg-card-green: #f0fdfa;
+    --bg-card-purple: #f8f7ff;
+    --bg-card-pink: #fff5f5;
+    --bg-card-blue: #f7faff;
+    --bg-card-sky: #f0f9ff;
+    --bg-card-checklist: #fefeff;
+}
+
+
+/* ==========================================================================
+   2. General & Typography - 通用基礎與文字排版
+   ========================================================================== */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.7;
+    /* 柔和的漸層背景，取代原本的雜訊紋理 */
+    background-image: linear-gradient(to top, #f8f9fa, #f0fdfa);
+}
+
+p {
+    line-height: 1.8;
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, var(--accent-tangerine), var(--accent-sunny-yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* ==========================================================================
+   3. Layout & Card Styles - 主要佈局與卡片
+   ========================================================================== */
+.main-section {
+    transition: opacity 0.4s ease-in-out;
+}
+
+.card {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* 卡片背景色 */
+#summary.card {
+    background-color: var(--bg-card-yellow);
+}
+
+#itinerary.card {
+    background-color: var(--bg-card-green);
+}
+
+#map.card {
+    background-color: var(--bg-card-sky);
+}
+
+#checklist.card {
+    background-color: var(--bg-card-checklist);
+}
+
+#faq.card {
+    background-color: var(--bg-card-purple);
+}
+
+#registration.card {
+    background-color: var(--bg-card-pink);
+}
+
+#passport-info.card,
+.dual-card-container>.card {
+    background-color: var(--bg-card-blue);
+}
+
+/* 卡片標題 */
+.card-header {
+    background: linear-gradient(45deg, var(--accent-tangerine), var(--accent-sunny-yellow));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    margin: -2rem -2rem 1.5rem -2rem;
+    border-radius: 1rem 1rem 0 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/* 覆蓋行程卡片的標題，因其有獨立設計 */
+#itinerary .card-header {
+    background: none;
+    color: var(--accent-tangerine);
+    margin: 0 0 1.5rem 0;
+    border-radius: 0;
+    text-shadow: none;
+    padding: 0;
+    font-size: 1.75rem;
+}
+
+.sub-section-bg {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================================================
+   4. Navigation - 導覽列
+   ========================================================================== */
+.nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+    padding-bottom: 6px;
+    cursor: pointer;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--accent-tangerine);
+    transition: width 0.3s ease;
+    border-radius: 2px;
+}
+
+.nav-link:not(.signup-button):not(.floating-signup-btn):hover {
+    color: var(--accent-tangerine);
+}
+
+.nav-link:not(.signup-button):not(.floating-signup-btn):hover::after {
+    width: 100%;
+}
+
+.nav-link.active {
+    color: var(--accent-tangerine);
+    font-weight: 700;
+}
+
+.nav-link.active::after {
+    width: 100%;
+}
+
+
+/* ==========================================================================
+   5. Component Styles - 元件樣式
+   ========================================================================== */
+
+/* --- Countdown Timer --- */
+.countdown-segment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-tangerine);
+    color: #FFFFFF;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    font-size: 1.75rem;
+    min-width: 65px;
+    height: 70px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    line-height: 1.1;
+    transition: background-color 0.3s ease;
+}
+
+.countdown-label {
+    font-size: 0.8rem;
+    color: #FFFFFF;
+    margin-top: 0.2rem;
+    font-weight: 500;
+}
+
+.urgent-countdown .countdown-segment {
+    background-color: #dc2626;
+}
+
+/* --- Itinerary Box --- */
+.itinerary-day-box {
+    position: relative;
+    border: 1px solid #e0f2f1;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.itinerary-day-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.itinerary-day-box::before,
+.itinerary-day-box::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--accent-teal);
+    border-style: solid;
+}
+
+.itinerary-day-box::before {
+    top: 0;
+    left: 0;
+    border-width: 3px 0 0 3px;
+    border-top-left-radius: 0.5rem;
+}
+
+.itinerary-day-box::after {
+    bottom: 0;
+    right: 0;
+    border-width: 0 3px 3px 0;
+    border-bottom-right-radius: 0.5rem;
+}
+
+.itinerary-header {
+    background-image: linear-gradient(45deg, var(--accent-teal), #24c6a8);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.itinerary-content {
+    padding: 1.5rem;
+}
+
+.itinerary-link {
+    text-decoration: underline;
+    text-decoration-color: var(--accent-teal);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    transition: all 0.2s ease-in-out;
+}
+
+.itinerary-link:hover {
+    color: var(--accent-tangerine);
+    background-color: rgba(255, 122, 89, 0.1);
+}
+
+/* --- Map --- */
+.map-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 75%;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* --- Checklist --- */
+.checklist-category {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.checklist-header {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent-teal);
+    margin-bottom: 0.75rem;
+    border-bottom: 2px solid var(--accent-teal);
+    padding-bottom: 0.5rem;
+}
+
+.checklist-item {
+    margin-bottom: 0.5rem;
+}
+
+.checklist-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checklist-item input[type="checkbox"]+span {
+    position: relative;
+    margin-left: 0.75rem;
+    transition: all 0.2s;
+}
+
+.checklist-item input[type="checkbox"]+span::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--accent-tangerine);
+    transition: width 0.3s ease;
+}
+
+.checklist-item input[type="checkbox"]:checked+span {
+    color: #9ca3af;
+}
+
+.checklist-item input[type="checkbox"]:checked+span::after {
+    width: 100%;
+}
+
+
+/* --- FAQ --- */
+.faq-item {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1rem;
+    transition: margin-bottom 0.3s ease;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.faq-question {
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dark);
+    transition: color 0.3s ease;
+}
+
+.faq-question:hover {
+    color: var(--accent-tangerine);
+}
+
+.faq-question::-webkit-details-marker,
+.faq-question::marker {
+    display: none;
+}
+
+.faq-question::after {
+    content: '+';
+    font-size: 1.5rem;
+    color: var(--accent-teal);
+    transition: transform 0.3s ease;
+}
+
+details[open]>summary.faq-question::after {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    color: #4b5563;
+    line-height: 1.8;
+    transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1), padding-top 0.5s ease;
+}
+
+details[open]>.faq-answer {
+    max-height: 500px;
+    padding-top: 1rem;
+}
+
+.faq-answer p {
+    margin-bottom: 0.75rem;
+}
+
+.faq-answer p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* --- Passport & Info Lists --- */
+.info-list-item {
+    display: flex;
+    align-items: flex-start;
+    font-size: 1rem;
+    color: var(--text-dark);
+    margin-bottom: 0.75rem;
+}
+
+.info-list-item::before {
+    content: '🍊';
+    display: inline-block;
+    width: 1em;
+    flex-shrink: 0;
+    margin-right: 0.6em;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.passport-info-item {
+    display: flex;
+    align-items: flex-start;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin-bottom: 0.6rem;
+}
+
+.passport-info-item::before {
+    content: '📄';
+    display: inline-block;
+    width: 1.5em;
+    flex-shrink: 0;
+    margin-right: 0.5em;
+}
+
+#passport-info .text-center.mb-6 {
+    border-left: 5px solid var(--accent-sunny-yellow);
+    background-color: rgba(241, 196, 15, 0.1) !important;
+    text-align: left !important;
+    padding: 1rem 1.5rem !important;
+    font-weight: 500;
+}
+
+
+/* ==========================================================================
+   6. Form & Button Styles - 表單與按鈕
+   ========================================================================== */
+
+/* --- Form Fields --- */
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid var(--accent-teal);
+    transition: all 0.2s ease-in-out;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    border-radius: 4px;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: #ffffff;
+    flex-shrink: 0;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--accent-tangerine);
+    border-color: var(--accent-tangerine);
+    box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.3);
+}
+
+input[type="checkbox"]:checked::before {
+    content: '✔';
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.9rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+input[type="checkbox"]:disabled {
+    border-color: #adb5bd;
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+label.inline-flex span {
+    transition: color 0.2s ease-in-out;
+}
+
+input[type="checkbox"]:checked+span {
+    color: var(--accent-tangerine);
+    font-weight: 600;
+}
+
+.form-input {
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-dark);
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-tangerine);
+    box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.25);
+}
+
+.form-input.invalid-input {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+}
+
+form fieldset {
+    border-color: #e5e7eb;
+    transition: border-color 0.3s ease;
+}
+
+form fieldset:focus-within {
+    border-color: var(--accent-tangerine);
+}
+
+form label {
+    transition: color 0.3s ease;
+}
+
+form :focus-within label {
+    color: var(--accent-tangerine);
+    font-weight: 600;
+}
+
+/* --- Buttons --- */
+#submitBtn {
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(45deg, var(--accent-tangerine), #ff5e3a);
+    box-shadow: 0 0 20px rgba(255, 122, 89, 0.5);
+    animation: pulse-glow 2s infinite ease-in-out;
+}
+
+#submitBtn:hover {
+    transform: scale(1.02) translateY(-2px);
+}
+
+#submitBtn:active {
+    transform: scale(0.98) translateY(0);
+}
+
+#submitBtn:disabled {
+    background-color: #adb5bd;
+    background-image: none;
+    color: #6c757d;
+    cursor: not-allowed;
+    transform: scale(1);
+    box-shadow: none;
+    animation: none;
+}
+
+.floating-signup-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: var(--accent-tangerine);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    box-shadow: 0 8px 25px rgba(255, 122, 89, 0.4);
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    z-index: 50;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.floating-signup-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(255, 122, 89, 0.5);
+}
+
+.floating-signup-btn:active {
+    transform: scale(1);
+    background-color: #ff6347;
+}
+
+
+/* --- Progress Bar --- */
+.progress-bar-container {
+    background-color: #e9ecef;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+}
+
+.progress-bar-fill {
+    background: linear-gradient(90deg, var(--accent-tangerine), var(--accent-sunny-yellow));
+    padding: 0.5rem;
+    text-align: right;
+    color: var(--text-dark);
+    font-weight: bold;
+    transition: width 0.5s ease-in-out;
+}
+
+.plan-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.active-plan {
+    border-color: var(--accent-tangerine);
+    box-shadow: 0 0 25px rgba(255, 122, 89, 0.5);
+}
+
+
+/* ==========================================================================
+   7. Animations & Spinners - 動畫與讀取圖示
+   ========================================================================== */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    animation: spin 0.8s linear infinite;
+}
+
+.progress-spinner {
+    border: 4px solid #e9ecef;
+    border-top-color: var(--accent-tangerine);
+    width: 2rem;
+    height: 2rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 20px rgba(255, 122, 89, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 35px rgba(255, 122, 89, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 20px rgba(255, 122, 89, 0.5);
+    }
+}
+
+
+/* ==========================================================================
+   8. Others (Footer, Modal) - 其他
+   ========================================================================== */
+.main-footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #dee2e6;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+#modal-content {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+/* ==========================================================================
+   9. Modal Content Active State - 彈出視窗內容啟用狀態 (新增的修復)
+   ========================================================================== */
+#modify-modal-content,
+#recover-modal-content {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+#modify-modal-content.active,
+#recover-modal-content.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+#modal-content.active {
+    transform: scale(1);
+    opacity: 1;
+}
