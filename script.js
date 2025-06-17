@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.regForm.querySelector('[name="employee_dob"]').value = data['出生年月日'] || '';
             
             // [BUG A FIX]: Use correct key '需換護照' instead of '需換護照(員工)'
-            dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照'] === 'Y');
+            dom.regForm.querySelector('[name="employee_renew_passport"]').checked = (data['需換護照(員工)'] === 'Y');
     
             for (let i = 1; i <= originalCompanionCounts.adults; i++) {
                 if (dom.regForm.querySelector(`[name="adult_${i}_name"]`)) dom.regForm.querySelector(`[name="adult_${i}_name"]`).value = data[`成人${i}-姓名`] || '';
