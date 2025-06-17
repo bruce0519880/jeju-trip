@@ -292,22 +292,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const url = `${SCRIPT_URL}?action=getdatabyid&secret_key=${SECRET_KEY}&id=${id}&t=${new Date().getTime()}`;
             const response = await fetch(url);
             const data = await response.json();
-            if (data.status === 'success') {
-                hideModifyModal();
-                hideRecoverModal();
-                
-                // 步驟 1: 僅填入資料到表單，不做其他事
-                populateForm(data.rowData);
-                
-                formMode = 'update';
-                updateRowNumber = data.rowNumber;
-                switchToUpdateModeUI();
-                showSection('registration');
-                
-                // 步驟 2: 延遲 100 毫秒後，再呼叫費用計算函式
-                setTimeout(() => {
-                    updateStateFromServer();
-                }, 100);
+if (data.status === 'success') {
+    hideModifyModal();
+    hideRecoverModal();
+
+    // 步驟 1: 執行填入表單
+    populateForm(data.rowData);
+
+    // ===================== 加入這兩行最終驗證碼 =====================
+    console.log("【最終驗證】從畫面上回讀「員工姓名」輸入框的值:", dom.inputs.regName.value);
+    console.log("【最終驗證】從畫面上回讀「生日」輸入框的值:", dom.regForm.querySelector('[name="employee_dob"]').value);
+    // =============================================================
+
+    formMode = 'update';
+    updateRowNumber = data.rowNumber;
+    switchToUpdateModeUI();
+    showSection('registration');
+
+    setTimeout(() => {
+        updateStateFromServer();
+    }, 100);
 
             } else { throw new Error(data.message); }
         } catch (error) {
