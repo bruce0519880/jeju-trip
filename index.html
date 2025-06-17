@@ -13,13 +13,17 @@
     <link rel="apple-touch-icon" href="/images/icon-192.png">
 
     <link rel="manifest" href="manifest.json">
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="preconnect" href="https://script.google.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <script src="script.js" defer></script>
 </head>
 
 <body class="p-4 sm:p-6 lg:p-8">
@@ -108,7 +112,7 @@
                 <div class="mt-8">
                     <a class="weatherwidget-io" href="https://forecast7.com/zh-tw/33d49126d50/jeju-do/"
                         data-label_1="JEJU-DO" data-label_2="天氣" data-font="微軟正黑體 (Microsoft JhengHei)"
-                        data-theme="pure">JEJU-DO WEATHER</a>
+                        data-theme="pure" title="濟州島天氣預報">JEJU-DO WEATHER</a>
                 </div>
             </section>
 
@@ -121,9 +125,9 @@
                         <div class="itinerary-header">
                             <h3 class="text-xl font-bold">
                                 🛬 第一天：桃園國際機場/濟州國際機場→<a href="https://www.google.com/maps/search/?api=1&query=濟州島龍頭岩"
-                                    target="_blank" rel="noopener noreferrer" class="itinerary-link text-white underline">龍頭岩</a>+<a
+                                    target="_blank" rel="noopener noreferrer" class="itinerary-link text-white underline" aria-label="在地圖上查看龍頭岩">龍頭岩</a>+<a
                                     href="https://www.google.com/maps/search/?api=1&query=濟州島龍淵峽谷" target="_blank" rel="noopener noreferrer"
-                                    class="itinerary-link text-white underline">龍淵峽谷</a>
+                                    class="itinerary-link text-white underline" aria-label="在地圖上查看龍淵峽谷">龍淵峽谷</a>
                             </h3>
                         </div>
                         <div class="itinerary-content">
@@ -143,13 +147,13 @@
                         <div class="itinerary-header">
                             <h3 class="text-xl font-bold">
                                 🏞️ 第二天：<a href="https://www.google.com/maps/search/?api=1&query=城山日出峰" target="_blank" rel="noopener noreferrer"
-                                    class="itinerary-link text-white underline">城山日出峰</a>→<a
+                                    class="itinerary-link text-white underline" aria-label="在地圖上查看城山日出峰">城山日出峰</a>→<a
                                     href="https://www.google.com/maps/search/?api=1&query=萬丈窟" target="_blank" rel="noopener noreferrer"
-                                    class="itinerary-link text-white underline">萬丈窟</a>→<a
+                                    class="itinerary-link text-white underline" aria-label="在地圖上查看萬丈窟">萬丈窟</a>→<a
                                     href="https://www.google.com/maps/search/?api=1&query=濟州城邑民俗村" target="_blank" rel="noopener noreferrer"
-                                    class="itinerary-link text-white underline">濟州城邑民俗村</a>→<a
+                                    class="itinerary-link text-white underline" aria-label="在地圖上查看濟州城邑民俗村">濟州城邑民俗村</a>→<a
                                     href="https://www.google.com/maps/search/?api=1&query=濟州東門市場" target="_blank" rel="noopener noreferrer"
-                                    class="itinerary-link text-white underline">東門市場</a>
+                                    class="itinerary-link text-white underline" aria-label="在地圖上查看東門市場">東門市場</a>
                             </h3>
                         </div>
                         <div class="itinerary-content">
@@ -169,11 +173,11 @@
                         <div class="itinerary-header">
                             <h3 class="text-xl font-bold">
                                 🌳 第三天：<a href="https://www.google.com/maps/search/?api=1&query=ECOLAND森林小火車"
-                                    target="_blank" rel="noopener noreferrer" class="itinerary-link text-white underline">ECOLAND森林小火車</a>→<a
+                                    target="_blank" rel="noopener noreferrer" class="itinerary-link text-white underline" aria-label="在地圖上查看ECOLAND森林小火車">ECOLAND森林小火車</a>→<a
                                     href="https://www.google.com/maps/search/?api=1&query=漢拏樹木園" target="_blank" rel="noopener noreferrer"
-                                    class="itinerary-link text-white underline">漢拏樹木園</a>→<a
+                                    class="itinerary-link text-white underline" aria-label="在地圖上查看漢拏樹木園">漢拏樹木園</a>→<a
                                     href="https://www.google.com/maps/search/?api=1&query=天地淵瀑布" target="_blank" rel="noopener noreferrer"
-                                    class="itinerary-link text-white underline">天地淵瀑布</a>
+                                    class="itinerary-link text-white underline" aria-label="在地圖上查看天地淵瀑布">天地淵瀑布</a>
                             </h3>
                         </div>
                         <div class="itinerary-content">
@@ -231,7 +235,7 @@
                 <div class="map-container">
                     <iframe
                         src="https://www.google.com/maps/d/u/3/embed?mid=1g2SJi8dLOyFMvDvPwpCr5NA3Q-XsP-c&ehbc=2E312F&noprof=1"
-                        width="640" height="480" loading="lazy"></iframe>
+                        width="640" height="480" loading="lazy" title="濟州島景點互動式地圖"></iframe>
                 </div>
             </section>
 
@@ -426,20 +430,18 @@
                                 <legend class="px-2 text-lg font-semibold text-gray-800">1. 同行人數 (員工本人免填)</legend>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
                                     <div><label for="numAdults" class="block text-sm font-medium text-gray-600 mb-1">眷屬
-                                            (成人)</label><input type="number" id="numAdults" class="form-input" value="0"
+                                            (成人)</label><input type="number" id="numAdults" name="adults" class="form-input" value="0"
                                             min="0"></div>
                                     <div><label for="numChildren"
                                             class="block text-sm font-medium text-gray-600 mb-1">孩童
-                                            (9歲以下不佔床)</label><input type="number" id="numChildren" class="form-input"
+                                            (9歲以下不佔床)</label><input type="number" id="numChildren" name="children" class="form-input"
                                             value="0" min="0"></div>
                                     <div><label for="numInfants" class="block text-sm font-medium text-gray-600 mb-1">嬰兒
-                                            (2歲以下)</label><input type="number" id="numInfants" class="form-input"
+                                            (2歲以下)</label><input type="number" id="numInfants" name="infants" class="form-input"
                                             value="0" min="0"></div>
                                 </div>
                             </fieldset>
-                            <input type="hidden" id="hiddenAdults" name="adults"><input type="hidden"
-                                id="hiddenChildren" name="children"><input type="hidden" id="hiddenInfants"
-                                name="infants">
+                            
                             <fieldset class="p-4 border border-gray-300 rounded-lg">
                                 <legend class="px-2 text-lg font-semibold text-gray-800">2. 您的資料</legend>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
@@ -654,7 +656,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
     <script>
         !function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = 'https://weatherwidget.io/js/widget.min.js'; js.async = true; /* ← 新增這一行 */ fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'weatherwidget-io-js');
     </script>
