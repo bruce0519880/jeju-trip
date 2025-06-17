@@ -296,15 +296,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideModifyModal();
                 hideRecoverModal();
 
-                // 修正後執行順序: 1. 顯示區塊
                 showSection('registration');
                 
-                // 修正後執行順序: 2. 設定模式
                 formMode = 'update';
                 updateRowNumber = data.rowNumber;
                 switchToUpdateModeUI();
 
-                // 修正後執行順序: 3. 使用 setTimeout 延遲填入，避免渲染衝突
                 setTimeout(() => {
                     populateForm(data.rowData);
                     updateStateFromServer();
@@ -594,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.progress.title.innerText = "頁面載入失敗";
             dom.progress.text.innerText = "無法從伺服器取得必要資訊，請稍後再試。";
         }
-        // 【最終修正】關閉與渲染衝突的CSS動畫
+        // 【最終修正】註解掉這行動畫程式碼以避免渲染衝突
         // const animationObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 });
         // document.querySelectorAll('.fade-in-up').forEach(section => animationObserver.observe(section));
     }
